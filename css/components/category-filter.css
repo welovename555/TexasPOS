@@ -4,20 +4,22 @@
   padding: 0 0 24px 0;
   overflow-x: auto;
   white-space: nowrap;
-  /* ซ่อน Scrollbar ของแถบหมวดหมู่ */
-  -ms-overflow-style: none;  /* IE and Edge */
-  scrollbar-width: none;  /* Firefox */
+  -ms-overflow-style: none;
+  scrollbar-width: none;
 }
 
 .category-filter-container::-webkit-scrollbar {
-  display: none; /* Chrome, Safari, and Opera */
+  display: none;
 }
 
 .category-filter-btn {
-  padding: 10px 20px;
-  border-radius: 20px;
-  border: 1px solid rgba(255, 255, 255, 0.2);
-  background-color: transparent;
+  display: flex;
+  align-items: center;
+  gap: 8px; /* เพิ่มระยะห่างระหว่างไอคอนกับข้อความ */
+  padding: 10px 16px; /* ปรับ padding */
+  border-radius: 12px; /* ปรับความโค้งมน */
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  background-color: var(--content-bg);
   color: var(--text-secondary);
   font-size: 0.9rem;
   font-weight: 500;
@@ -25,8 +27,14 @@
   transition: background-color 0.2s ease, color 0.2s ease, border-color 0.2s ease;
 }
 
+.category-filter-btn svg {
+  width: 18px; /* กำหนดขนาดไอคอน */
+  height: 18px;
+  stroke-width: 2.5; /* ทำให้เส้นหนาขึ้นเล็กน้อย */
+}
+
 .category-filter-btn:hover {
-  background-color: rgba(255, 255, 255, 0.1);
+  background-color: rgba(255, 255, 255, 0.05);
   color: var(--text-primary);
 }
 
