@@ -8,46 +8,32 @@
     <link rel="stylesheet" href="css/base.css">
     <link rel="stylesheet" href="css/layout.css">
     <link rel="stylesheet" href="css/components/sidebar.css">
+    <link rel="stylesheet" href="css/components/category-filter.css">
     <link rel="stylesheet" href="css/components/modal.css">
     <link rel="stylesheet" href="css/components/spinner.css">
     <link rel="stylesheet" href="css/views/sellView.css">
-    <link rel="stylesheet" href="css/components/category-filter.css">
-
 
 </head>
 <body>
-
     <div class="pos-container">
-        
         <aside class="sidebar">
             <div class="sidebar-brand">
-                </div>
+                <h1 class="brand-title">TEXAS POS</h1>
+            </div>
             <nav class="sidebar-nav">
-                <a href="#" class="nav-item active" data-view="sell-view">
-                    <span>ขายของ</span>
-                </a>
-                <a href="#" class="nav-item" data-view="history-view">
-                    <span>ประวัติ</span>
-                </a>
-                <a href="#" class="nav-item" data-view="stock-view">
-                    <span>สต็อก</span>
-                </a>
+                <a href="#" class="nav-item active" data-view="sell-view"><span>ขายของ</span></a>
+                <a href="#" class="nav-item" data-view="history-view"><span>ประวัติ</span></a>
+                <a href="#" class="nav-item" data-view="stock-view"><span>สต็อก</span></a>
             </nav>
             <div class="sidebar-footer">
-                <a href="#" class="nav-item" id="logout-btn">
-                    <span>ออก</span>
-                </a>
+                <a href="#" class="nav-item" id="logout-btn"><span>ออก</span></a>
             </div>
         </aside>
-
         <main class="main-content">
             <div id="sell-view" class="content-view active"></div>
         </main>
-
     </div>
-
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script type="module" src="js/app.js"></script>
-
 </body>
 </html>
