@@ -4,58 +4,31 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>TEXAS POS - Login</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="css/base.css">
     <link rel="stylesheet" href="css/login.css">
 </head>
 <body>
-
-    <div id="spinner-overlay" class="spinner-overlay hidden">
+    <div class="login-container">
+        <div class="pin-display">
+            <h1 class="logo">TEXAS POS</h1>
+            <p>กรุณาใส่รหัสผ่าน 4 หลัก</p>
+            <div id="pin-dots" class="pin-dots-container">
+                <span class="pin-dot"></span>
+                <span class="pin-dot"></span>
+                <span class="pin-dot"></span>
+                <span class="pin-dot"></span>
+            </div>
+            <p id="error-message" class="error-message"></p>
+        </div>
+        <div id="pin-pad" class="pin-pad-container">
+            </div>
+    </div>
+    
+    <div id="loading-overlay" class="loading-overlay">
         <div class="spinner"></div>
     </div>
 
-    <main class="login-container">
-        <div class="login-box">
-            <h1>TEXAS POS</h1>
-            <h2>กรุณากรอกรหัส PIN</h2>
-
-            <div id="pin-display" class="pin-display">
-                <div class="pin-dot"></div>
-                <div class="pin-dot"></div>
-                <div class="pin-dot"></div>
-                <div class="pin-dot"></div>
-            </div>
-
-            <p id="error-message" class="error-message"></p>
-
-            <div id="keypad" class="keypad">
-                <button class="keypad-button" data-key="1">1</button>
-                <button class="keypad-button" data-key="2">2</button>
-                <button class="keypad-button" data-key="3">3</button>
-                <button class="keypad-button" data-key="4">4</button>
-                <button class="keypad-button" data-key="5">5</button>
-                <button class="keypad-button" data-key="6">6</button>
-                <button class="keypad-button" data-key="7">7</button>
-                <button class="keypad-button" data-key="8">8</button>
-                <button class="keypad-button" data-key="9">9</button>
-                <div class="keypad-placeholder"></div>
-                <button class="keypad-button" data-key="0">0</button>
-                <button class="keypad-button" data-key="backspace">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                        <path d="M21 4H8l-7 8 7 8h13a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2z"></path>
-                        <line x1="18" y1="9" x2="12" y2="15"></line>
-                        <line x1="12" y1="9" x2="18" y2="15"></line>
-                    </svg>
-                </button>
-            </div>
-        </div>
-    </main>
-
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <script type="module" src="js/config.js"></script>
     <script type="module" src="js/views/loginView.js"></script>
-
 </body>
 </html>
