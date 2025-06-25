@@ -2,31 +2,46 @@
 <html lang="th">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
     <title>TEXAS POS</title>
     
     <link rel="stylesheet" href="css/base.css">
     <link rel="stylesheet" href="css/layout.css">
+    <link rel="stylesheet" href="css/components/sidebar.css">
     <link rel="stylesheet" href="css/components/modal.css">
     <link rel="stylesheet" href="css/components/spinner.css">
-    <link rel="stylesheet" href="css/components/cart.css">
     <link rel="stylesheet" href="css/views/sellView.css">
 
 </head>
 <body>
 
     <div class="pos-container">
+        
         <aside class="sidebar">
-            <h1 class="logo">POS</h1>
+            <div class="sidebar-brand">
+                </div>
             <nav class="sidebar-nav">
-                <a href="#" class="nav-item active">🛒 ขายของ / ตะกร้า</a>
+                <a href="#" class="nav-item active" data-view="sell-view">
+                    <span>ขายของ</span>
+                </a>
+                <a href="#" class="nav-item" data-view="history-view">
+                    <span>ประวัติ</span>
+                </a>
+                <a href="#" class="nav-item" data-view="stock-view">
+                    <span>สต็อก</span>
+                </a>
             </nav>
+            <div class="sidebar-footer">
+                <a href="#" class="nav-item" id="logout-btn">
+                    <span>ออก</span>
+                </a>
+            </div>
         </aside>
 
         <main class="main-content">
             <div id="sell-view" class="content-view active"></div>
-            <aside id="cart-view-container"></aside>
         </main>
+
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
