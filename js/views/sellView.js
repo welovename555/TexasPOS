@@ -19,15 +19,14 @@ const sellView = {
     Spinner.show();
     this.allCategories = await productService.fetchAllProductsGroupedByCategory();
     Spinner.hide();
-    
-    if (this.allCategories) {
-      // map ชื่อหมวดหมู่ให้ตรงกับลำดับที่ต้องการ
-      this.allCategories = this.allCategories.map(cat => {
-        const rawName = cat.name || '';
 
-        if (rawName.includes('น้ำ')) return { ...cat, name: 'น้ำ/ผสม' };
-        if (rawName.includes('บุหรี่')) return { ...cat, name: 'บุหรี่' };
+    if (this.allCategories) {
+      this.allCategories = this.allCategories.map(cat => {
+        const rawName = (cat.name || '').toLowerCase();
+
         if (rawName.includes('ยา')) return { ...cat, name: 'ยา' };
+        if (rawName.includes('บุหรี่')) return { ...cat, name: 'บุหรี่' };
+        if (rawName.includes('น้ำ')) return { ...cat, name: 'น้ำ/ผสม' };
         return { ...cat, name: 'อื่นๆ' };
       });
 
