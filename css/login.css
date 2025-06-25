@@ -1,0 +1,135 @@
+/* --- CSS เฉพาะหน้า Login --- */
+/* จัดการ Layout และ Style ขององค์ประกอบในหน้า index.html */
+
+/* 1. Layout Container */
+/* จัดให้กล่อง Login อยู่ตรงกลางของหน้าจอ */
+.login-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    padding: 20px;
+}
+
+/* 2. Login Box */
+/* สไตล์ของกล่องฟอร์ม Login */
+.login-box {
+    background-color: var(--color-surface);
+    padding: 40px;
+    border-radius: 12px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+    width: 100%;
+    max-width: 400px; /* จำกัดความกว้างสูงสุดบนจอใหญ่ */
+    text-align: center;
+    border: 1px solid rgba(59, 130, 246, 0.2); /* เส้นขอบเรืองแสงเล็กน้อย */
+}
+
+.login-box h1 {
+    font-size: 2rem;
+    font-weight: 600;
+    color: var(--color-text-primary);
+    margin-bottom: 8px;
+}
+
+.login-box h2 {
+    font-size: 1.1rem;
+    font-weight: 400;
+    color: var(--color-text-secondary);
+    margin-bottom: 32px;
+}
+
+/* 3. Form Elements */
+#login-form {
+    display: flex;
+    flex-direction: column;
+}
+
+.input-group {
+    position: relative;
+    margin-bottom: 24px;
+}
+
+.input-group label {
+    display: block;
+    text-align: left;
+    color: var(--color-text-secondary);
+    font-size: 0.9rem;
+    margin-bottom: 8px;
+}
+
+/* สไตล์ของช่องกรอกรหัส */
+.input-group input {
+    width: 100%;
+    height: 60px;
+    background-color: var(--color-background);
+    border: 1px solid transparent;
+    border-radius: 8px;
+    color: var(--color-text-primary);
+    text-align: center;
+    font-size: 2.5rem; /* ทำให้ตัวเลขใหญ่และชัดเจน */
+    letter-spacing: 0.5em; /* เพิ่มระยะห่างระหว่างตัวเลข */
+    padding-left: 0.5em; /* แก้ไขการเยื้องของ padding */
+    font-family: var(--font-family-main);
+    transition: border-color var(--transition-speed);
+}
+
+.input-group input:focus {
+    outline: none;
+    border-color: var(--color-primary);
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.3);
+}
+
+/* Placeholder สำหรับ input ที่เป็น password จะมองไม่เห็น */
+/* เราจะใช้ JS จัดการเมื่อผู้ใช้พิมพ์ */
+input[type="password"] {
+    -webkit-text-security: disc;
+}
+
+/* 4. Button & Messages */
+#login-button {
+    height: 50px;
+    border: none;
+    border-radius: 8px;
+    background-color: var(--color-primary);
+    color: #ffffff;
+    font-size: 1rem;
+    font-weight: 500;
+    font-family: var(--font-family-main);
+    cursor: pointer;
+    transition: background-color var(--transition-speed);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+#login-button:hover:not(:disabled) {
+    background-color: #2563eb; /* ทำให้สีเข้มขึ้นเล็กน้อยเมื่อ hover */
+}
+
+#login-button:disabled {
+    background-color: #555;
+    cursor: not-allowed;
+}
+
+.error-message {
+    color: var(--color-error);
+    margin-top: -16px;
+    margin-bottom: 16px;
+    min-height: 1.2em; /* จองพื้นที่ไว้เล็กน้อยกัน Layout ขยับ */
+    font-size: 0.9rem;
+}
+
+/* 5. Spinner (สไตล์พื้นฐานสำหรับใช้ในปุ่ม) */
+.spinner {
+    width: 20px;
+    height: 20px;
+    border: 3px solid rgba(255, 255, 255, 0.3);
+    border-top-color: #fff;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    to { transform: rotate(360deg); }
+}
+
