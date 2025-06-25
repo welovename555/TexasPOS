@@ -1,7 +1,3 @@
-/* --- CSS เฉพาะหน้า Login (เวอร์ชัน PIN Pad) --- */
-/* จัดการ Layout และ Style ขององค์ประกอบในหน้า index.html ที่ปรับปรุงใหม่ */
-
-/* 1. Layout Container & Login Box */
 .login-container {
     display: flex;
     justify-content: center;
@@ -16,7 +12,7 @@
     border-radius: 16px;
     box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
     width: 100%;
-    max-width: 380px; /* ปรับขนาดให้พอดีกับ Keypad */
+    max-width: 380px;
     text-align: center;
     border: 1px solid rgba(59, 130, 246, 0.1);
 }
@@ -32,13 +28,11 @@
     margin-bottom: 24px;
 }
 
-/* 2. PIN Display */
-/* สไตล์ของจุด 4 จุดที่แสดงสถานะการกรอก PIN */
 .pin-display {
     display: flex;
     justify-content: center;
     align-items: center;
-    gap: 20px; /* ระยะห่างระหว่างจุด */
+    gap: 20px;
     margin-bottom: 16px;
     height: 30px;
 }
@@ -52,14 +46,12 @@
     transition: all var(--transition-speed) ease;
 }
 
-/* สไตล์ของจุดเมื่อมีการกรอก PIN เข้ามา (ควบคุมโดย JS) */
 .pin-dot.filled {
     background-color: var(--color-accent);
     border-color: var(--color-accent);
     transform: scale(1.1);
 }
 
-/* 3. Error Message */
 .error-message {
     color: var(--color-error);
     min-height: 20px;
@@ -68,8 +60,6 @@
     font-weight: 500;
 }
 
-/* 4. Keypad */
-/* จัด Layout ของปุ่มกดด้วย CSS Grid */
 .keypad {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
@@ -78,8 +68,8 @@
 
 .keypad-button {
     width: 100%;
-    aspect-ratio: 1 / 1; /* ทำให้ปุ่มเป็นสี่เหลี่ยมจัตุรัสเสมอ */
-    border-radius: 50%; /* ทำให้ปุ่มเป็นวงกลม */
+    aspect-ratio: 1 / 1;
+    border-radius: 50%;
     border: 1px solid transparent;
     background-color: rgba(255, 255, 255, 0.05);
     color: var(--color-text-primary);
@@ -93,43 +83,38 @@
     align-items: center;
 }
 
-/* เอฟเฟกต์ตอนนำเมาส์ไปชี้ */
 .keypad-button:hover {
     background-color: rgba(255, 255, 255, 0.1);
     border-color: var(--color-primary);
 }
 
-/* เอฟเฟกต์ตอนกดปุ่ม */
 .keypad-button:active {
     transform: scale(0.95);
     background-color: var(--color-primary);
 }
 
-/* ทำให้ปุ่ม Backspace มีสีไอคอนที่ถูกต้อง */
 .keypad-button[data-key="backspace"] svg {
     stroke: var(--color-text-secondary);
 }
 
-/* 5. Full-screen Spinner */
-/* สไตล์ของ Spinner ที่จะแสดงเต็มจอเมื่อกำลัง Login */
 .spinner-overlay {
     position: fixed;
     top: 0;
     left: 0;
     width: 100%;
     height: 100%;
-    background-color: rgba(16, 20, 31, 0.8); /* สีพื้นหลังโปร่งแสง */
+    background-color: rgba(16, 20, 31, 0.8);
     display: flex;
     justify-content: center;
     align-items: center;
     z-index: 1000;
-    backdrop-filter: blur(5px); /* เพิ่มความหรูหราด้วย effect blur */
+    backdrop-filter: blur(5px);
     transition: opacity var(--transition-speed) ease;
 }
 
 .spinner-overlay.hidden {
     opacity: 0;
-    pointer-events: none; /* ทำให้คลิกทะลุได้เมื่อซ่อนอยู่ */
+    pointer-events: none;
 }
 
 .spinner-overlay .spinner {
@@ -141,14 +126,12 @@
     animation: spin 1.2s linear infinite;
 }
 
-@keyframes spin {
-    to { transform: rotate(360deg); }
-}
-
-/* 6. Animation (เพิ่มเติม) */
-/* Animation สั่นสำหรับแจ้งเตือนเมื่อ PIN ผิด */
 .shake {
     animation: shake 0.5s cubic-bezier(.36,.07,.19,.97) both;
+}
+
+@keyframes spin {
+    to { transform: rotate(360deg); }
 }
 
 @keyframes shake {
