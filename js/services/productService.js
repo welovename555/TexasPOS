@@ -1,7 +1,7 @@
 const productService = {
   async fetchAllProductsGroupedByCategory() {
     try {
-      const { data: categories, error: categoriesError } = await supabase
+      const { data: categories, error: categoriesError } = await supabaseClient
         .from('categories')
         .select('id, name')
         .order('created_at', { ascending: true });
@@ -11,7 +11,7 @@ const productService = {
         throw categoriesError;
       }
 
-      const { data: products, error: productsError } = await supabase
+      const { data: products, error: productsError } = await supabaseClient
         .from('products')
         .select('id, name, base_price, category_id, image_url')
         .eq('is_active', true)
