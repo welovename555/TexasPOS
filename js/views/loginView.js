@@ -1,71 +1,92 @@
-import { login } from '../services/authService.js';
+import { authService } from '../services/authService.js';
 
-document.addEventListener('DOMContentLoaded', () => {
-  const keypad = document.getElementById('keypad');
-  const pinDisplay = document.getElementById('pin-display');
-  const pinDots = pinDisplay.querySelectorAll('.pin-dot');
-  const errorMessageElement = document.getElementById('error-message');
-  const spinnerOverlay = document.getElementById('spinner-overlay');
+const loginView = {
+  pin: '',
+  pinDots: null,
+  errorMessage: null,
+  pinPad: null,
+  loadingOverlay: null,
 
-  let currentPin = '';
+  init() {
+    this.pinDots = document.getElementById('pin-dots');
+    this.errorMessage = document.getElementById('error-message');
+    this.pinPad = document.getElementById('pin-pad');
+    this.loadingOverlay = document.getElementById('loading-overlay');
+    
+    this.renderPinPad();
+    this.attachPinPadListeners();
+  },
 
-  const updatePinDisplay = () => {
-    pinDots.forEach((dot, index) => {
-      if (index < currentPin.length) {
-        dot.classList.add('filled');
-      } else {
-        dot.classList.remove('filled');
+  renderPinPad() {
+    const buttons = [1, 2, 3, 4, 5, 6, 7, 8, 9, 'C', 0, '<'];
+    buttons.forEach(val => {
+      const btn = document.createElement('button');
+      btn.className = 'pin-btn';
+      btn.dataset.value = val;
+      btn.textContent = val;
+      this.pinPad.appendChild(btn);
+    });
+  },
+
+  attachPinPadListeners() {
+    this.pinPad.addEventListener('click', (e) => {
+      if (e.target.matches('.pin-btn')) {
+        const value = e.target.dataset.value;
+        this.handlePinInput(value);
       }
     });
-  };
+  },
 
-  const showSpinner = (show) => {
-    if (show) {
-      spinnerOverlay.classList.remove('hidden');
-      spinnerOverlay.style.opacity = '1';
-    } else {
-      spinnerOverlay.style.opacity = '0';
-      setTimeout(() => {
-        spinnerOverlay.classList.add('hidden');
-      }, 300);
+  async handlePinInput(value) {
+    this.clearError();
+    if (value === 'C') {
+      this.pin = '';
+    } else if (value === '<') {
+      this.pin = this.pin.slice(0, -1);
+    } else if (this.pin.length < 4) {
+      this.pin += value;
     }
-  };
-  
-  const attemptLogin = async () => {
-    showSpinner(true);
-    const result = await login(currentPin);
-    showSpinner(false);
 
-    if (!result.success) {
-      errorMessageElement.textContent = result.message;
-      pinDisplay.classList.add('shake');
+    this.updatePinDots();
+
+    if (this.pin.length === 4) {
+      this.showLoading(true);
+      const success = await authService.login(this.pin);
+      this.showLoading(false);
       
-      currentPin = '';
-      
-      setTimeout(() => {
-        updatePinDisplay();
-        pinDisplay.classList.remove('shake');
-      }, 500);
+      if (success) {
+        window.location.href = 'pos.html';
+      } else {
+        this.showError('รหัสผ่านไม่ถูกต้อง');
+        this.pin = '';
+        setTimeout(() => this.updatePinDots(), 500);
+      }
     }
-  };
+  },
 
-  keypad.addEventListener('click', (event) => {
-    const button = event.target.closest('.keypad-button');
-    if (!button) return;
-
-    errorMessageElement.textContent = '';
-    const key = button.dataset.key;
-
-    if (key === 'backspace') {
-      currentPin = currentPin.slice(0, -1);
-    } else if (currentPin.length < 4) {
-      currentPin += key;
+  updatePinDots() {
+    const dots = this.pinDots.children;
+    for (let i = 0; i < dots.length; i++) {
+      dots[i].classList.toggle('filled', i < this.pin.length);
     }
+  },
 
-    updatePinDisplay();
+  showError(message) {
+    this.errorMessage.textContent = message;
+    this.pinDots.parentElement.classList.add('shake');
+    setTimeout(() => {
+      this.pinDots.parentElement.classList.remove('shake');
+    }, 500);
+  },
 
-    if (currentPin.length === 4) {
-      attemptLogin();
-    }
-  });
-});
+  clearError() {
+    this.errorMessage.textContent = '';
+  },
+
+  showLoading(isLoading) {
+    this.loadingOverlay.style.display = isLoading ? 'flex' : 'none';
+  }
+};
+
+loginView.init();
+
