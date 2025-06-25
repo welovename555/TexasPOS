@@ -1,67 +1,90 @@
-// --- Login View ---
-// หน้าที่: จัดการ Logic ที่เกี่ยวข้องกับ UI ของหน้า Login (index.html)
-// เช่น การรับข้อมูลจากฟอร์ม, การแสดงข้อความ error, และการเรียกใช้ authService
+// --- Login View (PIN Pad Version) ---
+// หน้าที่: จัดการ Logic ที่เกี่ยวข้องกับ UI ของหน้า Login แบบ PIN Pad
 
-// 1. Import ฟังก์ชัน login จาก authService
+// 1. Import ฟังก์ชันที่จำเป็น
 import { login } from '../services/authService.js';
 
-// 2. รอให้ HTML โหลดเสร็จก่อนเริ่มทำงานกับ DOM
+// 2. รอให้ HTML โหลดเสร็จก่อนเริ่มทำงาน
 document.addEventListener('DOMContentLoaded', () => {
 
   // 3. ดึง Element ที่ต้องใช้จากหน้า HTML
-  const loginForm = document.getElementById('login-form');
-  const employeeCodeInput = document.getElementById('employee-code');
-  const loginButton = document.getElementById('login-button');
+  const keypad = document.getElementById('keypad');
+  const pinDisplay = document.getElementById('pin-display');
+  const pinDots = pinDisplay.querySelectorAll('.pin-dot');
   const errorMessageElement = document.getElementById('error-message');
-  const buttonText = loginButton.querySelector('.button-text');
-  const spinner = loginButton.querySelector('.spinner');
+  const spinnerOverlay = document.getElementById('spinner-overlay');
 
-  // 4. สร้างฟังก์ชันสำหรับจัดการสถานะ Loading ของปุ่ม
-  const setLoadingState = (isLoading) => {
-    if (isLoading) {
-      loginButton.disabled = true;
-      buttonText.style.display = 'none';
-      spinner.style.display = 'block';
-    } else {
-      loginButton.disabled = false;
-      buttonText.style.display = 'block';
-      spinner.style.display = 'none';
-    }
+  let currentPin = ''; // ตัวแปรสำหรับเก็บค่า PIN ที่ผู้ใช้กด
+
+  // 4. Helper Functions (ฟังก์ชันตัวช่วย)
+  
+  /** อัปเดตการแสดงผลของจุด PIN */
+  const updatePinDisplay = () => {
+    pinDots.forEach((dot, index) => {
+      if (index < currentPin.length) {
+        dot.classList.add('filled');
+      } else {
+        dot.classList.remove('filled');
+      }
+    });
   };
 
-  // 5. ดักจับเหตุการณ์การกด "Submit" ของฟอร์ม
-  loginForm.addEventListener('submit', async (event) => {
-    event.preventDefault(); // ป้องกันไม่ให้หน้าเว็บโหลดใหม่
-    
-    // 6. เริ่มสถานะ Loading และล้างข้อความ error เก่า
-    setLoadingState(true);
-    errorMessageElement.textContent = '';
-    
-    // 7. ดึงค่ารหัสพนักงานจากช่อง input
-    const employeeCode = employeeCodeInput.value;
-
-    // 8. ตรวจสอบข้อมูลเบื้องต้น
-    if (employeeCode.length !== 4) {
-      errorMessageElement.textContent = 'กรุณากรอกรหัสพนักงาน 4 หลักให้ถูกต้อง';
-      setLoadingState(false);
-      return; // หยุดการทำงาน
+  /** แสดง/ซ่อน Spinner แบบเต็มจอ */
+  const showSpinner = (show) => {
+    if (show) {
+      spinnerOverlay.classList.remove('hidden');
+      spinnerOverlay.style.opacity = '1'; // เริ่ม Fade-in
+    } else {
+      spinnerOverlay.style.opacity = '0'; // เริ่ม Fade-out
+      // รอให้ animation fade-out จบก่อนซ่อน element จริงๆ
+      setTimeout(() => {
+        spinnerOverlay.classList.add('hidden');
+      }, 300); // 300ms คือค่า --transition-speed ใน base.css
     }
+  };
+  
+  /** ลองทำการ Login */
+  const attemptLogin = async () => {
+    showSpinner(true);
+    const result = await login(currentPin);
+    showSpinner(false);
 
-    // 9. เรียกใช้ฟังก์ชัน login จาก authService
-    const result = await login(employeeCode);
-
-    // 10. หากการ Login ล้มเหลว (success === false)
     if (!result.success) {
-      // แสดงข้อความ error ที่ได้จาก service
       errorMessageElement.textContent = result.message;
+      // เพิ่ม animation สั่นเพื่อแจ้งเตือนผู้ใช้
+      pinDisplay.classList.add('shake');
       
-      // คืนสถานะปุ่มกลับเป็นปกติ
-      setLoadingState(false);
+      // ล้างค่า PIN หลังจาก Login ผิดพลาด
+      currentPin = '';
       
-      // ล้างช่อง input เพื่อให้ผู้ใช้กรอกใหม่
-      employeeCodeInput.value = '';
-      employeeCodeInput.focus();
+      // รอให้ animation สั่นจบแล้วค่อยล้างจุด PIN และเอา class สั่นออก
+      setTimeout(() => {
+        updatePinDisplay();
+        pinDisplay.classList.remove('shake');
+      }, 500);
     }
-    // หากสำเร็จ (success === true), authService จะ redirect ไปหน้า pos.html เอง
+    // หากสำเร็จ authService จะ redirect ไปเอง
+  };
+
+  // 5. เพิ่ม Event Listener ที่ Keypad (ใช้ Event Delegation)
+  keypad.addEventListener('click', (event) => {
+    const button = event.target.closest('.keypad-button');
+    if (!button) return; // ถ้าที่คลิกไม่ใช่ปุ่ม ให้หยุด
+
+    errorMessageElement.textContent = ''; // ล้าง error เก่าทุกครั้งที่กด
+    const key = button.dataset.key;
+
+    if (key === 'backspace') {
+      currentPin = currentPin.slice(0, -1);
+    } else if (currentPin.length < 4) {
+      currentPin += key;
+    }
+
+    updatePinDisplay();
+
+    // ถ้า PIN ครบ 4 หลัก ให้ทำการ Login ทันที
+    if (currentPin.length === 4) {
+      attemptLogin();
+    }
   });
 });
