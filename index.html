@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TEXAS POS - Login</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap" rel="stylesheet">
+
+    <link rel="stylesheet" href="css/base.css">
+    <link rel="stylesheet" href="css/login.css">
+</head>
+<body>
+
+    <main class="login-container">
+        <div class="login-box">
+            <h1>TEXAS POS</h1>
+            <h2>เข้าสู่ระบบ</h2>
+            <form id="login-form">
+                <div class="input-group">
+                    <label for="employee-code">รหัสพนักงาน 4 หลัก</label>
+                    <input 
+                        type="password" 
+                        id="employee-code" 
+                        name="employee-code"
+                        maxlength="4" 
+                        inputmode="numeric" 
+                        pattern="[0-9]*"
+                        autocomplete="off"
+                        required
+                    >
+                </div>
+                <p id="error-message" class="error-message"></p>
+                <button type="submit" id="login-button">
+                    <span class="button-text">เข้าสู่ระบบ</span>
+                    <div class="spinner" style="display: none;"></div>
+                </button>
+            </form>
+        </div>
+    </main>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    
+    <script src="js/config.js"></script>
+    <script src="js/views/loginView.js"></script>
+
+</body>
+</html>
