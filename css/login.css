@@ -1,8 +1,7 @@
-/* --- CSS เฉพาะหน้า Login --- */
-/* จัดการ Layout และ Style ขององค์ประกอบในหน้า index.html */
+/* --- CSS เฉพาะหน้า Login (เวอร์ชัน PIN Pad) --- */
+/* จัดการ Layout และ Style ขององค์ประกอบในหน้า index.html ที่ปรับปรุงใหม่ */
 
-/* 1. Layout Container */
-/* จัดให้กล่อง Login อยู่ตรงกลางของหน้าจอ */
+/* 1. Layout Container & Login Box */
 .login-container {
     display: flex;
     justify-content: center;
@@ -11,122 +10,135 @@
     padding: 20px;
 }
 
-/* 2. Login Box */
-/* สไตล์ของกล่องฟอร์ม Login */
 .login-box {
     background-color: var(--color-surface);
-    padding: 40px;
-    border-radius: 12px;
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+    padding: 30px 40px;
+    border-radius: 16px;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
     width: 100%;
-    max-width: 400px; /* จำกัดความกว้างสูงสุดบนจอใหญ่ */
+    max-width: 380px; /* ปรับขนาดให้พอดีกับ Keypad */
     text-align: center;
-    border: 1px solid rgba(59, 130, 246, 0.2); /* เส้นขอบเรืองแสงเล็กน้อย */
+    border: 1px solid rgba(59, 130, 246, 0.1);
 }
 
 .login-box h1 {
-    font-size: 2rem;
-    font-weight: 600;
-    color: var(--color-text-primary);
+    font-size: 1.8rem;
     margin-bottom: 8px;
 }
 
 .login-box h2 {
-    font-size: 1.1rem;
-    font-weight: 400;
+    font-size: 1rem;
     color: var(--color-text-secondary);
-    margin-bottom: 32px;
-}
-
-/* 3. Form Elements */
-#login-form {
-    display: flex;
-    flex-direction: column;
-}
-
-.input-group {
-    position: relative;
     margin-bottom: 24px;
 }
 
-.input-group label {
-    display: block;
-    text-align: left;
-    color: var(--color-text-secondary);
+/* 2. PIN Display */
+/* สไตล์ของจุด 4 จุดที่แสดงสถานะการกรอก PIN */
+.pin-display {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 20px; /* ระยะห่างระหว่างจุด */
+    margin-bottom: 16px;
+    height: 30px;
+}
+
+.pin-dot {
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    background-color: transparent;
+    border: 2px solid var(--color-text-secondary);
+    transition: all var(--transition-speed) ease;
+}
+
+/* สไตล์ของจุดเมื่อมีการกรอก PIN เข้ามา (ควบคุมโดย JS) */
+.pin-dot.filled {
+    background-color: var(--color-accent);
+    border-color: var(--color-accent);
+    transform: scale(1.1);
+}
+
+/* 3. Error Message */
+.error-message {
+    color: var(--color-error);
+    min-height: 20px;
+    margin-bottom: 20px;
     font-size: 0.9rem;
-    margin-bottom: 8px;
+    font-weight: 500;
 }
 
-/* สไตล์ของช่องกรอกรหัส */
-.input-group input {
+/* 4. Keypad */
+/* จัด Layout ของปุ่มกดด้วย CSS Grid */
+.keypad {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 15px;
+}
+
+.keypad-button {
     width: 100%;
-    height: 60px;
-    background-color: var(--color-background);
+    aspect-ratio: 1 / 1; /* ทำให้ปุ่มเป็นสี่เหลี่ยมจัตุรัสเสมอ */
+    border-radius: 50%; /* ทำให้ปุ่มเป็นวงกลม */
     border: 1px solid transparent;
-    border-radius: 8px;
+    background-color: rgba(255, 255, 255, 0.05);
     color: var(--color-text-primary);
-    text-align: center;
-    font-size: 2.5rem; /* ทำให้ตัวเลขใหญ่และชัดเจน */
-    letter-spacing: 0.5em; /* เพิ่มระยะห่างระหว่างตัวเลข */
-    padding-left: 0.5em; /* แก้ไขการเยื้องของ padding */
-    font-family: var(--font-family-main);
-    transition: border-color var(--transition-speed);
-}
-
-.input-group input:focus {
-    outline: none;
-    border-color: var(--color-primary);
-    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.3);
-}
-
-/* Placeholder สำหรับ input ที่เป็น password จะมองไม่เห็น */
-/* เราจะใช้ JS จัดการเมื่อผู้ใช้พิมพ์ */
-input[type="password"] {
-    -webkit-text-security: disc;
-}
-
-/* 4. Button & Messages */
-#login-button {
-    height: 50px;
-    border: none;
-    border-radius: 8px;
-    background-color: var(--color-primary);
-    color: #ffffff;
-    font-size: 1rem;
+    font-size: 1.8rem;
     font-weight: 500;
     font-family: var(--font-family-main);
     cursor: pointer;
-    transition: background-color var(--transition-speed);
+    transition: all var(--transition-speed) ease;
     display: flex;
     justify-content: center;
     align-items: center;
 }
 
-#login-button:hover:not(:disabled) {
-    background-color: #2563eb; /* ทำให้สีเข้มขึ้นเล็กน้อยเมื่อ hover */
+/* เอฟเฟกต์ตอนนำเมาส์ไปชี้ */
+.keypad-button:hover {
+    background-color: rgba(255, 255, 255, 0.1);
+    border-color: var(--color-primary);
 }
 
-#login-button:disabled {
-    background-color: #555;
-    cursor: not-allowed;
+/* เอฟเฟกต์ตอนกดปุ่ม */
+.keypad-button:active {
+    transform: scale(0.95);
+    background-color: var(--color-primary);
 }
 
-.error-message {
-    color: var(--color-error);
-    margin-top: -16px;
-    margin-bottom: 16px;
-    min-height: 1.2em; /* จองพื้นที่ไว้เล็กน้อยกัน Layout ขยับ */
-    font-size: 0.9rem;
+/* ทำให้ปุ่ม Backspace มีสีไอคอนที่ถูกต้อง */
+.keypad-button[data-key="backspace"] svg {
+    stroke: var(--color-text-secondary);
 }
 
-/* 5. Spinner (สไตล์พื้นฐานสำหรับใช้ในปุ่ม) */
-.spinner {
-    width: 20px;
-    height: 20px;
-    border: 3px solid rgba(255, 255, 255, 0.3);
-    border-top-color: #fff;
+/* 5. Full-screen Spinner */
+/* สไตล์ของ Spinner ที่จะแสดงเต็มจอเมื่อกำลัง Login */
+.spinner-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(16, 20, 31, 0.8); /* สีพื้นหลังโปร่งแสง */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+    backdrop-filter: blur(5px); /* เพิ่มความหรูหราด้วย effect blur */
+    transition: opacity var(--transition-speed) ease;
+}
+
+.spinner-overlay.hidden {
+    opacity: 0;
+    pointer-events: none; /* ทำให้คลิกทะลุได้เมื่อซ่อนอยู่ */
+}
+
+.spinner-overlay .spinner {
+    width: 60px;
+    height: 60px;
+    border: 5px solid rgba(255, 255, 255, 0.2);
+    border-top-color: var(--color-accent);
     border-radius: 50%;
-    animation: spin 1s linear infinite;
+    animation: spin 1.2s linear infinite;
 }
 
 @keyframes spin {
