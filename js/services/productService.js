@@ -1,3 +1,5 @@
+import { supabaseClient } from '../config.js';
+
 const productService = {
   async fetchAllProductsGroupedByCategory() {
     try {
@@ -6,10 +8,7 @@ const productService = {
         .select('id, name')
         .order('created_at', { ascending: true });
 
-      if (categoriesError) {
-        console.error('Error fetching categories:', categoriesError.message);
-        throw categoriesError;
-      }
+      if (categoriesError) throw categoriesError;
 
       const { data: products, error: productsError } = await supabaseClient
         .from('products')
@@ -17,25 +16,19 @@ const productService = {
         .eq('is_active', true)
         .order('created_at', { ascending: true });
 
-      if (productsError) {
-        console.error('Error fetching products:', productsError.message);
-        throw productsError;
-      }
+      if (productsError) throw productsError;
 
-      const grouped = categories.map(category => {
-        return {
-          ...category,
-          products: products.filter(product => product.category_id === category.id)
-        };
-      });
+      const grouped = categories.map(category => ({
+        ...category,
+        products: products.filter(product => product.category_id === category.id)
+      }));
 
-      const categoriesWithProducts = grouped.filter(category => category.products.length > 0);
-
-      return categoriesWithProducts;
-
+      return grouped.filter(category => category.products.length > 0);
     } catch (error) {
       console.error('An error occurred in fetchAllProductsGroupedByCategory:', error.message);
       return null;
     }
   }
 };
+
+export { productService };
