@@ -1,23 +1,20 @@
-import { getUserByCode } from './userService.js';
+import { userService } from './userService.js';
 import { authStore } from '../stores/authStore.js';
 
-export const login = async (employeeCode) => {
-  const { user, error } = await getUserByCode(employeeCode);
+const authService = {
+  async login(pinCode) {
+    const user = await userService.findUserByCode(pinCode);
+    if (user) {
+      authStore.login(user);
+      return true;
+    }
+    return false;
+  },
 
-  if (error || !user) {
-    return { success: false, message: 'รหัสพนักงานไม่ถูกต้อง' };
+  logout() {
+    authStore.logout();
+    window.location.href = 'index.html';
   }
-
-  authStore.setUser(user);
-  window.location.href = 'pos.html';
-  return { success: true, message: 'เข้าสู่ระบบสำเร็จ' };
 };
 
-export const logout = () => {
-  authStore.clearUser();
-  window.location.href = 'index.html';
-};
-
-export const checkLoginStatus = () => {
-  return authStore.getUser();
-};
+export { authService };
