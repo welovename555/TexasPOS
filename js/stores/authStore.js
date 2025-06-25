@@ -1,23 +1,28 @@
 const authStore = {
-  currentUser: null,
-  setUser(user) {
-    this.currentUser = user;
-    sessionStorage.setItem('loggedInUser', JSON.stringify(user));
+  state: {
+    user: null,
+    isAuthenticated: false
   },
-  getUser() {
-    if (this.currentUser) {
-      return this.currentUser;
+
+  init() {
+    const userSession = sessionStorage.getItem('userSession');
+    if (userSession) {
+      this.state.user = JSON.parse(userSession);
+      this.state.isAuthenticated = true;
     }
-    const userFromSession = sessionStorage.getItem('loggedInUser');
-    if (userFromSession) {
-      this.currentUser = JSON.parse(userFromSession);
-      return this.currentUser;
-    }
-    return null;
   },
-  clearUser() {
-    this.currentUser = null;
-    sessionStorage.removeItem('loggedInUser');
+
+  login(userData) {
+    this.state.user = userData;
+    this.state.isAuthenticated = true;
+    sessionStorage.setItem('userSession', JSON.stringify(userData));
+  },
+
+  logout() {
+    this.state.user = null;
+    this.state.isAuthenticated = false;
+    sessionStorage.removeItem('userSession');
   }
 };
-export { authStore };
+
+authStore.init();
