@@ -14,7 +14,21 @@
 .sidebar-brand {
   height: 60px;
   margin-bottom: 30px;
-  /* เราจะมาใส่ดีไซน์โลโก้ TEXAS POS ที่นี่ในภายหลัง */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.brand-title {
+  font-size: 1.1rem;
+  font-weight: 800;
+  margin: 0;
+  background: -webkit-linear-gradient(45deg, #34c759, #0a84ff);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  writing-mode: vertical-rl;
+  text-orientation: mixed;
+  transform: rotate(180deg);
 }
 
 .sidebar-nav {
@@ -53,5 +67,5 @@
 }
 
 .sidebar-footer {
-  margin-top: auto; /* ดันลงไปอยู่ข้างล่างสุด */
+  margin-top: auto;
 }
