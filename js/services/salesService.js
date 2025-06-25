@@ -1,3 +1,7 @@
+import { supabaseClient } from '../config.js';
+import { authStore } from '../stores/authStore.js';
+import { shiftStore } from '../stores/shiftStore.js';
+
 const salesService = {
   async createSale(cartItems, paymentMethod) {
     try {
@@ -10,9 +14,9 @@ const salesService = {
       }
 
       const salesData = cartItems.map(item => ({
-        transaction_id: transaction_id,
-        employee_id: employee_id,
-        shift_id: shift_id,
+        transaction_id,
+        employee_id,
+        shift_id,
         product_id: item.product.id,
         quantity: item.quantity,
         price_per_unit: item.product.base_price,
@@ -25,10 +29,7 @@ const salesService = {
         .insert(salesData)
         .select();
 
-      if (error) {
-        throw error;
-      }
-
+      if (error) throw error;
       return { success: true, data };
     } catch (error) {
       console.error('Error creating sale:', error.message);
@@ -36,3 +37,5 @@ const salesService = {
     }
   }
 };
+
+export { salesService };
