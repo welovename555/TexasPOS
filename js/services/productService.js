@@ -12,18 +12,31 @@ const productService = {
 
       const { data: products, error: productsError } = await supabaseClient
         .from('products')
-        .select('id, name, base_price, category_id, image_url')
+        .select(`
+          id, 
+          name, 
+          base_price, 
+          category_id, 
+          image_url,
+          product_stocks ( stock_quantity )
+        `)
         .eq('is_active', true)
         .order('created_at', { ascending: true });
 
       if (productsError) throw productsError;
 
+      const productsWithStock = products.map(p => ({
+        ...p,
+        stock_quantity: p.product_stocks[0]?.stock_quantity ?? 0
+      }));
+
       const grouped = categories.map(category => ({
         ...category,
-        products: products.filter(product => product.category_id === category.id)
+        products: productsWithStock.filter(product => product.category_id === category.id)
       }));
 
       return grouped.filter(category => category.products.length > 0);
+
     } catch (error) {
       console.error('An error occurred in fetchAllProductsGroupedByCategory:', error.message);
       return null;
