@@ -26,3 +26,5 @@ const authStore = {
 };
 
 authStore.init();
+
+export { authStore };
