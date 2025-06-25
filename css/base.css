@@ -1,0 +1,41 @@
+/* --- CSS พื้นฐาน (Reset, Variables, Typography, Body) --- */
+/* ใช้สำหรับกำหนดค่าเริ่มต้นและตัวแปรกลางที่ใช้ทั้งโปรเจกต์ */
+
+/* 1. CSS Variables (ตัวแปรสำหรับสี, ฟอนต์, และอื่นๆ) */
+/* ออกแบบให้ดู "หรูหรา+ไฮเทค" โดยใช้โทนสีเข้มเป็นหลัก */
+:root {
+    --color-background: #10141f; /* สีพื้นหลังหลัก (น้ำเงิน-ดำเข้ม) */
+    --color-surface: #1a2233;   /* สีพื้นผิวของกล่อง UI (น้ำเงิน-เทา) */
+    --color-primary: #3b82f6;   /* สีหลักสำหรับเน้น (สีน้ำเงินสว่าง) */
+    --color-accent: #14b8a6;    /* สีรองสำหรับปุ่มหรือจุดที่ต้องการความเด่น (สีเขียวอมฟ้า) */
+    --color-text-primary: #f0f4f8;   /* สีตัวอักษรหลัก (ขาวนวล) */
+    --color-text-secondary: #94a3b8; /* สีตัวอักษรรอง (เทา) */
+    --color-error: #ef4444;       /* สีสำหรับข้อความแจ้งเตือนผิดพลาด (แดง) */
+    --font-family-main: 'Poppins', sans-serif; /* ฟอนต์หลักของโปรเจกต์ */
+    --transition-speed: 0.3s; /* ความเร็วในการเปลี่ยนสถานะ (animation) */
+}
+
+/* 2. CSS Reset */
+/* ล้างค่า default style ของ browser เพื่อให้แสดงผลเหมือนกันทุกที่ */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+/* 3. Body Styling */
+/* กำหนดสไตล์พื้นฐานให้กับทั้งหน้าเว็บ */
+body {
+    font-family: var(--font-family-main);
+    background-color: var(--color-background);
+    color: var(--color-text-primary);
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+/* 4. Utility Classes */
+/* คลาสเสริมที่สามารถนำไปใช้ได้ทั่วไป */
+.hidden {
+    display: none;
+}
