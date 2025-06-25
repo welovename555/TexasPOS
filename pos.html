@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TEXAS POS</title>
+    
+    <link rel="stylesheet" href="css/base.css">
+    <link rel="stylesheet" href="css/layout.css">
+    
+    <link rel="stylesheet" href="css/components/modal.css">
+    <link rel="stylesheet" href="css/components/spinner.css">
+
+    <link rel="stylesheet" href="css/views/sellView.css">
+
+</head>
+<body>
+
+    <div class="pos-container">
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <h1 class="logo">POS</h1>
+            </div>
+            <nav class="sidebar-nav">
+                <a href="#" class="nav-item active">🛒 ขายของ / ตะกร้า</a>
+                <a href="#" class="nav-item">📆 ประวัติการขาย</a>
+                <a href="#" class="nav-item">🏷️ จัดการสินค้า</a>
+            </nav>
+        </aside>
+
+        <main class="main-content">
+            <div id="sell-view" class="content-view active">
+                </div>
+
+            </main>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    
+    <script src="js/config.js"></script>
+    
+    <script src="js/services/productService.js"></script>
+
+    <script src="js/stores/cartStore.js"></script>
+    
+    <script src="js/components/modal.js"></script>
+    <script src="js/components/spinner.js"></script>
+    
+    <script src="js/views/sellView.js"></script>
+    
+    <script src="js/app.js"></script>
+
+</body>
+</html>
