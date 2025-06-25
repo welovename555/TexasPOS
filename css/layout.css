@@ -1,0 +1,69 @@
+/* หากมีโค้ดเดิมอยู่แล้ว ให้แทนที่ด้วยโค้ดชุดนี้ทั้งหมด */
+/* โค้ดนี้เป็นเพียงโครงสร้าง layout พื้นฐาน */
+
+body {
+    margin: 0;
+    background-color: #000000;
+    color: #ffffff;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    overflow: hidden;
+}
+
+.pos-container {
+    display: flex;
+    height: 100vh;
+}
+
+.main-content {
+    flex-grow: 1;
+    display: flex;
+    overflow: hidden;
+}
+
+#sell-view {
+    flex-grow: 1;
+    height: 100vh;
+    overflow-y: auto;
+}
+
+#cart-view-container {
+    width: 400px;
+    flex-shrink: 0;
+    height: 100vh;
+    box-shadow: -8px 0 20px rgba(0, 0, 0, 0.25);
+    z-index: 10;
+}
+
+.content-view {
+    display: none; /* ซ่อนทุก view เป็นค่าเริ่มต้น */
+}
+
+.content-view.active {
+    display: block; /* แสดงเฉพาะ view ที่ active */
+}
+
+/* Placeholder for sidebar */
+.sidebar {
+    width: 240px;
+    background-color: #1c1c1e;
+    padding: 20px;
+    flex-shrink: 0;
+}
+.logo {
+    font-size: 2rem;
+    font-weight: bold;
+    text-align: center;
+    margin-bottom: 30px;
+}
+.nav-item {
+    display: block;
+    color: #ffffff;
+    text-decoration: none;
+    padding: 15px;
+    border-radius: 8px;
+    margin-bottom: 10px;
+    font-size: 1.1rem;
+}
+.nav-item.active {
+    background-color: #0a84ff;
+}
