@@ -4,14 +4,14 @@ import { cartStore } from '../stores/cartStore.js';
 
 const sellView = {
   allCategories: [],
-  activeCategoryId: 'all',
+  activeCategoryId: null, // เปลี่ยนค่าเริ่มต้นเป็น null
 
-  // ไอคอนสำหรับแต่ละหมวดหมู่ (SVG)
+  // อัปเดตไอคอน SVG ทั้งหมดตามที่คุณส่งมา
   categoryIcons: {
-    'น้ำ/ผสม': `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15.2 3.8a2 2 0 0 1 2.8 2.8l-4.4 4.4-4-4Z"/><path d="m14 14-4.4 4.4a2 2 0 0 1-2.8-2.8l4.4-4.4Z"/><path d="M8 8  l.9.9"/><path d="M13 2v2"/><path d="M19 8h2"/><path d="M3 11H1"/><path d="M12 21v2"/></svg>`,
-    'บุหรี่': `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22H5a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v1m-6-1v4"/><path d="M18 18H5a2 2 0 0 1-2-2v-1a2 2 0 0 1 2-2h13v5a2 2 0 0 1-2 2Z"/></svg>`,
-    'ยา': `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m10.5 20.5 7-7"/><path d="m17.5 13.5 7-7"/><path d="M5 15.5l-1-1L14.5 4l1 1L5 15.5Z"/><path d="M12.5 18.5 9 22l-1-1 3.5-3.5"/><path d="M8.5 11.5 5 15l-1-1 3.5-3.5"/><path d="m22 2-1.5 1.5"/><path d="M13.5 9.5 12 11l-4-4 1.5-1.5L13.5 9.5Z"/></svg>`,
-    'อื่นๆ': `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="1"/><circle cx="19" cy="12" r="1"/><circle cx="5" cy="12" r="1"/></svg>`,
+    'น้ำ/ผสม': `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 2h8"/><path d="M9 2v2.789a4 4 0 0 1-.672 2.219l-.656.984A4 4 0 0 0 7 10.212V20a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2v-9.789a4 4 0 0 0-.672-2.219l-.656-.984A4 4 0 0 1 15 4.788V2"/><path d="M7 15a6.472 6.472 0 0 1 5 0 6.47 6.47 0 0 0 5 0"/></svg>`,
+    'บุหรี่': `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 12H3a1 1 0 0 0-1 1v2a1 1 0 0 0 1 1h14"/><path d="M18 8c0-2.5-2-2.5-2-5"/><path d="M21 16a1 1 0 0 0 1-1v-2a1 1 0 0 0-1-1"/><path d="M22 8c0-2.5-2-2.5-2-5"/><path d="M7 12v4"/></svg>`,
+    'ยา': `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 9a2 2 0 0 0-2 2v2a2 2 0 0 0 2 2h4a1 1 0 0 1 1 1v4a2 2 0 0 0 2 2h2a2 2 0 0 0 2-2v-4a1 1 0 0 1 1-1h4a2 2 0 0 0 2-2v-2a2 2 0 0 0-2-2h-4a1 1 0 0 1-1-1V4a2 2 0 0 0-2-2h-2a2 2 0 0 0-2 2v4a1 1 0 0 1-1 1z"/></svg>`,
+    'อื่นๆ': `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="12" height="12" x="2" y="10" rx="2" ry="2"/><path d="m17.92 14 3.5-3.5a2.24 2.24 0 0 0 0-3l-5-4.92a2.24 2.24 0 0 0-3 0L10 6"/><path d="M6 18h.01"/><path d="M10 14h.01"/><path d="M15 6h.01"/><path d="M18 9h.01"/></svg>`,
   },
 
   async init() {
@@ -21,6 +21,15 @@ const sellView = {
     Spinner.hide();
     
     if (this.allCategories) {
+      // จัดเรียงลำดับหมวดหมู่ที่นี่ครั้งเดียว
+      const order = ['น้ำ/ผสม', 'บุหรี่', 'ยา', 'อื่นๆ'];
+      this.allCategories.sort((a, b) => order.indexOf(a.name) - order.indexOf(b.name));
+      
+      // ตั้งค่าหมวดหมู่แรกที่เลือกไว้ ถ้ายังไม่มี
+      if (!this.activeCategoryId && this.allCategories.length > 0) {
+        this.activeCategoryId = this.allCategories[0].id;
+      }
+      
       this.render();
     } else {
       this.container.innerHTML = `<p class="error-message">ไม่สามารถโหลดข้อมูลสินค้าได้</p>`;
@@ -37,17 +46,9 @@ const sellView = {
     const filterContainer = document.createElement('div');
     filterContainer.className = 'category-filter-container';
 
-    // เรียงลำดับหมวดหมู่ตามที่คุณต้องการ
-    const sortedCategories = [
-      { id: 'all', name: 'ทั้งหมด', icon: `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="7" height="7" x="3" y="3" rx="1"/><rect width="7" height="7" x="14" y="3" rx="1"/><rect width="7" height="7" x="14" y="14" rx="1"/><rect width="7" height="7" x="3" y="14" rx="1"/></svg>` },
-      ...this.allCategories.sort((a, b) => {
-        const order = ['น้ำ/ผสม', 'บุหรี่', 'ยา', 'อื่นๆ'];
-        return order.indexOf(a.name) - order.indexOf(b.name);
-      })
-    ];
-
-    sortedCategories.forEach(cat => {
-      const icon = cat.icon || this.categoryIcons[cat.name] || this.categoryIcons['อื่นๆ'];
+    // วนลูปจากหมวดหมู่ที่เรียงลำดับแล้ว
+    this.allCategories.forEach(cat => {
+      const icon = this.categoryIcons[cat.name] || this.categoryIcons['อื่นๆ'];
       const btn = this.createFilterButton(cat, icon);
       filterContainer.appendChild(btn);
     });
@@ -74,11 +75,9 @@ const sellView = {
     const productGrid = document.createElement('div');
     productGrid.className = 'product-grid';
     
-    const categoriesToDisplay = this.activeCategoryId === 'all'
-      ? this.allCategories
-      : this.allCategories.filter(c => c.id === this.activeCategoryId);
+    const categoriesToDisplay = this.allCategories.filter(c => c.id === this.activeCategoryId);
 
-    if(categoriesToDisplay.length === 0) {
+    if(categoriesToDisplay.length === 0 || categoriesToDisplay[0].products.length === 0) {
         productGrid.innerHTML = `<p class="empty-message">ไม่พบสินค้าในหมวดหมู่นี้</p>`
     } else {
         categoriesToDisplay.forEach(category => {
