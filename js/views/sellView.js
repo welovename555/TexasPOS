@@ -4,9 +4,8 @@ import { cartStore } from '../stores/cartStore.js';
 
 const sellView = {
   allCategories: [],
-  activeCategoryId: null, // เปลี่ยนค่าเริ่มต้นเป็น null
+  activeCategoryId: null,
 
-  // อัปเดตไอคอน SVG ทั้งหมดตามที่คุณส่งมา
   categoryIcons: {
     'น้ำ/ผสม': `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 2h8"/><path d="M9 2v2.789a4 4 0 0 1-.672 2.219l-.656.984A4 4 0 0 0 7 10.212V20a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2v-9.789a4 4 0 0 0-.672-2.219l-.656-.984A4 4 0 0 1 15 4.788V2"/><path d="M7 15a6.472 6.472 0 0 1 5 0 6.47 6.47 0 0 0 5 0"/></svg>`,
     'บุหรี่': `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 12H3a1 1 0 0 0-1 1v2a1 1 0 0 0 1 1h14"/><path d="M18 8c0-2.5-2-2.5-2-5"/><path d="M21 16a1 1 0 0 0 1-1v-2a1 1 0 0 0-1-1"/><path d="M22 8c0-2.5-2-2.5-2-5"/><path d="M7 12v4"/></svg>`,
@@ -21,11 +20,9 @@ const sellView = {
     Spinner.hide();
     
     if (this.allCategories) {
-      // จัดเรียงลำดับหมวดหมู่ที่นี่ครั้งเดียว
       const order = ['น้ำ/ผสม', 'บุหรี่', 'ยา', 'อื่นๆ'];
       this.allCategories.sort((a, b) => order.indexOf(a.name) - order.indexOf(b.name));
       
-      // ตั้งค่าหมวดหมู่แรกที่เลือกไว้ ถ้ายังไม่มี
       if (!this.activeCategoryId && this.allCategories.length > 0) {
         this.activeCategoryId = this.allCategories[0].id;
       }
@@ -46,7 +43,6 @@ const sellView = {
     const filterContainer = document.createElement('div');
     filterContainer.className = 'category-filter-container';
 
-    // วนลูปจากหมวดหมู่ที่เรียงลำดับแล้ว
     this.allCategories.forEach(cat => {
       const icon = this.categoryIcons[cat.name] || this.categoryIcons['อื่นๆ'];
       const btn = this.createFilterButton(cat, icon);
@@ -74,47 +70,11 @@ const sellView = {
   renderProductGrid() {
     const productGrid = document.createElement('div');
     productGrid.className = 'product-grid';
-    
-    const categoriesToDisplay = this.allCategories.filter(c => c.id === this.activeCategoryId);
 
-    if(categoriesToDisplay.length === 0 || categoriesToDisplay[0].products.length === 0) {
-        productGrid.innerHTML = `<p class="empty-message">ไม่พบสินค้าในหมวดหมู่นี้</p>`
-    } else {
-        categoriesToDisplay.forEach(category => {
-          category.products.forEach(product => {
-            const item = this.createProductItemElement(product);
-            productGrid.appendChild(item);
-          });
-        });
-    }
+    // แสดงข้อความเปล่าแทนรายการสินค้า
+    productGrid.innerHTML = `<p class="empty-message">ไม่พบสินค้าในหมวดหมู่นี้</p>`;
 
     this.container.appendChild(productGrid);
-  },
-
-  createProductItemElement(product) {
-    const item = document.createElement('div');
-    item.className = 'product-item';
-    
-    const stockText = product.stock_quantity > 0 ? `เหลือ: ${product.stock_quantity}` : 'หมด';
-    
-    item.innerHTML = `
-      <div class="product-item-image-container">
-        <img class="product-item-image" src="${product.image_url || 'https://jkenfjjxwdckmvqjkdkp.supabase.co/storage/v1/object/public/product-images/placeholder.png'}" alt="${product.name}">
-      </div>
-      <div class="product-item-name">${product.name}</div>
-      <div class="product-item-footer">
-        <span class="product-item-price">${product.base_price} บาท</span>
-        <span class="product-item-stock">${stockText}</span>
-      </div>
-    `;
-
-    if(product.stock_quantity > 0){
-        item.addEventListener('click', () => cartStore.addItem(product));
-    } else {
-        item.classList.add('out-of-stock');
-    }
-
-    return item;
   }
 };
 
