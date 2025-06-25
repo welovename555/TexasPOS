@@ -6,9 +6,10 @@
 const SUPABASE_URL = 'https://jkenfjjxwdckmvqjkdkp.supabase.co';
 const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImprZW5mamp4d2Rja212cWprZGtwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTA4MjA5NjIsImV4cCI6MjA2NjM5Njk2Mn0.3VOZpt4baNnC5-qpYq6dC9UZ0gcfI2V4aTdi1itxmXI';
 
-// 2. สร้างและ export Supabase client
-// เราใช้ฟังก์ชัน createClient จากไลบรารีของ Supabase ที่โหลดมาจาก CDN ใน index.html
-// การ export จะทำให้ไฟล์ JS อื่นๆ (ที่เป็น module) สามารถ import ตัวแปร supabase นี้ไปใช้ได้
-const supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+// 2. สร้างและ export Supabase client (ฉบับแก้ไข)
+// เราเรียกใช้ `createClient` จาก object `supabase` ที่อยู่ใน `window` (ที่โหลดมาจาก CDN)
+// เพื่อหลีกเลี่ยงปัญหา ReferenceError ที่เกิดขึ้นก่อนหน้านี้
+const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
+// 3. Export client เพื่อให้ไฟล์อื่น import ไปใช้ได้
 export { supabase };
