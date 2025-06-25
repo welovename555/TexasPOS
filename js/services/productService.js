@@ -27,7 +27,8 @@ const productService = {
 
       const productsWithStock = products.map(p => ({
         ...p,
-        stock_quantity: p.product_stocks[0]?.stock_quantity ?? 0
+        // แก้ไขบรรทัดนี้เพื่อรองรับสินค้าที่ไม่มีสต็อก (ค่าเป็น null)
+        stock_quantity: p.product_stocks?.stock_quantity ?? 0
       }));
 
       const grouped = categories.map(category => ({
