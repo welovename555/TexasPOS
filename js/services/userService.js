@@ -1,19 +1,28 @@
-import { supabase } from '../config.js';
+// js/services/userService.js
+import { supabaseClient } from '../config.js';
 
-export const getUserByCode = async (employeeCode) => {
-  try {
-    const { data, error } = await supabase
-      .from('employees')
-      .select('*')
-      .eq('code', employeeCode)
-      .single();
+const userService = {
+  async findUserByCode(pinCode) {
+    try {
+      const { data, error } = await supabaseClient
+        .from('employees')
+        .select('*')
+        .eq('code', pinCode)
+        .single();
 
-    if (error) {
-      throw error;
+      if (error) {
+        if (error.code === 'PGRST116') {
+          return null;
+        }
+        throw error;
+      }
+      
+      return data;
+    } catch (error) {
+      console.error('Error finding user by code:', error);
+      return null;
     }
-    return { user: data, error: null };
-  } catch (error) {
-    console.error('Error fetching user by code:', error.message);
-    return { user: null, error: error };
   }
 };
+
+export { userService };
