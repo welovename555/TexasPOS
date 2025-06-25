@@ -20,13 +20,10 @@ const sellView = {
     this.allCategories = await productService.fetchAllProductsGroupedByCategory();
     Spinner.hide();
     
-    // แปลงชื่อหมวดหมู่ให้อยู่ในรูปแบบที่สอดคล้องกับลำดับ order
-this.allCategories = this.allCategories.map(cat => {
-  if (cat.name.includes('น้ำ')) return { ...cat, name: 'น้ำ/ผสม' };
-  if (cat.name.includes('บุหรี่')) return { ...cat, name: 'บุหรี่' };
-  if (cat.name.includes('ยา')) return { ...cat, name: 'ยา' };
-  return { ...cat, name: 'อื่นๆ' };
-});
+    if (this.allCategories) {
+      // จัดเรียงลำดับหมวดหมู่ที่นี่ครั้งเดียว
+      const order = ['น้ำ/ผสม', 'บุหรี่', 'ยา', 'อื่นๆ'];
+      this.allCategories.sort((a, b) => order.indexOf(a.name) - order.indexOf(b.name));
       
       // ตั้งค่าหมวดหมู่แรกที่เลือกไว้ ถ้ายังไม่มี
       if (!this.activeCategoryId && this.allCategories.length > 0) {
