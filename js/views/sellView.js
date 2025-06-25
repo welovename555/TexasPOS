@@ -20,28 +20,18 @@ const sellView = {
   },
 
   render() {
-    this.container.innerHTML = ''; // Clear previous content
-    this.renderHeader();
+    this.container.innerHTML = '';
     this.renderCategoryFilter();
     this.renderProductGrid();
-  },
-
-  renderHeader() {
-    const header = document.createElement('div');
-    header.className = 'view-header';
-    header.innerHTML = `<h1 class="view-title">TEXAS POS</h1>`;
-    this.container.appendChild(header);
   },
 
   renderCategoryFilter() {
     const filterContainer = document.createElement('div');
     filterContainer.className = 'category-filter-container';
 
-    // "All" button
     const allBtn = this.createFilterButton({ id: 'all', name: 'สินค้าทั้งหมด' });
     filterContainer.appendChild(allBtn);
 
-    // Buttons for each category
     this.allCategories.forEach(cat => {
       const btn = this.createFilterButton(cat);
       filterContainer.appendChild(btn);
@@ -60,7 +50,7 @@ const sellView = {
     }
     btn.addEventListener('click', () => {
       this.activeCategoryId = category.id;
-      this.render(); // Re-render the entire view to update active state and grid
+      this.render();
     });
     return btn;
   },
