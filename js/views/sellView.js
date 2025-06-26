@@ -194,3 +194,35 @@ const sellView = (() => {
 })();
 
 export default sellView;
+
+document.addEventListener('DOMContentLoaded', () => {
+  const checkoutBtnId = 'checkout-btn-floating';
+
+  const createCheckoutButton = () => {
+    let btn = document.getElementById(checkoutBtnId);
+    if (!btn) {
+      btn = document.createElement('button');
+      btn.id = checkoutBtnId;
+      btn.className = 'checkout-btn';
+      btn.textContent = 'ชำระเงิน';
+      btn.addEventListener('click', () => {
+        const event = new CustomEvent('openCheckoutModal');
+        window.dispatchEvent(event);
+      });
+      document.body.appendChild(btn);
+    }
+  };
+
+  const toggleCheckoutButton = (visible) => {
+    const btn = document.getElementById(checkoutBtnId);
+    if (btn) btn.style.display = visible ? 'block' : 'none';
+  };
+
+  createCheckoutButton();
+  toggleCheckoutButton(false);
+
+  document.addEventListener('cartUpdated', (e) => {
+    const items = e.detail.items || [];
+    toggleCheckoutButton(items.length > 0);
+  });
+});
