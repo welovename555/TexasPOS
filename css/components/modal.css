@@ -74,3 +74,63 @@
   justify-content: flex-end;
   gap: 12px;
 }
+
+/* ปุ่ม toggle เงินสด / โอนเงิน */
+.payment-method-toggle {
+  display: flex;
+  gap: 12px;
+  margin-top: 16px;
+  margin-bottom: 12px;
+}
+
+.btn-toggle {
+  flex: 1;
+  padding: 10px;
+  background-color: #3a3a3c;
+  border: none;
+  color: #ffffff;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 1rem;
+  transition: background-color 0.2s ease;
+}
+
+.btn-toggle.active {
+  background-color: #0a84ff;
+  color: #ffffff;
+}
+
+.btn-toggle .dot {
+  width: 8px;
+  height: 8px;
+  background-color: white;
+  border-radius: 50%;
+  display: inline-block;
+  margin-right: 6px;
+}
+
+/* กล่องกรอกเงิน */
+.cash-input {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-top: 16px;
+}
+
+.cash-input.hidden {
+  display: none;
+}
+
+.cash-input input {
+  padding: 10px;
+  font-size: 1rem;
+  border-radius: 8px;
+  border: none;
+  background-color: #3a3a3c;
+  color: white;
+}
+
+.change-output {
+  color: #32d74b;
+  font-weight: bold;
+}
