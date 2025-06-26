@@ -14,13 +14,13 @@ const checkoutModal = (() => {
         ${items.map(item => `
           <div class="cart-item-row">
             <span>${item.product.name} (x${item.quantity})</span>
-            <span>${item.product.base_price * item.quantity} ฿</span>
+            <span>${item.product.price * item.quantity} ฿</span>
           </div>
         `).join('')}
       </div>
       <div class="total-row">
         <span>ยอดรวม</span>
-        <strong id="total-amount">${cartStore.getTotal()} ฿</strong>
+        <strong id="total-amount">${cartStore.getTotalPrice()} ฿</strong>
       </div>
       <div class="payment-method-toggle">
         <button class="btn btn-toggle active" data-method="cash">
@@ -53,33 +53,59 @@ const checkoutModal = (() => {
     if (cashInput) {
       cashInput.addEventListener('input', () => {
         const value = parseFloat(cashInput.value);
-        const total = cartStore.getTotal();
+        const total = cartStore.getTotalPrice(); // ใช้ getTotalPrice()
         const change = !isNaN(value) && value >= total ? (value - total) : 0;
-        document.getElementById('change-output').textContent = `เงินทอน: ${change} ฿`;
+        document.getElementById('change-output').textContent = `เงินทอน: ${change.toFixed(2)} ฿`; // เพิ่ม .toFixed(2) เพื่อทศนิยม 2 ตำแหน่ง
       });
     }
 
     const confirmBtn = document.getElementById('confirm-checkout');
     confirmBtn.addEventListener('click', async () => {
       confirmBtn.disabled = true;
-      const items = cartStore.getItems();
-      const paymentMethod = document.querySelector('.btn-toggle.active')?.dataset?.method || 'cash';
-      const payload = {
-        items: items.map(i => ({ product_id: i.product.id, quantity: i.quantity })),
-        payment_method: paymentMethod
-      };
 
-      const result = await salesService.saveSale(payload);
-
-      if (result.success) {
-        alert('บันทึกการขายสำเร็จ');
-        cartStore.clearCart();
-        modalInstance?.close();
-      } else {
-        alert('เกิดข้อผิดพลาด: ' + result.message);
+      const method = document.querySelector('.btn-toggle.active')?.dataset?.method || 'cash';
+      if (!method) {
+          alert('กรุณาเลือกวิธีการชำระเงิน');
+          confirmBtn.disabled = false;
+          return;
       }
 
-      confirmBtn.disabled = false;
+      const cartItems = cartStore.getItems();
+      const totalPrice = cartStore.getTotalPrice(); // ใช้ getTotalPrice()
+      const seller = 'admin'; // หรือดึงมาจากระบบ
+      const timestamp = new Date().toISOString();
+
+      const items = cartItems.map(item => ({
+        product_id: item.product.id, // ยังคงส่ง product_id ไปด้วยหาก backend ต้องการ
+        name: item.product.name,
+        quantity: item.quantity,
+        price: item.product.price // ใช้ price ที่มาจากสินค้าที่เลือกในตะกร้า
+      }));
+
+      const saleRecord = {
+        timestamp,
+        items,
+        total_price: totalPrice,
+        payment_method: method,
+        seller
+      };
+
+      try {
+        const result = await salesService.saveSale(saleRecord);
+
+        if (result.success) {
+          alert('บันทึกการขายสำเร็จ');
+          cartStore.clear(); // ใช้ clear()
+          modalInstance?.close();
+        } else {
+          alert('เกิดข้อผิดพลาด: ' + result.message);
+        }
+      } catch (error) {
+        console.error('Save sale failed:', error);
+        alert('เกิดข้อผิดพลาดในการบันทึกการขาย');
+      } finally {
+        confirmBtn.disabled = false;
+      }
     });
 
     document.getElementById('cancel-checkout').addEventListener('click', () => {
@@ -96,7 +122,8 @@ const checkoutModal = (() => {
         <button class="btn btn-cancel" id="cancel-checkout">ยกเลิก</button>
       `
     });
-    setTimeout(() => attachEvents(), 20);
+    // ใช้ setTimeout เพื่อให้แน่ใจว่า DOM element พร้อมใช้งานแล้ว
+    setTimeout(() => attachEvents(), 50);
   };
 
   return { open };
