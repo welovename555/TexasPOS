@@ -23,6 +23,7 @@ const shiftStore = {
     }
   },
 
+  // สร้างกะจำลองสำหรับใช้ทดสอบในเฟส 2
   startMockShift() {
     const mockShift = {
       // ใช้ ID จำลองเพื่อให้ทดสอบได้
@@ -32,7 +33,7 @@ const shiftStore = {
     };
     this.state.currentShift = mockShift;
     this.state.isActive = true;
-    // บันทึกกะจำลองลง sessionStorage
+    // บันทึกกะจำลองลง sessionStorage เพื่อให้ใช้ได้แม้จะรีเฟรชหน้า
     sessionStorage.setItem(SHIFT_SESSION_KEY, JSON.stringify(mockShift));
   },
 
