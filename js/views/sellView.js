@@ -125,3 +125,72 @@ const sellView = {
 };
 
 export { sellView };
+
+import cartStore from '../stores/cartStore.js';
+
+const sellView = (() => {
+  const sellViewContainer = document.getElementById('sell-view');
+
+  const createProductCard = (product) => {
+    const card = document.createElement('div');
+    card.className = 'product-card';
+
+    const name = document.createElement('div');
+    name.className = 'product-name';
+    name.textContent = product.name;
+
+    const price = document.createElement('div');
+    price.className = 'product-price';
+    price.textContent = `${product.price} ฿`;
+
+    const button = document.createElement('button');
+    button.className = 'add-btn';
+    button.textContent = '+ เพิ่ม';
+    button.addEventListener('click', () => {
+      cartStore.addItem(product);
+      showCheckoutButton();
+    });
+
+    card.appendChild(name);
+    card.appendChild(price);
+    card.appendChild(button);
+    return card;
+  };
+
+  const showCheckoutButton = () => {
+    let btn = document.getElementById('checkout-btn');
+    if (!btn) {
+      btn = document.createElement('button');
+      btn.id = 'checkout-btn';
+      btn.className = 'checkout-btn';
+      btn.textContent = 'ชำระเงิน';
+      btn.addEventListener('click', () => {
+        const event = new CustomEvent('openCheckoutModal');
+        window.dispatchEvent(event);
+      });
+      document.body.appendChild(btn);
+    }
+  };
+
+  const renderProducts = async () => {
+    const { getAllProducts } = await import('../services/productService.js');
+    const products = await getAllProducts();
+    sellViewContainer.innerHTML = '';
+    products.forEach((p) => {
+      const card = createProductCard({
+        id: p.id,
+        name: p.name,
+        price: p.base_price,
+      });
+      sellViewContainer.appendChild(card);
+    });
+  };
+
+  const init = () => {
+    renderProducts();
+  };
+
+  return { init };
+})();
+
+export default sellView;
