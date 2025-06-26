@@ -11,7 +11,7 @@ const productService = {
 
       if (categoriesError) throw categoriesError;
 
-      // ดึง products ทั้งหมด
+      // ดึง products ทั้งหมด พร้อมข้อมูล multi_prices
       const { data: products, error: productsError } = await supabaseClient
         .from('products')
         .select(`
@@ -19,7 +19,8 @@ const productService = {
           name, 
           base_price, 
           category_id, 
-          image_url
+          image_url,
+          multi_prices
         `)
         .eq('is_active', true)
         .order('created_at', { ascending: true });
@@ -36,7 +37,6 @@ const productService = {
       // รวมสต๊อกเข้า products
       const productsWithStock = products.map(product => {
         const stock = stocks.find(s => s.product_id.trim() === product.id.trim());
-console.log('🧪 Matching Product ID:', product.id, '→ Stock:', stock?.stock_quantity ?? 0);
         return {
           ...product,
           stock_quantity: stock ? stock.stock_quantity : 0
