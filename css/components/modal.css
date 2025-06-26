@@ -134,3 +134,34 @@
   color: #32d74b;
   font-weight: bold;
 }
+
+.btn-confirm {
+  background-color: #00bfff;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  padding: 10px 18px;
+  font-weight: bold;
+  font-size: 15px;
+  transition: background-color 0.2s;
+}
+
+.btn-confirm:hover {
+  background-color: #009acd;
+}
+
+.btn-cancel {
+  background-color: #e0e0e0;
+  color: #333;
+  border: none;
+  border-radius: 6px;
+  padding: 10px 18px;
+  font-weight: bold;
+  font-size: 15px;
+  margin-left: 8px;
+  transition: background-color 0.2s;
+}
+
+.btn-cancel:hover {
+  background-color: #cfcfcf;
+}
