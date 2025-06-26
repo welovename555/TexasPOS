@@ -114,7 +114,14 @@ const sellView = {
     `;
 
     if (product.stock_quantity > 0) {
-      item.addEventListener('click', () => cartStore.addItem(product));
+      item.addEventListener('click', () => {
+  if (product.multi_prices && Array.isArray(product.multi_prices)) {
+    const event = new CustomEvent('openPriceSelector', { detail: { product } });
+    window.dispatchEvent(event);
+  } else {
+    cartStore.addItem(product);
+  }
+});
     } else {
       item.classList.add('out-of-stock');
     }
