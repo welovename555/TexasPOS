@@ -1,6 +1,7 @@
 import { Modal } from './modal.js';
 import { cartStore } from '../stores/cartStore.js';
 import { salesService } from '../services/salesService.js';
+import { Spinner } from './spinner.js';
 
 const checkoutModal = (() => {
   let modalInstance = null;
@@ -14,21 +15,18 @@ const checkoutModal = (() => {
         ${items.map(item => `
           <div class="cart-item-row">
             <span>${item.product.name} (x${item.quantity})</span>
-            <span>${item.product.price * item.quantity} ฿</span>
+            <span>${item.product.base_price * item.quantity} ฿</span>
           </div>
         `).join('')}
       </div>
       <div class="total-row">
         <span>ยอดรวม</span>
-        <strong id="total-amount">${cartStore.getTotalPrice()} ฿</strong>
+        {/* FIX: Changed getTotalPrice() to getTotal() */}
+        <strong id="total-amount">${cartStore.getTotal()} ฿</strong>
       </div>
       <div class="payment-method-toggle">
-        <button class="btn btn-toggle active" data-method="cash">
-          <span class="dot"></span> เงินสด
-        </button>
-        <button class="btn btn-toggle" data-method="transfer">
-          <span class="dot"></span> โอนเงิน
-        </button>
+        <button class="btn-toggle" data-method="cash">เงินสด</button>
+        <button class="btn-toggle" data-method="transfer">โอนเงิน</button>
       </div>
       <div class="cash-input hidden">
         <label>ลูกค้าจ่ายมา</label>
@@ -53,57 +51,37 @@ const checkoutModal = (() => {
     if (cashInput) {
       cashInput.addEventListener('input', () => {
         const value = parseFloat(cashInput.value);
-        const total = cartStore.getTotalPrice(); // ใช้ getTotalPrice()
+        // FIX: Changed getTotalPrice() to getTotal()
+        const total = cartStore.getTotal();
         const change = !isNaN(value) && value >= total ? (value - total) : 0;
-        document.getElementById('change-output').textContent = `เงินทอน: ${change.toFixed(2)} ฿`; // เพิ่ม .toFixed(2) เพื่อทศนิยม 2 ตำแหน่ง
+        document.getElementById('change-output').textContent = `เงินทอน: ${change.toFixed(2)} ฿`;
       });
     }
 
     const confirmBtn = document.getElementById('confirm-checkout');
     confirmBtn.addEventListener('click', async () => {
-      confirmBtn.disabled = true;
-
-      const method = document.querySelector('.btn-toggle.active')?.dataset?.method || 'cash';
-      if (!method) {
-          alert('กรุณาเลือกวิธีการชำระเงิน');
-          confirmBtn.disabled = false;
-          return;
+      const selectedMethodEl = document.querySelector('.btn-toggle.active');
+      if (!selectedMethodEl) {
+        alert('กรุณาเลือกวิธีการชำระเงิน');
+        return;
       }
+      
+      confirmBtn.disabled = true;
+      Spinner.show();
 
+      const paymentMethod = selectedMethodEl.dataset.method;
       const cartItems = cartStore.getItems();
-      const totalPrice = cartStore.getTotalPrice(); // ใช้ getTotalPrice()
-      const seller = 'admin'; // หรือดึงมาจากระบบ
-      const timestamp = new Date().toISOString();
 
-      const items = cartItems.map(item => ({
-        product_id: item.product.id, // ยังคงส่ง product_id ไปด้วยหาก backend ต้องการ
-        name: item.product.name,
-        quantity: item.quantity,
-        price: item.product.price // ใช้ price ที่มาจากสินค้าที่เลือกในตะกร้า
-      }));
+      const result = await salesService.createSale(cartItems, paymentMethod);
 
-      const saleRecord = {
-        timestamp,
-        items,
-        total_price: totalPrice,
-        payment_method: method,
-        seller
-      };
+      Spinner.hide();
 
-      try {
-        const result = await salesService.saveSale(saleRecord);
-
-        if (result.success) {
-          alert('บันทึกการขายสำเร็จ');
-          cartStore.clear(); // ใช้ clear()
-          modalInstance?.close();
-        } else {
-          alert('เกิดข้อผิดพลาด: ' + result.message);
-        }
-      } catch (error) {
-        console.error('Save sale failed:', error);
-        alert('เกิดข้อผิดพลาดในการบันทึกการขาย');
-      } finally {
+      if (result.success) {
+        alert('บันทึกการขายสำเร็จ!');
+        cartStore.clearCart();
+        modalInstance?.close();
+      } else {
+        alert('เกิดข้อผิดพลาด: ' + result.error.message);
         confirmBtn.disabled = false;
       }
     });
@@ -129,6 +107,7 @@ const checkoutModal = (() => {
   return { open };
 })();
 
+// Listener นี้สำคัญมาก ทำให้ปุ่มชำระเงิน Floating เรียกใช้ Modal นี้ได้
 window.addEventListener('openCheckoutModal', () => {
   checkoutModal.open();
 });
