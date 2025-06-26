@@ -3,7 +3,7 @@ import { supabaseClient } from '../config.js';
 const productService = {
   async fetchAllProductsGroupedByCategory() {
     try {
-      // ดึงหมวดหมู่
+      // ดึง categories ทั้งหมด
       const { data: categories, error: categoriesError } = await supabaseClient
         .from('categories')
         .select('id, name')
@@ -11,37 +11,48 @@ const productService = {
 
       if (categoriesError) throw categoriesError;
 
-      // ดึงสินค้า พร้อมข้อมูล stock
+      // ดึง products ทั้งหมด
       const { data: products, error: productsError } = await supabaseClient
         .from('products')
         .select(`
-          id,
-          name,
-          base_price,
-          category_id,
-          image_url,
-          product_stocks!products_id_fkey ( stock_quantity )
+          id, 
+          name, 
+          base_price, 
+          category_id, 
+          image_url
         `)
         .eq('is_active', true)
         .order('created_at', { ascending: true });
 
       if (productsError) throw productsError;
 
-      // map ค่ามาใช้งานให้เรียบง่าย
-      const productsWithStock = products.map(p => ({
-        ...p,
-        stock_quantity: Array.isArray(p.product_stocks) ? p.product_stocks[0]?.stock_quantity ?? 0 : 0
-      }));
+      // ดึงสต๊อกแบบแยก
+      const { data: stocks, error: stocksError } = await supabaseClient
+        .from('product_stocks')
+        .select('product_id, stock_quantity');
 
-      // จับกลุ่มตามหมวดหมู่
+      if (stocksError) throw stocksError;
+
+      // รวมสต๊อกเข้า products
+      const productsWithStock = products.map(product => {
+        const stock = stocks.find(s => s.product_id === product.id);
+        return {
+          ...product,
+          stock_quantity: stock ? stock.stock_quantity : 0
+        };
+      });
+
+      // รวม products เข้า categories
       const grouped = categories.map(category => ({
         ...category,
         products: productsWithStock.filter(product => product.category_id === category.id)
       }));
 
+      // return เฉพาะ category ที่มีสินค้า
       return grouped.filter(category => category.products.length > 0);
+
     } catch (error) {
-      console.error('An error occurred in fetchAllProductsGroupedByCategory:', error.message);
+      console.error('❌ fetchAllProductsGroupedByCategory error:', error.message);
       return null;
     }
   }
