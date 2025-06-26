@@ -4,9 +4,8 @@ import { cartStore } from '../stores/cartStore.js';
 
 const sellView = {
   allCategories: [],
-  activeCategoryId: null, // เปลี่ยนค่าเริ่มต้นเป็น null
+  activeCategoryId: null,
 
-  // อัปเดตไอคอน SVG ทั้งหมดตามที่คุณส่งมา
   categoryIcons: {
     'น้ำ/ผสม': `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 2h8"/><path d="M9 2v2.789a4 4 0 0 1-.672 2.219l-.656.984A4 4 0 0 0 7 10.212V20a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2v-9.789a4 4 0 0 0-.672-2.219l-.656-.984A4 4 0 0 1 15 4.788V2"/><path d="M7 15a6.472 6.472 0 0 1 5 0 6.47 6.47 0 0 0 5 0"/></svg>`,
     'บุหรี่': `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 12H3a1 1 0 0 0-1 1v2a1 1 0 0 0 1 1h14"/><path d="M18 8c0-2.5-2-2.5-2-5"/><path d="M21 16a1 1 0 0 0 1-1v-2a1 1 0 0 0-1-1"/><path d="M22 8c0-2.5-2-2.5-2-5"/><path d="M7 12v4"/></svg>`,
@@ -23,7 +22,6 @@ const sellView = {
     if (this.allCategories) {
       this.allCategories = this.allCategories.map(cat => {
         const rawName = (cat.name || '').toLowerCase();
-
         if (rawName.includes('ยา')) return { ...cat, name: 'ยา' };
         if (rawName.includes('บุหรี่')) return { ...cat, name: 'บุหรี่' };
         if (rawName.includes('น้ำ')) return { ...cat, name: 'น้ำ/ผสม' };
@@ -125,75 +123,6 @@ const sellView = {
 };
 
 export { sellView };
-
-import cartStore from '../stores/cartStore.js';
-
-const sellView = (() => {
-  const sellViewContainer = document.getElementById('sell-view');
-
-  const createProductCard = (product) => {
-    const card = document.createElement('div');
-    card.className = 'product-card';
-
-    const name = document.createElement('div');
-    name.className = 'product-name';
-    name.textContent = product.name;
-
-    const price = document.createElement('div');
-    price.className = 'product-price';
-    price.textContent = `${product.price} ฿`;
-
-    const button = document.createElement('button');
-    button.className = 'add-btn';
-    button.textContent = '+ เพิ่ม';
-    button.addEventListener('click', () => {
-      cartStore.addItem(product);
-      showCheckoutButton();
-    });
-
-    card.appendChild(name);
-    card.appendChild(price);
-    card.appendChild(button);
-    return card;
-  };
-
-  const showCheckoutButton = () => {
-    let btn = document.getElementById('checkout-btn');
-    if (!btn) {
-      btn = document.createElement('button');
-      btn.id = 'checkout-btn';
-      btn.className = 'checkout-btn';
-      btn.textContent = 'ชำระเงิน';
-      btn.addEventListener('click', () => {
-        const event = new CustomEvent('openCheckoutModal');
-        window.dispatchEvent(event);
-      });
-      document.body.appendChild(btn);
-    }
-  };
-
-  const renderProducts = async () => {
-    const { getAllProducts } = await import('../services/productService.js');
-    const products = await getAllProducts();
-    sellViewContainer.innerHTML = '';
-    products.forEach((p) => {
-      const card = createProductCard({
-        id: p.id,
-        name: p.name,
-        price: p.base_price,
-      });
-      sellViewContainer.appendChild(card);
-    });
-  };
-
-  const init = () => {
-    renderProducts();
-  };
-
-  return { init };
-})();
-
-export default sellView;
 
 document.addEventListener('DOMContentLoaded', () => {
   const checkoutBtnId = 'checkout-btn-floating';
