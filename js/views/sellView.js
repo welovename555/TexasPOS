@@ -1,6 +1,7 @@
 import { Spinner } from '../components/spinner.js';
 import { productService } from '../services/productService.js';
 import { cartStore } from '../stores/cartStore.js';
+import { priceSelectorModal } from '../components/priceSelectorModal.js';
 
 const sellView = {
   allCategories: [],
