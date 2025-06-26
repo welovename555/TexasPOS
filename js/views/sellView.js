@@ -155,3 +155,30 @@ document.addEventListener('DOMContentLoaded', () => {
     toggleCheckoutButton(items.length > 0);
   });
 });
+
+document.addEventListener('stockUpdated', async () => {
+  try {
+    Spinner.show();
+    const updatedData = await productService.fetchAllProductsGroupedByCategory();
+
+    if (updatedData) {
+      sellView.allCategories = updatedData.map(cat => {
+        const rawName = (cat.name || '').toLowerCase();
+
+        if (rawName.includes('ยา')) return { ...cat, name: 'ยา' };
+        if (rawName.includes('บุหรี่')) return { ...cat, name: 'บุหรี่' };
+        if (rawName.includes('น้ำ')) return { ...cat, name: 'น้ำ/ผสม' };
+        return { ...cat, name: 'อื่นๆ' };
+      });
+
+      const order = ['น้ำ/ผสม', 'บุหรี่', 'ยา', 'อื่นๆ'];
+      sellView.allCategories.sort((a, b) => order.indexOf(a.name) - order.indexOf(b.name));
+
+      sellView.render();
+    }
+  } catch (error) {
+    console.error('Error refreshing product stock:', error.message);
+  } finally {
+    Spinner.hide();
+  }
+});
