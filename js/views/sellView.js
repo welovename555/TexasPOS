@@ -101,6 +101,16 @@ const sellView = {
     item.className = 'product-item';
 
     const stockText = product.stock_quantity > 0 ? `เหลือ: ${product.stock_quantity}` : 'หมด';
+    
+    // ตรวจสอบว่าสินค้ามีหลายราคาหรือไม่ เพื่อแสดงผลที่เหมาะสม
+    let priceDisplay = '';
+    if (product.multi_prices && Array.isArray(product.multi_prices) && product.multi_prices.length > 1) {
+      priceDisplay = 'เลือกราคา'; // แสดง "เลือกราคา" ถ้ามีหลายราคา
+    } else if (product.base_price !== undefined && product.base_price !== null) {
+      priceDisplay = `${product.base_price} บาท`; // แสดง base_price ถ้ามีราคาเดียว
+    } else {
+      priceDisplay = 'ไม่มีราคา'; // กรณีไม่มีข้อมูลราคา
+    }
 
     item.innerHTML = `
       <div class="product-item-image-container">
@@ -108,20 +118,20 @@ const sellView = {
       </div>
       <div class="product-item-name">${product.name}</div>
       <div class="product-item-footer">
-        <span class="product-item-price">${product.base_price} บาท</span>
+        <span class="product-item-price">${priceDisplay}</span>
         <span class="product-item-stock">${stockText}</span>
       </div>
     `;
 
     if (product.stock_quantity > 0) {
       item.addEventListener('click', () => {
-  if (product.multi_prices && Array.isArray(product.multi_prices)) {
-    const event = new CustomEvent('openPriceSelector', { detail: { product } });
-    window.dispatchEvent(event);
-  } else {
-    cartStore.addItem(product);
-  }
-});
+        if (product.multi_prices && Array.isArray(product.multi_prices) && product.multi_prices.length > 1) {
+          const event = new CustomEvent('openPriceSelector', { detail: { product } });
+          window.dispatchEvent(event);
+        } else {
+          cartStore.addItem(product);
+        }
+      });
     } else {
       item.classList.add('out-of-stock');
     }
@@ -150,9 +160,13 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   };
 
-  const toggleCheckoutButton = (visible) => {
+  const toggleCheckoutButton = (visible, itemCount = 0) => {
     const btn = document.getElementById(checkoutBtnId);
-    if (btn) btn.style.display = visible ? 'block' : 'none';
+    if (btn) {
+      btn.style.display = visible ? 'block' : 'none';
+      // แก้ไขให้แสดงจำนวนชิ้นเป็น x3
+      btn.textContent = itemCount > 0 ? `ชำระเงิน (x${itemCount})` : 'ชำระเงิน';
+    }
   };
 
   createCheckoutButton();
@@ -160,7 +174,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
   document.addEventListener('cartUpdated', (e) => {
     const items = e.detail.items || [];
-    toggleCheckoutButton(items.length > 0);
+    const itemCount = items.reduce((sum, item) => sum + item.quantity, 0);
+    toggleCheckoutButton(items.length > 0, itemCount);
   });
 });
 
