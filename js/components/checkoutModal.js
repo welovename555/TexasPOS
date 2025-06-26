@@ -1,14 +1,13 @@
 import { Modal } from './modal.js';
 import { cartStore } from '../stores/cartStore.js';
+import { salesService } from '../services/salesService.js';
 
 const checkoutModal = (() => {
   let modalInstance = null;
 
   const renderCartItems = () => {
     const items = cartStore.getItems();
-    if (items.length === 0) {
-      return '<p>ไม่มีสินค้าในตะกร้า</p>';
-    }
+    if (items.length === 0) return '<p>ไม่มีสินค้าในตะกร้า</p>';
 
     return `
       <div class="cart-items">
@@ -60,9 +59,27 @@ const checkoutModal = (() => {
       });
     }
 
-    document.getElementById('confirm-checkout').addEventListener('click', () => {
-      cartStore.clearCart();
-      modalInstance?.close();
+    const confirmBtn = document.getElementById('confirm-checkout');
+    confirmBtn.addEventListener('click', async () => {
+      confirmBtn.disabled = true;
+      const items = cartStore.getItems();
+      const paymentMethod = document.querySelector('.btn-toggle.active')?.dataset?.method || 'cash';
+      const payload = {
+        items: items.map(i => ({ product_id: i.product.id, quantity: i.quantity })),
+        payment_method: paymentMethod
+      };
+
+      const result = await salesService.saveSale(payload);
+
+      if (result.success) {
+        alert('บันทึกการขายสำเร็จ');
+        cartStore.clearCart();
+        modalInstance?.close();
+      } else {
+        alert('เกิดข้อผิดพลาด: ' + result.message);
+      }
+
+      confirmBtn.disabled = false;
     });
 
     document.getElementById('cancel-checkout').addEventListener('click', () => {
