@@ -39,3 +39,57 @@ const salesService = {
 };
 
 export { salesService };
+
+// แก้ createSale โดยเพิ่มส่วนลด stock ต่อท้าย
+async function createSale(cartItems, paymentMethod, paidAmount = null) {
+  try {
+    const total = cartItems.reduce((sum, item) => sum + (item.product.base_price * item.quantity), 0);
+
+    const { data: sale, error } = await supabaseClient
+      .from('sales')
+      .insert([{
+        items: cartItems.map(item => ({
+          product_id: item.product.id,
+          name: item.product.name,
+          price: item.product.base_price,
+          quantity: item.quantity
+        })),
+        total,
+        payment_method: paymentMethod,
+        paid_amount: paidAmount
+      }])
+      .select()
+      .single();
+
+    if (error) throw error;
+
+    // ✅ ตัด stock สินค้าทันที
+    await updateStockAfterSale(cartItems);
+
+    return sale;
+  } catch (error) {
+    console.error('Sale Error:', error.message);
+    return null;
+  }
+}
+
+async function updateStockAfterSale(cartItems) {
+  try {
+    const updates = cartItems.map(item => ({
+      id: item.product.id,
+      stock_quantity: item.product.stock_quantity - item.quantity
+    }));
+
+    const { error } = await supabaseClient
+      .from('products')
+      .upsert(updates, { onConflict: ['id'] });
+
+    if (error) throw error;
+
+    document.dispatchEvent(new CustomEvent('stockUpdated'));
+    return true;
+  } catch (err) {
+    console.error('Stock update error:', err.message);
+    return false;
+  }
+}
