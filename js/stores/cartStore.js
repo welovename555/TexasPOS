@@ -1,61 +1,87 @@
-const cartStore = {
-  state: { items: [], total: 0 },
+const cartStore = (() => {
+  const state = {
+    items: []
+  };
 
-  addItem(product) {
-    const existingItem = this.state.items.find(item => item.product.id === product.id);
+  const getItems = () => [...state.items];
+
+  const addItem = (product, selectedPrice = null) => {
+    const existingItem = state.items.find(item => item.product.id === product.id && item.selectedPrice === selectedPrice);
+
     if (existingItem) {
       existingItem.quantity++;
     } else {
-      this.state.items.push({ product: product, quantity: 1 });
+      state.items.push({ product, quantity: 1, selectedPrice });
     }
-    this.updateTotal();
-  },
+    saveToLocalStorage();
+  };
 
-  removeItem(productId) {
-    const itemIndex = this.state.items.findIndex(item => item.product.id === productId);
-    if (itemIndex > -1) {
-      const item = this.state.items[itemIndex];
-      if (item.quantity > 1) {
-        item.quantity--;
-      } else {
-        this.state.items.splice(itemIndex, 1);
-      }
-      this.updateTotal();
-    }
-  },
+  const removeItem = (productId, selectedPrice = null) => {
+    state.items = state.items.filter(item => !(item.product.id === productId && item.selectedPrice === selectedPrice));
+    saveToLocalStorage();
+    document.dispatchEvent(new CustomEvent('cartUpdated'));
+  };
 
-  updateQuantity(productId, quantity) {
-    const item = this.state.items.find(item => item.product.id === productId);
+  const increaseItemQuantity = (productId, selectedPrice = null) => {
+    const item = state.items.find(item => item.product.id === productId && item.selectedPrice === selectedPrice);
     if (item) {
-      item.quantity = quantity;
-      this.updateTotal();
+      item.quantity++;
+      saveToLocalStorage();
+      document.dispatchEvent(new CustomEvent('cartUpdated'));
     }
-  },
+  };
 
-  updateTotal() {
-    this.state.total = this.state.items.reduce(
-      (sum, item) => sum + item.product.base_price * item.quantity, 0
-    );
-    document.dispatchEvent(new CustomEvent('cartUpdated', { detail: this.state }));
-  },
+  const decreaseItemQuantity = (productId, selectedPrice = null) => {
+    const item = state.items.find(item => item.product.id === productId && item.selectedPrice === selectedPrice);
+    if (item && item.quantity > 1) {
+      item.quantity--;
+      saveToLocalStorage();
+      document.dispatchEvent(new CustomEvent('cartUpdated'));
+    } else if (item) {
+      removeItem(productId, selectedPrice);
+    }
+  };
 
-  getCart() {
-    return this.state;
-  },
+  const clearCart = () => {
+    state.items = [];
+    saveToLocalStorage();
+    document.dispatchEvent(new CustomEvent('cartUpdated'));
+  };
 
-  getItems() {
-    return [...this.state.items];
-  },
+  const getTotal = () => {
+    return state.items.reduce((total, item) => {
+      const price = item.selectedPrice !== null ? item.selectedPrice : item.product.base_price;
+      return total + price * item.quantity;
+    }, 0);
+  };
 
-  getTotal() {
-    return this.state.total;
-  },
+  const getItemCount = () => {
+    return state.items.reduce((count, item) => count + item.quantity, 0);
+  };
 
-  clearCart() {
-    this.state.items = [];
-    this.state.total = 0;
-    document.dispatchEvent(new CustomEvent('cartUpdated', { detail: this.state }));
-  }
-};
+  const saveToLocalStorage = () => {
+    localStorage.setItem('cartItems', JSON.stringify(state.items));
+  };
+
+  const loadFromLocalStorage = () => {
+    const storedItems = localStorage.getItem('cartItems');
+    if (storedItems) {
+      state.items = JSON.parse(storedItems);
+    }
+  };
+
+  loadFromLocalStorage();
+
+  return {
+    getItems,
+    addItem,
+    removeItem,
+    increaseItemQuantity,
+    decreaseItemQuantity,
+    clearCart,
+    getTotal,
+    getItemCount
+  };
+})();
 
 export { cartStore };
