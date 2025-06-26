@@ -21,7 +21,6 @@ const checkoutModal = (() => {
       </div>
       <div class="total-row">
         <span>ยอดรวม</span>
-        {/* FIX: Changed getTotalPrice() to getTotal() */}
         <strong id="total-amount">${cartStore.getTotal()} ฿</strong>
       </div>
       <div class="payment-method-toggle">
@@ -51,7 +50,6 @@ const checkoutModal = (() => {
     if (cashInput) {
       cashInput.addEventListener('input', () => {
         const value = parseFloat(cashInput.value);
-        // FIX: Changed getTotalPrice() to getTotal()
         const total = cartStore.getTotal();
         const change = !isNaN(value) && value >= total ? (value - total) : 0;
         document.getElementById('change-output').textContent = `เงินทอน: ${change.toFixed(2)} ฿`;
@@ -100,14 +98,12 @@ const checkoutModal = (() => {
         <button class="btn btn-cancel" id="cancel-checkout">ยกเลิก</button>
       `
     });
-    // ใช้ setTimeout เพื่อให้แน่ใจว่า DOM element พร้อมใช้งานแล้ว
     setTimeout(() => attachEvents(), 50);
   };
 
   return { open };
 })();
 
-// Listener นี้สำคัญมาก ทำให้ปุ่มชำระเงิน Floating เรียกใช้ Modal นี้ได้
 window.addEventListener('openCheckoutModal', () => {
   checkoutModal.open();
 });
