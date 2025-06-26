@@ -35,7 +35,8 @@ const productService = {
 
       // รวมสต๊อกเข้า products
       const productsWithStock = products.map(product => {
-        const stock = stocks.find(s => s.product_id === product.id);
+        const stock = stocks.find(s => s.product_id.trim() === product.id.trim());
+console.log('🧪 Matching Product ID:', product.id, '→ Stock:', stock?.stock_quantity ?? 0);
         return {
           ...product,
           stock_quantity: stock ? stock.stock_quantity : 0
