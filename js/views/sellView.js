@@ -15,6 +15,7 @@ const sellView = {
 
   async init() {
     this.container = document.querySelector('#sell-view');
+    this.setupFloatingButton(); // **เพิ่มโค้ดที่ขาดหายไปกลับมา**
     Spinner.show();
     this.allCategories = await productService.fetchAllProductsGroupedByCategory();
     Spinner.hide();
@@ -99,7 +100,6 @@ const sellView = {
     item.className = 'product-item';
     const stockText = product.stock_quantity > 0 ? `เหลือ: ${product.stock_quantity}` : 'หมด';
     
-    // แสดงราคาจาก base_price เสมอ
     const priceDisplay = `${product.base_price} บาท`;
 
     item.innerHTML = `
@@ -115,7 +115,6 @@ const sellView = {
 
     if (product.stock_quantity > 0) {
       item.addEventListener('click', () => {
-        // ถ้ามี multi_prices ให้เปิด Modal, ถ้าไม่มีให้เพิ่มลงตะกร้าเลย
         if (product.multi_prices && Array.isArray(product.multi_prices) && product.multi_prices.length > 1) {
           const event = new CustomEvent('openPriceSelector', { detail: { product } });
           window.dispatchEvent(event);
@@ -128,6 +127,45 @@ const sellView = {
     }
 
     return item;
+  },
+
+  // **โค้ดที่นำกลับมาเพื่อแก้บัคปุ่มชำระเงินไม่แสดง**
+  setupFloatingButton() {
+    const checkoutBtnId = 'checkout-btn-floating';
+
+    const createCheckoutButton = () => {
+      let btn = document.getElementById(checkoutBtnId);
+      if (btn) return; // ถ้ามีปุ่มอยู่แล้วไม่ต้องสร้างใหม่
+      
+      btn = document.createElement('button');
+      btn.id = checkoutBtnId;
+      btn.className = 'checkout-btn';
+      btn.style.display = 'none'; // เริ่มต้นให้ซ่อนไว้
+      document.body.appendChild(btn);
+
+      btn.addEventListener('click', () => {
+        window.dispatchEvent(new CustomEvent('openCheckoutModal'));
+      });
+    };
+
+    const toggleCheckoutButton = (cartState) => {
+      const btn = document.getElementById(checkoutBtnId);
+      if (!btn) return;
+
+      const itemCount = cartState.items.reduce((sum, item) => sum + item.quantity, 0);
+
+      if (itemCount > 0) {
+        btn.textContent = `ชำระเงิน (${itemCount} รายการ) - ${cartState.total.toFixed(2)} ฿`;
+        btn.style.display = 'block';
+      } else {
+        btn.style.display = 'none';
+      }
+    };
+
+    createCheckoutButton();
+    document.addEventListener('cartUpdated', (e) => {
+      toggleCheckoutButton(e.detail);
+    });
   }
 };
 
