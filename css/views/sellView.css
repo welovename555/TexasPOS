@@ -91,3 +91,33 @@
     width: 100%;
     padding: 50px 0;
 }
+
+.checkout-btn {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  z-index: 999;
+  background-color: #2ecc71;
+  color: white;
+  padding: 14px 22px;
+  font-size: 16px;
+  font-weight: bold;
+  border: none;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+  cursor: pointer;
+  transition: background 0.3s ease;
+}
+
+.checkout-btn:hover {
+  background-color: #27ae60;
+}
+
+@media (max-width: 480px) {
+  .checkout-btn {
+    width: calc(100% - 40px);
+    left: 20px;
+    right: 20px;
+    border-radius: 12px;
+  }
+}
