@@ -1,7 +1,7 @@
 import { Modal } from './modal.js';
 import { cartStore } from '../stores/cartStore.js';
 import { salesService } from '../services/salesService.js';
-import { Spinner } from './spinner.js';
+import { ProgressBar } from './progressBar.js'; // **แก้ไข: เปลี่ยนจาก Spinner เป็น ProgressBar**
 
 const checkoutModal = (() => {
   let modalInstance = null;
@@ -15,13 +15,13 @@ const checkoutModal = (() => {
         ${items.map(item => `
           <div class="cart-item-row">
             <span>${item.product.name} (x${item.quantity})</span>
-            <span>${item.product.base_price * item.quantity} ฿</span>
+            <span>${(item.selectedPrice * item.quantity).toFixed(2)} ฿</span>
           </div>
         `).join('')}
       </div>
       <div class="total-row">
         <span>ยอดรวม</span>
-        <strong id="total-amount">${cartStore.getTotal()} ฿</strong>
+        <strong id="total-amount">${cartStore.getTotal().toFixed(2)} ฿</strong>
       </div>
       <div class="payment-method-toggle">
         <button class="btn-toggle" data-method="cash">เงินสด</button>
@@ -30,7 +30,7 @@ const checkoutModal = (() => {
       <div class="cash-input hidden">
         <label>ลูกค้าจ่ายมา</label>
         <input type="number" id="cash-input" placeholder="จำนวนเงิน">
-        <p class="change-output" id="change-output">เงินทอน: 0 ฿</p>
+        <p class="change-output" id="change-output">เงินทอน: 0.00 ฿</p>
       </div>
     `;
   };
@@ -65,17 +65,19 @@ const checkoutModal = (() => {
       }
       
       confirmBtn.disabled = true;
-      Spinner.show();
 
-      const paymentMethod = selectedMethodEl.dataset.method;
-      const cartItems = cartStore.getItems();
-
-      const result = await salesService.createSale(cartItems, paymentMethod);
-
-      Spinner.hide();
+      // **(การแก้ไขหลัก)**
+      // 1. เรียกใช้ ProgressBar.show() และ salesService.createSale() พร้อมกัน
+      // เพื่อให้ UI แสดงผลทันที ในขณะที่เบื้องหลังกำลังบันทึกข้อมูล
+      const [_, result] = await Promise.all([
+        ProgressBar.show('กำลังบันทึกการขาย...'),
+        salesService.createSale(cartStore.getItems(), selectedMethodEl.dataset.method)
+      ]);
+      
+      // 2. ProgressBar จะซ่อนตัวเองอัตโนมัติ ไม่ต้องมี hide()
 
       if (result.success) {
-        alert('บันทึกการขายสำเร็จ!');
+        // 3. ไม่ต้องมี alert() เพราะ ProgressBar ที่โหลดสำเร็จเป็นการยืนยันที่ดีกว่า
         cartStore.clearCart();
         modalInstance?.close();
       } else {
@@ -98,6 +100,7 @@ const checkoutModal = (() => {
         <button class="btn btn-cancel" id="cancel-checkout">ยกเลิก</button>
       `
     });
+    // ใช้ setTimeout เล็กน้อยเพื่อให้ DOM อัปเดตทันก่อน attach event
     setTimeout(() => attachEvents(), 50);
   };
 
