@@ -1,7 +1,8 @@
 import { authStore } from './stores/authStore.js';
 import { sellView } from './views/sellView.js';
 import { priceSelectorModal } from './components/priceSelectorModal.js';
-import './stores/shiftStore.js'; // **แก้ไข: import เพื่อให้ shiftStore.init() ทำงาน**
+import { checkoutModal } from './components/checkoutModal.js'; // **เพิ่มบรรทัดนี้กลับเข้ามา**
+import './stores/shiftStore.js';
 
 const App = {
   init() {
@@ -26,7 +27,6 @@ const App = {
       return;
     }
     
-    // ไม่มีการตรวจสอบกะอีกต่อไป เริ่มหน้าขายของทันที
     sellView.init();
   }
 };
