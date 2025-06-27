@@ -9,7 +9,6 @@ import { Spinner } from './components/spinner.js';
 const App = {
   init() {
     document.addEventListener('DOMContentLoaded', () => {
-      console.log('[DEBUG] App: DOMContentLoaded');
       this.handleAuthentication();
       this.addGlobalEventListeners();
     });
@@ -25,9 +24,7 @@ const App = {
   },
 
   async handleAuthentication() {
-    console.log('[DEBUG] App: handleAuthentication started.');
     if (!authStore.state.isAuthenticated) {
-      console.log('[DEBUG] App: User not authenticated. Redirecting to login.');
       window.location.href = 'index.html';
       return;
     }
@@ -41,26 +38,20 @@ const App = {
     Spinner.hide();
     mainContent.style.visibility = 'visible';
     
-    console.log('[DEBUG] App: Shift confirmed. Initializing sellView.');
     sellView.init();
   },
 
   async checkAndStartShift() {
-    console.log('[DEBUG] App: checkAndStartShift started. Current shiftStore.state.isActive:', shiftStore.state.isActive);
     if (shiftStore.state.isActive) {
-      console.log('[DEBUG] App: Shift is already active in store. Skipping checks.');
       return;
     }
 
     const employeeId = authStore.state.user.id;
-    console.log('[DEBUG] App: No active shift in store. Checking DB for employeeId:', employeeId);
     const activeShift = await shiftService.getActiveShift(employeeId);
-    console.log('[DEBUG] App: Fetched active shift from DB:', activeShift);
 
     if (activeShift) {
       shiftStore.setShift(activeShift);
     } else {
-      console.log('[DEBUG] App: No active shift in DB. Prompting to start a new one.');
       await this.promptToStartShift(employeeId);
     }
   },
@@ -95,3 +86,5 @@ const App = {
 };
 
 App.init();
+
+//
