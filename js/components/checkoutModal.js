@@ -1,7 +1,7 @@
 import { Modal } from './modal.js';
 import { cartStore } from '../stores/cartStore.js';
 import { salesService } from '../services/salesService.js';
-import { ProgressBar } from './progressBar.js'; // **แก้ไข: เปลี่ยนจาก Spinner เป็น ProgressBar**
+import { ProgressBar } from './progressBar.js';
 
 const checkoutModal = (() => {
   let modalInstance = null;
@@ -66,18 +66,12 @@ const checkoutModal = (() => {
       
       confirmBtn.disabled = true;
 
-      // **(การแก้ไขหลัก)**
-      // 1. เรียกใช้ ProgressBar.show() และ salesService.createSale() พร้อมกัน
-      // เพื่อให้ UI แสดงผลทันที ในขณะที่เบื้องหลังกำลังบันทึกข้อมูล
       const [_, result] = await Promise.all([
         ProgressBar.show('กำลังบันทึกการขาย...'),
         salesService.createSale(cartStore.getItems(), selectedMethodEl.dataset.method)
       ]);
       
-      // 2. ProgressBar จะซ่อนตัวเองอัตโนมัติ ไม่ต้องมี hide()
-
       if (result.success) {
-        // 3. ไม่ต้องมี alert() เพราะ ProgressBar ที่โหลดสำเร็จเป็นการยืนยันที่ดีกว่า
         cartStore.clearCart();
         modalInstance?.close();
       } else {
@@ -86,21 +80,31 @@ const checkoutModal = (() => {
       }
     });
 
+    // === START EDIT ===
+    document.getElementById('clear-cart-btn').addEventListener('click', () => {
+      cartStore.clearCart();
+      modalInstance?.close();
+    });
+
     document.getElementById('cancel-checkout').addEventListener('click', () => {
       modalInstance?.close();
     });
+    // === END EDIT ===
   };
 
   const open = () => {
     modalInstance = Modal.create({
       title: 'สรุปรายการชำระเงิน',
       body: renderCartItems(),
+      // === START EDIT ===
       footer: `
+        <button class="btn btn-clear" id="clear-cart-btn">ล้างตะกร้า</button>
         <button class="btn btn-confirm" id="confirm-checkout">ยืนยันการชำระเงิน</button>
-        <button class="btn btn-cancel" id="cancel-checkout">ยกเลิก</button>
+        <button class="btn btn-cancel" id="cancel-checkout">ออก</button>
       `
+      // === END EDIT ===
     });
-    // ใช้ setTimeout เล็กน้อยเพื่อให้ DOM อัปเดตทันก่อน attach event
+
     setTimeout(() => attachEvents(), 50);
   };
 
