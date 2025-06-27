@@ -135,36 +135,37 @@
   font-weight: bold;
 }
 
+.btn {
+    border: none;
+    border-radius: 6px;
+    padding: 10px 18px;
+    font-weight: bold;
+    font-size: 15px;
+    cursor: pointer;
+    transition: background-color 0.2s, opacity 0.2s;
+}
+
+.btn:hover {
+    opacity: 0.9;
+}
+
 .btn-confirm {
   background-color: #28a745; /* เขียว */
   color: #fff;
-  border: none;
-  border-radius: 6px;
-  padding: 10px 18px;
-  font-weight: bold;
-  font-size: 15px;
-  transition: background-color 0.2s;
 }
 
-.btn-confirm:hover {
-  background-color: #218838;
+/* === START EDIT === */
+.btn-clear {
+  background-color: #dc3545; /* แดง */
+  color: #fff;
+  margin-right: auto; /* ดันปุ่มนี้ไปซ้ายสุด */
 }
 
 .btn-cancel {
-  background-color: #dc3545; /* แดง */
+  background-color: #5a6268; /* เทา */
   color: #fff;
-  border: none;
-  border-radius: 6px;
-  padding: 10px 18px;
-  font-weight: bold;
-  font-size: 15px;
-  margin-left: 8px;
-  transition: background-color 0.2s;
 }
-
-.btn-cancel:hover {
-  background-color: #c82333;
-}
+/* === END EDIT === */
 
 .price-options {
   display: flex;
