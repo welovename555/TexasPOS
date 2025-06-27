@@ -3,17 +3,21 @@ import { supabaseClient } from '../config.js';
 const shiftService = {
   async getActiveShift(employeeId) {
     try {
+      // แก้ไขโค้ดโดยการเอา .single() ออก
       const { data, error } = await supabaseClient
         .from('shifts')
         .select('*')
         .eq('employee_id', employeeId)
-        .is('end_time', null)
-        .single();
+        .is('end_time', null);
 
-      if (error && error.code !== 'PGRST116') {
+      if (error) {
         throw error;
       }
-      return data;
+
+      // เนื่องจากตอนนี้ data จะเป็น Array เสมอ (เช่น [] หรือ [{...}])
+      // เราจึงต้องเช็คเองว่ามีข้อมูลหรือไม่ แล้วส่งค่าแรกกลับไป
+      return data && data.length > 0 ? data[0] : null;
+
     } catch (error) {
       console.error('Error getting active shift:', error.message);
       return null;
