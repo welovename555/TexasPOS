@@ -1,7 +1,7 @@
 body {
   margin: 0;
-  background-color: var(--main-bg);
-  color: var(--text-primary);
+  background-color: var(--color-bg-main);
+  color: var(--color-text-primary);
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
   overflow: hidden; /* ป้องกันการ scroll ทั้งหน้า */
 }
@@ -18,6 +18,7 @@ body {
   overflow-y: auto; /* ให้ scroll ได้เฉพาะส่วนเนื้อหา */
   padding: 24px;
   box-sizing: border-box;
+  margin-left: var(--sidebar-width); /* เพิ่ม: เว้นที่สำหรับ Sidebar */
 }
 
 /* ซ่อน Scrollbar แต่ยัง scroll ได้ */
