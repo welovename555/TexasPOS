@@ -15,8 +15,10 @@ const sellView = {
 
   async init() {
     this.container = document.querySelector('#sell-view');
+    if (!this.container) return;
+
     this.setupFloatingButton();
-    this.setupEventListeners(); // เพิ่มการฟัง event สำหรับการอัปเดตสินค้า
+    this.setupEventListeners();
     
     await this.loadProducts();
   },
@@ -35,32 +37,41 @@ const sellView = {
 
   async loadProducts() {
     Spinner.show();
-    this.allCategories = await productService.fetchAllProductsGroupedByCategory();
-    Spinner.hide();
+    
+    try {
+      this.allCategories = await productService.fetchAllProductsGroupedByCategory();
+      
+      if (this.allCategories) {
+        this.allCategories = this.allCategories.map(cat => {
+          const rawName = (cat.name || '').toLowerCase();
+          if (rawName.includes('ยา')) return { ...cat, name: 'ยา' };
+          if (rawName.includes('บุหรี่')) return { ...cat, name: 'บุหรี่' };
+          if (rawName.includes('น้ำ')) return { ...cat, name: 'น้ำ/ผสม' };
+          return { ...cat, name: 'อื่นๆ' };
+        });
 
-    if (this.allCategories) {
-      this.allCategories = this.allCategories.map(cat => {
-        const rawName = (cat.name || '').toLowerCase();
-        if (rawName.includes('ยา')) return { ...cat, name: 'ยา' };
-        if (rawName.includes('บุหรี่')) return { ...cat, name: 'บุหรี่' };
-        if (rawName.includes('น้ำ')) return { ...cat, name: 'น้ำ/ผสม' };
-        return { ...cat, name: 'อื่นๆ' };
-      });
+        const order = ['น้ำ/ผสม', 'บุหรี่', 'ยา', 'อื่นๆ'];
+        this.allCategories.sort((a, b) => order.indexOf(a.name) - order.indexOf(b.name));
 
-      const order = ['น้ำ/ผสม', 'บุหรี่', 'ยา', 'อื่นๆ'];
-      this.allCategories.sort((a, b) => order.indexOf(a.name) - order.indexOf(b.name));
+        if (!this.activeCategoryId && this.allCategories.length > 0) {
+          this.activeCategoryId = this.allCategories[0].id;
+        }
 
-      if (!this.activeCategoryId && this.allCategories.length > 0) {
-        this.activeCategoryId = this.allCategories[0].id;
+        this.render();
+      } else {
+        this.container.innerHTML = `<p class="error-message">ไม่สามารถโหลดข้อมูลสินค้าได้</p>`;
       }
-
-      this.render();
-    } else {
-      this.container.innerHTML = `<p class="error-message">ไม่สามารถโหลดข้อมูลสินค้าได้</p>`;
+    } catch (error) {
+      console.error('Error loading products:', error);
+      this.container.innerHTML = `<p class="error-message">เกิดข้อผิดพลาด: ${error.message}</p>`;
+    } finally {
+      Spinner.hide();
     }
   },
 
   render() {
+    if (!this.container) return;
+
     this.container.innerHTML = '';
     this.renderCategoryFilter();
     this.renderProductGrid();

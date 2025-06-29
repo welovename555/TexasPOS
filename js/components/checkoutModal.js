@@ -57,52 +57,61 @@ const checkoutModal = (() => {
     }
 
     const confirmBtn = document.getElementById('confirm-checkout');
-    confirmBtn.addEventListener('click', async () => {
-      const selectedMethodEl = document.querySelector('.btn-toggle.active');
-      if (!selectedMethodEl) {
-        alert('กรุณาเลือกวิธีการชำระเงิน');
-        return;
-      }
-      
-      confirmBtn.disabled = true;
+    if (confirmBtn) {
+      confirmBtn.addEventListener('click', async () => {
+        const selectedMethodEl = document.querySelector('.btn-toggle.active');
+        if (!selectedMethodEl) {
+          alert('กรุณาเลือกวิธีการชำระเงิน');
+          return;
+        }
+        
+        confirmBtn.disabled = true;
 
-      const [_, result] = await Promise.all([
-        ProgressBar.show('กำลังบันทึกการขาย...'),
-        salesService.createSale(cartStore.getItems(), selectedMethodEl.dataset.method)
-      ]);
-      
-      if (result.success) {
+        try {
+          const [_, result] = await Promise.all([
+            ProgressBar.show('กำลังบันทึกการขาย...'),
+            salesService.createSale(cartStore.getItems(), selectedMethodEl.dataset.method)
+          ]);
+          
+          if (result.success) {
+            cartStore.clearCart();
+            modalInstance?.close();
+          } else {
+            alert('เกิดข้อผิดพลาด: ' + result.error.message);
+            confirmBtn.disabled = false;
+          }
+        } catch (error) {
+          alert('เกิดข้อผิดพลาด: ' + error.message);
+          confirmBtn.disabled = false;
+        }
+      });
+    }
+
+    const clearCartBtn = document.getElementById('clear-cart-btn');
+    if (clearCartBtn) {
+      clearCartBtn.addEventListener('click', () => {
         cartStore.clearCart();
         modalInstance?.close();
-      } else {
-        alert('เกิดข้อผิดพลาด: ' + result.error.message);
-        confirmBtn.disabled = false;
-      }
-    });
+      });
+    }
 
-    // === START EDIT ===
-    document.getElementById('clear-cart-btn').addEventListener('click', () => {
-      cartStore.clearCart();
-      modalInstance?.close();
-    });
-
-    document.getElementById('cancel-checkout').addEventListener('click', () => {
-      modalInstance?.close();
-    });
-    // === END EDIT ===
+    const cancelBtn = document.getElementById('cancel-checkout');
+    if (cancelBtn) {
+      cancelBtn.addEventListener('click', () => {
+        modalInstance?.close();
+      });
+    }
   };
 
   const open = () => {
     modalInstance = Modal.create({
       title: 'สรุปรายการชำระเงิน',
       body: renderCartItems(),
-      // === START EDIT ===
       footer: `
         <button class="btn btn-clear" id="clear-cart-btn">ล้างตะกร้า</button>
         <button class="btn btn-confirm" id="confirm-checkout">ยืนยันการชำระเงิน</button>
         <button class="btn btn-cancel" id="cancel-checkout">ออก</button>
       `
-      // === END EDIT ===
     });
 
     setTimeout(() => attachEvents(), 50);

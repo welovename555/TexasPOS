@@ -61,14 +61,18 @@ const historyView = {
     const datePicker = document.getElementById('history-date-picker');
     const refreshBtn = document.getElementById('refresh-history-btn');
 
-    datePicker.addEventListener('change', (e) => {
-      this.currentDate = e.target.value;
-      this.loadSalesHistory();
-    });
+    if (datePicker) {
+      datePicker.addEventListener('change', (e) => {
+        this.currentDate = e.target.value;
+        this.loadSalesHistory();
+      });
+    }
 
-    refreshBtn.addEventListener('click', () => {
-      this.loadSalesHistory();
-    });
+    if (refreshBtn) {
+      refreshBtn.addEventListener('click', () => {
+        this.loadSalesHistory();
+      });
+    }
   },
 
   async loadSalesHistory() {
@@ -77,13 +81,15 @@ const historyView = {
     const summaryContainer = document.getElementById('sales-summary');
 
     // Show loading state
-    refreshBtn.disabled = true;
-    refreshBtn.innerHTML = `
-      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-        <path d="M21 12a9 9 0 11-6.219-8.56"/>
-      </svg>
-      กำลังโหลด...
-    `;
+    if (refreshBtn) {
+      refreshBtn.disabled = true;
+      refreshBtn.innerHTML = `
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M21 12a9 9 0 11-6.219-8.56"/>
+        </svg>
+        กำลังโหลด...
+      `;
+    }
 
     try {
       const result = await salesService.getSalesHistory(this.currentDate);
@@ -99,20 +105,24 @@ const historyView = {
       this.showError('เกิดข้อผิดพลาด: ' + error.message);
     } finally {
       // Reset refresh button
-      refreshBtn.disabled = false;
-      refreshBtn.innerHTML = `
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-          <polyline points="23 4 23 10 17 10"></polyline>
-          <polyline points="1 20 1 14 7 14"></polyline>
-          <path d="m20.49 9A9 9 0 0 0 5.64 5.64L1 10m22 4l-4.64 4.36A9 9 0 0 1 3.51 15"></path>
-        </svg>
-        รีเฟรช
-      `;
+      if (refreshBtn) {
+        refreshBtn.disabled = false;
+        refreshBtn.innerHTML = `
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <polyline points="23 4 23 10 17 10"></polyline>
+            <polyline points="1 20 1 14 7 14"></polyline>
+            <path d="m20.49 9A9 9 0 0 0 5.64 5.64L1 10m22 4l-4.64 4.36A9 9 0 0 1 3.51 15"></path>
+          </svg>
+          รีเฟรช
+        `;
+      }
     }
   },
 
   renderSummary(summary) {
     const summaryContainer = document.getElementById('sales-summary');
+    if (!summaryContainer) return;
+
     summaryContainer.innerHTML = `
       <div class="summary-card">
         <div class="summary-label">ยอดขายรวม</div>
@@ -135,6 +145,7 @@ const historyView = {
 
   renderSalesTable(salesData) {
     const tableBody = document.getElementById('history-table-body');
+    if (!tableBody) return;
 
     if (salesData.length === 0) {
       tableBody.innerHTML = `
@@ -182,24 +193,28 @@ const historyView = {
     const tableBody = document.getElementById('history-table-body');
     const summaryContainer = document.getElementById('sales-summary');
 
-    summaryContainer.innerHTML = `
-      <div class="summary-card">
-        <div class="summary-label">ข้อผิดพลาด</div>
-        <div class="summary-value" style="color: #ff453a;">${message}</div>
-      </div>
-    `;
+    if (summaryContainer) {
+      summaryContainer.innerHTML = `
+        <div class="summary-card">
+          <div class="summary-label">ข้อผิดพลาด</div>
+          <div class="summary-value" style="color: #ff453a;">${message}</div>
+        </div>
+      `;
+    }
 
-    tableBody.innerHTML = `
-      <tr>
-        <td colspan="6">
-          <div class="empty-state">
-            <div class="empty-state-icon">⚠️</div>
-            <div class="empty-state-text">เกิดข้อผิดพลาด</div>
-            <div class="empty-state-subtext">${message}</div>
-          </div>
-        </td>
-      </tr>
-    `;
+    if (tableBody) {
+      tableBody.innerHTML = `
+        <tr>
+          <td colspan="6">
+            <div class="empty-state">
+              <div class="empty-state-icon">⚠️</div>
+              <div class="empty-state-text">เกิดข้อผิดพลาด</div>
+              <div class="empty-state-subtext">${message}</div>
+            </div>
+          </td>
+        </tr>
+      `;
+    }
   }
 };
 
