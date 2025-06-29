@@ -1,14 +1,28 @@
 :root {
-    --color-background: #10141f;
-    --color-surface: #1a2233;
-    --color-primary: #3b82f6;
-    --color-accent: #14b8a6;
-    --color-text-primary: #f0f4f8;
-    --color-text-secondary: #94a3b8;
-    --color-error: #ef4444;
-    --font-family-main: 'Poppins', sans-serif;
+    /* 1. Colors */
+    --color-bg-main: #111315;       /* สีพื้นหลังหลัก */
+    --color-bg-content: #1A1D1F;    /* สีพื้นหลังส่วนเนื้อหา/การ์ด */
+    --color-text-primary: #FFFFFF;    /* สีตัวอักษรหลัก (สีขาว) */
+    --color-text-secondary: #9A9A9E;  /* สีตัวอักษรรอง (สีเทา) */
+
+    /* Brand & Accent Colors */
+    --color-accent-primary: #0a84ff;   /* สีไฮไลต์หลัก (สีน้ำเงิน) */
+    --color-accent-secondary: #34c759;  /* สีไฮไลต์รอง (สีเขียว) */
+    --color-accent-danger: #ff453a;      /* สีสำหรับแจ้งเตือน/ลบ (สีแดง) */
+
+    /* Border & Separator Colors */
+    --color-border: rgba(255, 255, 255, 0.1);
+
+    /* 2. Layout */
+    --sidebar-width: 80px;
+
+    /* 3. Font */
+    --font-family-main: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+
+    /* 4. Effects */
     --transition-speed: 0.3s;
 }
+
 
 * {
     margin: 0;
