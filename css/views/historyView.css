@@ -16,7 +16,7 @@
   font-weight: 800;
   color: #FFFFFF;
   margin: 0;
-  background: -webkit-linear-gradient(45deg, #34c759, #0a84ff);
+  background: -webkit-linear-gradient(45deg, var(--color-accent-secondary), var(--color-accent-primary)); /* แก้ไข */
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
 }
@@ -32,15 +32,15 @@
   padding: 10px 16px;
   border-radius: 8px;
   border: 1px solid rgba(255, 255, 255, 0.2);
-  background-color: var(--content-bg);
-  color: var(--text-primary);
+  background-color: var(--color-bg-content); /* แก้ไข */
+  color: var(--color-text-primary); /* แก้ไข */
   font-size: 1rem;
   cursor: pointer;
 }
 
 .date-picker:focus {
   outline: none;
-  border-color: var(--accent-color);
+  border-color: var(--color-accent-primary); /* แก้ไข */
   box-shadow: 0 0 0 2px rgba(10, 132, 255, 0.2);
 }
 
@@ -48,7 +48,7 @@
   padding: 10px 16px;
   border-radius: 8px;
   border: none;
-  background-color: var(--accent-color);
+  background-color: var(--color-accent-primary); /* แก้ไข */
   color: white;
   font-size: 1rem;
   font-weight: 600;
@@ -76,15 +76,15 @@
 }
 
 .summary-card {
-  background-color: var(--content-bg);
+  background-color: var(--color-bg-content); /* แก้ไข */
   border-radius: 12px;
   padding: 20px;
-  border: 1px solid rgba(255, 255, 255, 0.05);
+  border: 1px solid var(--color-border); /* แก้ไข */
 }
 
 .summary-label {
   font-size: 0.9rem;
-  color: var(--text-secondary);
+  color: var(--color-text-secondary); /* แก้ไข */
   margin-bottom: 8px;
   font-weight: 500;
 }
@@ -92,15 +92,15 @@
 .summary-value {
   font-size: 1.8rem;
   font-weight: 700;
-  color: var(--text-primary);
+  color: var(--color-text-primary); /* แก้ไข */
 }
 
 .summary-value.cash {
-  color: #34c759;
+  color: var(--color-accent-secondary); /* แก้ไข */
 }
 
 .summary-value.transfer {
-  color: #0a84ff;
+  color: var(--color-accent-primary); /* แก้ไข */
 }
 
 .summary-value.total {
@@ -108,10 +108,10 @@
 }
 
 .history-table-container {
-  background-color: var(--content-bg);
+  background-color: var(--color-bg-content); /* แก้ไข */
   border-radius: 12px;
   overflow: hidden;
-  border: 1px solid rgba(255, 255, 255, 0.05);
+  border: 1px solid var(--color-border); /* แก้ไข */
 }
 
 .history-table {
@@ -122,11 +122,11 @@
 
 .history-table th {
   background-color: rgba(255, 255, 255, 0.05);
-  color: var(--text-secondary);
+  color: var(--color-text-secondary); /* แก้ไข */
   font-weight: 600;
   padding: 16px 12px;
   text-align: left;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  border-bottom: 1px solid var(--color-border); /* แก้ไข */
   font-size: 0.85rem;
   text-transform: uppercase;
   letter-spacing: 0.5px;
@@ -134,8 +134,8 @@
 
 .history-table td {
   padding: 16px 12px;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
-  color: var(--text-primary);
+  border-bottom: 1px solid var(--color-border); /* แก้ไข */
+  color: var(--color-text-primary); /* แก้ไข */
 }
 
 .history-table tbody tr:hover {
@@ -157,28 +157,28 @@
 
 .payment-method.cash {
   background-color: rgba(52, 199, 89, 0.2);
-  color: #34c759;
+  color: var(--color-accent-secondary); /* แก้ไข */
 }
 
 .payment-method.transfer {
   background-color: rgba(10, 132, 255, 0.2);
-  color: #0a84ff;
+  color: var(--color-accent-primary); /* แก้ไข */
 }
 
 .price-cell {
   font-weight: 600;
-  color: #34c759;
+  color: var(--color-accent-secondary); /* แก้ไข */
 }
 
 .employee-name {
   font-weight: 500;
-  color: var(--text-secondary);
+  color: var(--color-text-secondary); /* แก้ไข */
 }
 
 .empty-state {
   text-align: center;
   padding: 60px 20px;
-  color: var(--text-secondary);
+  color: var(--color-text-secondary); /* แก้ไข */
 }
 
 .empty-state-icon {
