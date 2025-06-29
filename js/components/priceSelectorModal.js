@@ -13,9 +13,8 @@ const priceSelectorModal = {
     }
 
     // 2. [แก้ไข] แปลงข้อมูลราคาและสร้าง Label เริ่มต้นหากไม่มี
-    // ทำให้แน่ใจว่าทุกราคาที่มีค่าตัวเลข จะถูกนำมาพิจารณา
     const processedPrices = product.multi_prices
-      .filter(p => p && typeof p.price === 'number' && !isNaN(p.price)) // กรองเอาเฉพาะรายการที่มี price เป็นตัวเลข
+      .filter(p => p && typeof p.price === 'number' && !isNaN(p.price))
       .map(p => ({
         price: p.price,
         label: (p.label && String(p.label).trim() !== '') ? p.label : `ราคา ${p.price} บาท`
@@ -34,23 +33,23 @@ const priceSelectorModal = {
       return;
     }
 
-    // 4. จัดเรียงราคา (ใช้ processedPrices)
+    // 4. จัดเรียงราคา
     const desiredOrder = [80, 50, 60, 90];
     const sortedPrices = [...processedPrices].sort((a, b) => {
         if (product.name === 'น้ำผสมฝาเงินขวดใหญ่') {
             return desiredOrder.indexOf(a.price) - desiredOrder.indexOf(b.price);
         }
-        return a.price - b.price; // สำหรับสินค้าอื่น เรียงจากน้อยไปมาก
+        return a.price - b.price;
     });
     
-    // 5. สร้าง Modal (ใช้ sortedPrices)
+    // 5. สร้าง Modal (ใช้ sortedPrices) และใช้ชื่อ Class ใหม่ตามหลัก BEM
     const bodyHTML = `
-      <div class="price-options">
+      <div class="price-selector-modal__options">
         <p style="margin-bottom: 16px; color: #8e8e93; text-align: center;">
           เลือกราคาสำหรับ: <strong style="color: #ffffff;">${product.name}</strong>
         </p>
         ${sortedPrices.map(p => `
-          <button class="price-option-btn" data-price="${p.price}">
+          <button class="price-selector-modal__option-btn" data-price="${p.price}">
             <strong>${p.label}</strong> - ${p.price} บาท
           </button>
         `).join('')}
@@ -65,7 +64,7 @@ const priceSelectorModal = {
 
     // 6. เพิ่ม Event Listeners
     setTimeout(() => {
-      const priceButtons = document.querySelectorAll('.price-option-btn');
+      const priceButtons = document.querySelectorAll('.price-selector-modal__option-btn');
       console.log('🎯 Found price buttons:', priceButtons.length);
       
       priceButtons.forEach(btn => {
@@ -73,7 +72,6 @@ const priceSelectorModal = {
           const selectedPrice = parseFloat(btn.dataset.price);
           console.log('💰 Selected price:', selectedPrice, 'for product:', product.name);
           
-          // ส่งสินค้าและราคาที่เลือกไปที่ cartStore
           cartStore.addItem(product, selectedPrice);
           
           modal.close();
