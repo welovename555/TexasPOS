@@ -7,7 +7,7 @@
   font-weight: 800;
   color: #FFFFFF;
   margin: 0;
-  background: -webkit-linear-gradient(45deg, #34c759, #0a84ff);
+  background: -webkit-linear-gradient(45deg, var(--color-accent-secondary), var(--color-accent-primary)); /* แก้ไข */
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
 }
@@ -20,12 +20,12 @@
 }
 
 .product-item {
-  background-color: var(--content-bg);
+  background-color: var(--color-bg-content); /* แก้ไข */
   border-radius: 12px;
   text-align: left;
   cursor: pointer;
   transition: transform 0.2s ease, box-shadow 0.2s ease;
-  border: 1px solid rgba(255, 255, 255, 0.05);
+  border: 1px solid var(--color-border); /* แก้ไข */
   display: flex;
   flex-direction: column;
   overflow: hidden;
@@ -60,7 +60,7 @@
 .product-item-name {
   font-size: 0.9rem; /* ปรับขนาดฟอนต์ให้เล็กลงเล็กน้อย */
   font-weight: 600;
-  color: var(--text-primary);
+  color: var(--color-text-primary); /* แก้ไข */
   line-height: 1.3;
   padding: 10px; /* ลด padding เล็กน้อย */
   flex-grow: 1;
@@ -76,17 +76,17 @@
 .product-item-price {
   font-size: 1rem; /* ปรับขนาดฟอนต์ให้เล็กลงเล็กน้อย */
   font-weight: 700;
-  color: #34c759;
+  color: var(--color-accent-secondary); /* แก้ไข */
 }
 
 .product-item-stock {
   font-size: 0.75rem; /* ปรับขนาดฟอนต์ให้เล็กลงเล็กน้อย */
-  color: var(--text-secondary);
+  color: var(--color-text-secondary); /* แก้ไข */
   font-weight: 500;
 }
 
 .empty-message {
-    color: var(--text-secondary);
+    color: var(--color-text-secondary); /* แก้ไข */
     text-align: center;
     width: 100%;
     padding: 50px 0;
@@ -97,7 +97,7 @@
   bottom: 20px;
   right: 20px;
   z-index: 999;
-  background-color: #2ecc71;
+  background-color: var(--color-accent-secondary); /* แก้ไข */
   color: white;
   padding: 14px 22px;
   font-size: 16px;
