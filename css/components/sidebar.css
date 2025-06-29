@@ -1,6 +1,6 @@
 .sidebar {
   width: var(--sidebar-width);
-  background-color: var(--content-bg);
+  background-color: var(--color-bg-content); /* แก้ไข */
   flex-shrink: 0;
   height: 100vh;
   display: flex;
@@ -8,7 +8,7 @@
   align-items: center;
   padding: 24px 0;
   box-sizing: border-box;
-  border-right: 1px solid rgba(255, 255, 255, 0.05);
+  border-right: 1px solid var(--color-border); /* แก้ไข */
 }
 
 .sidebar-brand {
@@ -23,7 +23,7 @@
   font-size: 1.1rem;
   font-weight: 800;
   margin: 0;
-  background: -webkit-linear-gradient(45deg, #34c759, #0a84ff);
+  background: -webkit-linear-gradient(45deg, var(--color-accent-secondary), var(--color-accent-primary)); /* แก้ไข */
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   writing-mode: vertical-rl;
@@ -47,7 +47,7 @@
   height: 60px;
   border-radius: 12px;
   text-decoration: none;
-  color: var(--text-secondary);
+  color: var(--color-text-secondary); /* แก้ไข */
   transition: background-color 0.2s ease, color 0.2s ease;
 }
 
@@ -58,12 +58,12 @@
 
 .nav-item:hover {
   background-color: rgba(255, 255, 255, 0.08);
-  color: var(--text-primary);
+  color: var(--color-text-primary); /* แก้ไข */
 }
 
 .nav-item.active {
-  background-color: var(--accent-color);
-  color: var(--text-primary);
+  background-color: var(--color-accent-primary); /* แก้ไข */
+  color: var(--color-text-primary); /* แก้ไข */
 }
 
 .sidebar-footer {
