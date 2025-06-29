@@ -2,8 +2,10 @@ import { authStore } from './stores/authStore.js';
 import { sellView } from './views/sellView.js';
 import { historyView } from './views/historyView.js';
 import { adminView } from './views/adminView.js';
+import { stockView } from './views/stockView.js';
 import { priceSelectorModal } from './components/priceSelectorModal.js';
 import { checkoutModal } from './components/checkoutModal.js';
+import { themeManager } from './components/themeManager.js';
 import './stores/shiftStore.js';
 
 const App = {
@@ -14,6 +16,9 @@ const App = {
       this.handleAuthentication();
       this.addGlobalEventListeners();
       this.setupNavigation();
+      
+      // Initialize theme manager
+      themeManager.init();
     });
   },
 
@@ -94,6 +99,9 @@ const App = {
           break;
         case 'admin-view':
           adminView.init();
+          break;
+        case 'stock-view':
+          stockView.init();
           break;
         case 'sell-view':
           // sellView is already initialized
