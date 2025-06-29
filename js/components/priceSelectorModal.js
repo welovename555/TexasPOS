@@ -5,9 +5,25 @@ const priceSelectorModal = {
   open(product) {
     console.log('🏷️ Opening price selector for:', product);
     
-    if (!product.multi_prices || !Array.isArray(product.multi_prices)) {
+    // ตรวจสอบว่ามี multi_prices หรือไม่
+    if (!product.multi_prices || !Array.isArray(product.multi_prices) || product.multi_prices.length === 0) {
       console.log('❌ No multi_prices found, adding with base price');
       cartStore.addItem(product, product.base_price);
+      return;
+    }
+
+    // ตรวจสอบว่ามีราคาที่ valid หรือไม่
+    const validPrices = product.multi_prices.filter(p => p && p.price && p.label);
+    if (validPrices.length === 0) {
+      console.log('❌ No valid prices found, adding with base price');
+      cartStore.addItem(product, product.base_price);
+      return;
+    }
+
+    // ถ้ามีราคาเดียว ให้เพิ่มเลย
+    if (validPrices.length === 1) {
+      console.log('💰 Only one valid price, adding directly');
+      cartStore.addItem(product, validPrices[0].price);
       return;
     }
 
@@ -15,7 +31,7 @@ const priceSelectorModal = {
     const desiredOrder = [80, 50, 60, 90];
     
     // จัดเรียงราคาตามลำดับที่กำหนด ถ้าเป็นสินค้าอื่นให้เรียงตามปกติ
-    const sortedPrices = [...product.multi_prices].sort((a, b) => {
+    const sortedPrices = [...validPrices].sort((a, b) => {
         if (product.name === 'น้ำผสมฝาเงินขวดใหญ่') {
             return desiredOrder.indexOf(a.price) - desiredOrder.indexOf(b.price);
         }

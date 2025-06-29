@@ -224,11 +224,18 @@ const adminView = {
       const stock = product.product_stocks?.[0]?.stock_quantity || 0;
       const category = product.categories?.name || 'ไม่ระบุ';
       const hasMultiPrice = product.multi_prices && product.multi_prices.length > 0;
+      
+      // สร้าง placeholder image ที่สวยงาม
+      const imageUrl = product.image_url || this.getPlaceholderImage(product.name);
 
       return `
         <div class="product-item-admin">
-          <img src="${product.image_url || 'https://jkenfjjxwdckmvqjkdkp.supabase.co/storage/v1/object/public/product-images/placeholder.png'}" 
-               alt="${product.name}" class="product-image-small">
+          <div class="product-image-container">
+            <img src="${imageUrl}" 
+                 alt="${product.name}" 
+                 class="product-image-small ${!product.image_url ? 'placeholder-image' : ''}">
+            ${!product.image_url ? '<div class="image-overlay">ไม่มีรูป</div>' : ''}
+          </div>
           <div class="product-info">
             <div class="product-name-admin">${product.name}</div>
             <div class="product-details">
@@ -243,10 +250,57 @@ const adminView = {
                 <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
               </svg>
             </button>
+            <button class="btn-icon delete" onclick="adminView.deleteProduct('${product.id}', '${product.name}')" title="ลบสินค้า">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <polyline points="3,6 5,6 21,6"></polyline>
+                <path d="m19,6v14a2,2 0 0,1 -2,2H7a2,2 0 0,1 -2,-2V6m3,0V4a2,2 0 0,1 2,-2h4a2,2 0 0,1 2,2v2"></path>
+                <line x1="10" y1="11" x2="10" y2="17"></line>
+                <line x1="14" y1="11" x2="14" y2="17"></line>
+              </svg>
+            </button>
           </div>
         </div>
       `;
     }).join('');
+  },
+
+  getPlaceholderImage(productName) {
+    // สร้าง placeholder image ตามชื่อสินค้า
+    const name = productName.toLowerCase();
+    
+    if (name.includes('น้ำ') || name.includes('ผสม')) {
+      return 'data:image/svg+xml;base64,' + btoa(`
+        <svg width="120" height="120" xmlns="http://www.w3.org/2000/svg">
+          <rect width="120" height="120" fill="#1e3a8a"/>
+          <circle cx="60" cy="60" r="30" fill="#3b82f6" opacity="0.8"/>
+          <text x="60" y="90" text-anchor="middle" fill="white" font-size="12" font-family="Arial">น้ำ</text>
+        </svg>
+      `);
+    } else if (name.includes('บุหรี่')) {
+      return 'data:image/svg+xml;base64,' + btoa(`
+        <svg width="120" height="120" xmlns="http://www.w3.org/2000/svg">
+          <rect width="120" height="120" fill="#7c2d12"/>
+          <rect x="30" y="50" width="60" height="20" fill="#ea580c" opacity="0.8"/>
+          <text x="60" y="90" text-anchor="middle" fill="white" font-size="12" font-family="Arial">บุหรี่</text>
+        </svg>
+      `);
+    } else if (name.includes('ยา')) {
+      return 'data:image/svg+xml;base64,' + btoa(`
+        <svg width="120" height="120" xmlns="http://www.w3.org/2000/svg">
+          <rect width="120" height="120" fill="#166534"/>
+          <path d="M45 30 h30 v60 h-30 z M30 45 h60 v30 h-60 z" fill="#22c55e" opacity="0.8"/>
+          <text x="60" y="90" text-anchor="middle" fill="white" font-size="12" font-family="Arial">ยา</text>
+        </svg>
+      `);
+    } else {
+      return 'data:image/svg+xml;base64,' + btoa(`
+        <svg width="120" height="120" xmlns="http://www.w3.org/2000/svg">
+          <rect width="120" height="120" fill="#374151"/>
+          <rect x="30" y="30" width="60" height="60" fill="#6b7280" opacity="0.8"/>
+          <text x="60" y="90" text-anchor="middle" fill="white" font-size="12" font-family="Arial">สินค้า</text>
+        </svg>
+      `);
+    }
   },
 
   async handleImageUpload(event) {
@@ -458,10 +512,41 @@ const adminView = {
     };
 
     fileInput.click();
+  },
+
+  async deleteProduct(productId, productName) {
+    // ยืนยันการลบ
+    const confirmed = confirm(`คุณต้องการลบสินค้า "${productName}" หรือไม่?\n\nการลบจะไม่สามารถกู้คืนได้`);
+    if (!confirmed) return;
+
+    // ยืนยันอีกครั้ง
+    const doubleConfirmed = confirm(`ยืนยันอีกครั้ง: ลบสินค้า "${productName}" ใช่หรือไม่?`);
+    if (!doubleConfirmed) return;
+
+    try {
+      Spinner.show();
+
+      const result = await productService.deleteProduct(productId);
+      
+      if (result.success) {
+        alert('ลบสินค้าสำเร็จ!');
+        this.loadInitialData(); // Reload product list
+        
+        // Notify other views that products have changed
+        document.dispatchEvent(new CustomEvent('productsUpdated'));
+      } else {
+        alert('ไม่สามารถลบสินค้าได้: ' + result.error.message);
+      }
+
+    } catch (error) {
+      alert('เกิดข้อผิดพลาด: ' + error.message);
+    } finally {
+      Spinner.hide();
+    }
   }
 };
 
-// Make editProductImage available globally for onclick handlers
+// Make functions available globally for onclick handlers
 window.adminView = adminView;
 
 export { adminView };

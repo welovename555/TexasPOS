@@ -216,6 +216,28 @@ const productService = {
       console.error('Error updating product image:', error.message);
       return { success: false, error };
     }
+  },
+
+  /**
+   * Delete product (soft delete by setting is_active to false)
+   */
+  async deleteProduct(productId) {
+    try {
+      // Soft delete - set is_active to false instead of actually deleting
+      const { data, error } = await supabaseClient
+        .from('products')
+        .update({ is_active: false })
+        .eq('id', productId)
+        .select()
+        .single();
+
+      if (error) throw error;
+      return { success: true, data };
+
+    } catch (error) {
+      console.error('Error deleting product:', error.message);
+      return { success: false, error };
+    }
   }
 };
 

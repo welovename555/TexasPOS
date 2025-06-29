@@ -326,43 +326,80 @@
 
 .product-item-admin {
   display: grid;
-  grid-template-columns: 80px 1fr auto;
+  grid-template-columns: 100px 1fr auto;
   gap: 16px;
   align-items: center;
   padding: 16px;
   background-color: rgba(255, 255, 255, 0.02);
   border-radius: 8px;
   border: 1px solid rgba(255, 255, 255, 0.05);
+  transition: all 0.2s ease;
+}
+
+.product-item-admin:hover {
+  background-color: rgba(255, 255, 255, 0.05);
+  transform: translateY(-1px);
+}
+
+.product-image-container {
+  position: relative;
+  width: 100px;
+  height: 100px;
+  border-radius: 8px;
+  overflow: hidden;
+  background-color: rgba(255, 255, 255, 0.05);
 }
 
 .product-image-small {
-  width: 80px;
-  height: 80px;
-  border-radius: 6px;
+  width: 100%;
+  height: 100%;
   object-fit: cover;
-  background-color: rgba(255, 255, 255, 0.1);
+  border-radius: 6px;
+}
+
+.product-image-small.placeholder-image {
+  opacity: 0.8;
+}
+
+.image-overlay {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: linear-gradient(transparent, rgba(0, 0, 0, 0.8));
+  color: white;
+  font-size: 0.7rem;
+  text-align: center;
+  padding: 4px;
+  font-weight: 500;
 }
 
 .product-info {
   display: flex;
   flex-direction: column;
   gap: 4px;
+  min-width: 0;
 }
 
 .product-name-admin {
   font-size: 1rem;
   font-weight: 600;
   color: var(--text-primary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .product-details {
   font-size: 0.85rem;
   color: var(--text-secondary);
+  line-height: 1.4;
 }
 
 .product-actions {
   display: flex;
   gap: 8px;
+  flex-shrink: 0;
 }
 
 .btn-icon {
@@ -376,11 +413,12 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  transition: background-color 0.2s ease;
+  transition: all 0.2s ease;
 }
 
 .btn-icon:hover {
   background-color: rgba(255, 255, 255, 0.1);
+  transform: translateY(-1px);
 }
 
 .btn-icon.edit {
@@ -391,6 +429,18 @@
 
 .btn-icon.edit:hover {
   background-color: rgba(10, 132, 255, 0.2);
+  box-shadow: 0 4px 12px rgba(10, 132, 255, 0.3);
+}
+
+.btn-icon.delete {
+  border-color: rgba(255, 69, 58, 0.3);
+  background-color: rgba(255, 69, 58, 0.1);
+  color: #ff453a;
+}
+
+.btn-icon.delete:hover {
+  background-color: rgba(255, 69, 58, 0.2);
+  box-shadow: 0 4px 12px rgba(255, 69, 58, 0.3);
 }
 
 @media (max-width: 768px) {
@@ -403,7 +453,7 @@
   }
   
   .product-item-admin {
-    grid-template-columns: 60px 1fr;
+    grid-template-columns: 80px 1fr;
     gap: 12px;
   }
   
@@ -416,5 +466,10 @@
   .price-option {
     grid-template-columns: 1fr;
     gap: 8px;
+  }
+
+  .product-image-container {
+    width: 80px;
+    height: 80px;
   }
 }
