@@ -15,7 +15,25 @@ const sellView = {
 
   async init() {
     this.container = document.querySelector('#sell-view');
-    this.setupFloatingButton(); // **เพิ่มโค้ดที่ขาดหายไปกลับมา**
+    this.setupFloatingButton();
+    this.setupEventListeners(); // เพิ่มการฟัง event สำหรับการอัปเดตสินค้า
+    
+    await this.loadProducts();
+  },
+
+  setupEventListeners() {
+    // ฟัง event เมื่อมีการอัปเดตสินค้าจาก admin
+    document.addEventListener('productsUpdated', () => {
+      this.loadProducts();
+    });
+
+    // ฟัง event เมื่อมีการอัปเดตสต็อก
+    document.addEventListener('stockUpdated', () => {
+      this.loadProducts();
+    });
+  },
+
+  async loadProducts() {
     Spinner.show();
     this.allCategories = await productService.fetchAllProductsGroupedByCategory();
     Spinner.hide();
@@ -129,18 +147,17 @@ const sellView = {
     return item;
   },
 
-  // **โค้ดที่นำกลับมาเพื่อแก้บัคปุ่มชำระเงินไม่แสดง**
   setupFloatingButton() {
     const checkoutBtnId = 'checkout-btn-floating';
 
     const createCheckoutButton = () => {
       let btn = document.getElementById(checkoutBtnId);
-      if (btn) return; // ถ้ามีปุ่มอยู่แล้วไม่ต้องสร้างใหม่
+      if (btn) return;
       
       btn = document.createElement('button');
       btn.id = checkoutBtnId;
       btn.className = 'checkout-btn';
-      btn.style.display = 'none'; // เริ่มต้นให้ซ่อนไว้
+      btn.style.display = 'none';
       document.body.appendChild(btn);
 
       btn.addEventListener('click', () => {

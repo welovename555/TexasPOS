@@ -49,8 +49,8 @@ const salesService = {
         shift_id,
         product_id: item.product.id,
         quantity: item.quantity,
-        price_per_unit: item.product.base_price,
-        total_item_price: item.product.base_price * item.quantity,
+        price_per_unit: item.selectedPrice, // ใช้ราคาที่เลือก
+        total_item_price: item.selectedPrice * item.quantity,
         payment_method: paymentMethod
       }));
 
@@ -74,6 +74,53 @@ const salesService = {
 
     } catch (error) {
       console.error('Error in createSale process:', error.message);
+      return { success: false, error };
+    }
+  },
+
+  /**
+   * Fetch sales history for a specific date
+   * @param {string} date - Date in YYYY-MM-DD format
+   * @returns {Object} - Sales data with summary
+   */
+  async getSalesHistory(date) {
+    try {
+      const startDate = `${date}T00:00:00.000Z`;
+      const endDate = `${date}T23:59:59.999Z`;
+
+      const { data: salesData, error } = await supabaseClient
+        .from('sales')
+        .select(`
+          *,
+          products (name),
+          employees (name)
+        `)
+        .gte('created_at', startDate)
+        .lte('created_at', endDate)
+        .order('created_at', { ascending: false });
+
+      if (error) throw error;
+
+      // Calculate summary
+      const summary = {
+        totalSales: salesData.length,
+        totalAmount: salesData.reduce((sum, sale) => sum + sale.total_item_price, 0),
+        cashAmount: salesData
+          .filter(sale => sale.payment_method === 'cash')
+          .reduce((sum, sale) => sum + sale.total_item_price, 0),
+        transferAmount: salesData
+          .filter(sale => sale.payment_method === 'transfer')
+          .reduce((sum, sale) => sum + sale.total_item_price, 0)
+      };
+
+      return { 
+        success: true, 
+        data: salesData,
+        summary 
+      };
+
+    } catch (error) {
+      console.error('Error fetching sales history:', error.message);
       return { success: false, error };
     }
   }

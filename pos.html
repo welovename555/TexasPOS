@@ -11,7 +11,10 @@
     <link rel="stylesheet" href="css/components/category-filter.css">
     <link rel="stylesheet" href="css/components/modal.css">
     <link rel="stylesheet" href="css/components/spinner.css">
-    <link rel="stylesheet" href="css/components/progressBar.css"> <link rel="stylesheet" href="css/views/sellView.css">
+    <link rel="stylesheet" href="css/components/progressBar.css">
+    <link rel="stylesheet" href="css/views/sellView.css">
+    <link rel="stylesheet" href="css/views/historyView.css">
+    <link rel="stylesheet" href="css/views/adminView.css">
 
 </head>
 <body>
@@ -24,6 +27,7 @@
                 <a href="#" class="nav-item active" data-view="sell-view"><span>ขายของ</span></a>
                 <a href="#" class="nav-item" data-view="history-view"><span>ประวัติ</span></a>
                 <a href="#" class="nav-item" data-view="stock-view"><span>สต็อก</span></a>
+                <a href="#" class="nav-item" data-view="admin-view"><span>จัดการ</span></a>
             </nav>
             <div class="sidebar-footer">
                 <a href="#" class="nav-item" id="logout-btn"><span>ออก</span></a>
@@ -31,6 +35,9 @@
         </aside>
         <main class="main-content">
             <div id="sell-view" class="content-view active"></div>
+            <div id="history-view" class="content-view"></div>
+            <div id="stock-view" class="content-view"></div>
+            <div id="admin-view" class="content-view"></div>
         </main>
     </div>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>

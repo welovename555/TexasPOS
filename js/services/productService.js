@@ -56,6 +56,139 @@ const productService = {
       console.error('❌ fetchAllProductsGroupedByCategory error:', error.message);
       return null;
     }
+  },
+
+  /**
+   * Fetch all categories for admin dropdown
+   */
+  async fetchCategories() {
+    try {
+      const { data, error } = await supabaseClient
+        .from('categories')
+        .select('id, name')
+        .order('name', { ascending: true });
+
+      if (error) throw error;
+      return { success: true, data };
+
+    } catch (error) {
+      console.error('Error fetching categories:', error.message);
+      return { success: false, error };
+    }
+  },
+
+  /**
+   * Fetch all products for admin management
+   */
+  async fetchAllProducts() {
+    try {
+      const { data, error } = await supabaseClient
+        .from('products')
+        .select(`
+          id,
+          name,
+          base_price,
+          image_url,
+          multi_prices,
+          categories (name),
+          product_stocks (stock_quantity)
+        `)
+        .eq('is_active', true)
+        .order('created_at', { ascending: false });
+
+      if (error) throw error;
+      return { success: true, data };
+
+    } catch (error) {
+      console.error('Error fetching all products:', error.message);
+      return { success: false, error };
+    }
+  },
+
+  /**
+   * Upload image to Supabase Storage
+   */
+  async uploadProductImage(file) {
+    try {
+      const fileExt = file.name.split('.').pop();
+      const fileName = `${Date.now()}-${Math.random().toString(36).substring(2)}.${fileExt}`;
+      
+      const { data, error } = await supabaseClient.storage
+        .from('product-images')
+        .upload(fileName, file);
+
+      if (error) throw error;
+
+      // Get public URL
+      const { data: { publicUrl } } = supabaseClient.storage
+        .from('product-images')
+        .getPublicUrl(fileName);
+
+      return { success: true, url: publicUrl };
+
+    } catch (error) {
+      console.error('Error uploading image:', error.message);
+      return { success: false, error };
+    }
+  },
+
+  /**
+   * Create new product
+   */
+  async createProduct(productData) {
+    try {
+      // Insert product
+      const { data: product, error: productError } = await supabaseClient
+        .from('products')
+        .insert({
+          name: productData.name,
+          category_id: productData.category_id,
+          base_price: productData.base_price,
+          image_url: productData.image_url,
+          multi_prices: productData.multi_prices || null
+        })
+        .select()
+        .single();
+
+      if (productError) throw productError;
+
+      // Insert initial stock
+      const { error: stockError } = await supabaseClient
+        .from('product_stocks')
+        .insert({
+          product_id: product.id,
+          stock_quantity: productData.initial_stock || 0
+        });
+
+      if (stockError) throw stockError;
+
+      return { success: true, data: product };
+
+    } catch (error) {
+      console.error('Error creating product:', error.message);
+      return { success: false, error };
+    }
+  },
+
+  /**
+   * Update product image
+   */
+  async updateProductImage(productId, imageUrl) {
+    try {
+      const { data, error } = await supabaseClient
+        .from('products')
+        .update({ image_url: imageUrl })
+        .eq('id', productId)
+        .select()
+        .single();
+
+      if (error) throw error;
+      return { success: true, data };
+
+    } catch (error) {
+      console.error('Error updating product image:', error.message);
+      return { success: false, error };
+    }
   }
 };
 
