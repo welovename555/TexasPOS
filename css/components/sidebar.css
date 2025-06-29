@@ -9,10 +9,10 @@
   padding: 24px 0;
   box-sizing: border-box;
   border-right: 1px solid var(--color-border);
-  position: fixed; /* ล็อกตำแหน่ง Sidebar */
+  position: fixed;
   left: 0;
   top: 0;
-  z-index: 100; /* ทำให้อยู่เหนือเนื้อหาอื่น */
+  z-index: 100;
 }
 
 .sidebar-brand {
@@ -21,6 +21,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
+  flex-shrink: 0; /* เพิ่ม: ป้องกันไม่ให้หด */
 }
 
 .brand-title {
@@ -39,7 +40,17 @@
   display: flex;
   flex-direction: column;
   gap: 15px;
-  /* flex-grow: 1; */ /* เอาบรรทัดนี้ออก เพื่อไม่ให้เมนูดัน footer */
+  overflow-y: auto; /* เพิ่ม: ทำให้ scroll ได้ถ้าเมนูยาวเกิน */
+  overflow-x: hidden;
+  width: 100%;
+  align-items: center; /* จัดให้ไอคอนอยู่กลาง */
+  padding-bottom: 15px; /* เพิ่ม: เว้นระยะห่างด้านล่างเล็กน้อย */
+}
+
+/* ซ่อน Scrollbar ของ sidebar-nav */
+.sidebar-nav::-webkit-scrollbar {
+    width: 0;
+    height: 0;
 }
 
 .nav-item {
@@ -53,6 +64,7 @@
   text-decoration: none;
   color: var(--color-text-secondary);
   transition: background-color 0.2s ease, color 0.2s ease;
+  flex-shrink: 0; /* เพิ่ม: ป้องกันไม่ให้หด */
 }
 
 .nav-item span {
@@ -72,4 +84,5 @@
 
 .sidebar-footer {
   margin-top: auto; /* ทำให้ footer อยู่ล่างสุดเสมอ */
+  flex-shrink: 0; /* เพิ่ม: ป้องกันไม่ให้หด */
 }
