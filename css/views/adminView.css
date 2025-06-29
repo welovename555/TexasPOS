@@ -17,7 +17,7 @@
 }
 
 .admin-subtitle {
-  color: var(--text-secondary);
+  color: var(--color-text-secondary); /* แก้ไข */
   font-size: 1rem;
   margin: 0;
 }
@@ -28,7 +28,7 @@
 }
 
 .admin-section {
-  background-color: var(--content-bg);
+  background-color: var(--color-bg-content); /* แก้ไข */
   border-radius: 16px;
   padding: 24px;
   border: 1px solid rgba(255, 255, 255, 0.05);
@@ -37,7 +37,7 @@
 .section-title {
   font-size: 1.4rem;
   font-weight: 700;
-  color: var(--text-primary);
+  color: var(--color-text-primary); /* แก้ไข */
   margin: 0 0 20px 0;
   display: flex;
   align-items: center;
@@ -47,7 +47,7 @@
 .section-icon {
   width: 24px;
   height: 24px;
-  color: var(--accent-color);
+  color: var(--color-accent-primary); /* แก้ไข */
 }
 
 /* Add Product Form */
@@ -75,7 +75,7 @@
 .form-label {
   font-size: 0.9rem;
   font-weight: 600;
-  color: var(--text-primary);
+  color: var(--color-text-primary); /* แก้ไข */
 }
 
 .form-input,
@@ -85,7 +85,7 @@
   border-radius: 8px;
   border: 1px solid rgba(255, 255, 255, 0.2);
   background-color: rgba(255, 255, 255, 0.05);
-  color: var(--text-primary);
+  color: var(--color-text-primary); /* แก้ไข */
   font-size: 1rem;
   transition: border-color 0.2s ease, box-shadow 0.2s ease;
 }
@@ -94,7 +94,7 @@
 .form-select:focus,
 .form-textarea:focus {
   outline: none;
-  border-color: var(--accent-color);
+  border-color: var(--color-accent-primary); /* แก้ไข */
   box-shadow: 0 0 0 2px rgba(10, 132, 255, 0.2);
 }
 
@@ -145,7 +145,7 @@
 }
 
 .image-placeholder {
-  color: var(--text-secondary);
+  color: var(--color-text-secondary); /* แก้ไข */
   text-align: center;
   font-size: 0.8rem;
 }
@@ -155,7 +155,7 @@
   border-radius: 6px;
   border: 1px solid rgba(255, 255, 255, 0.2);
   background-color: rgba(255, 255, 255, 0.05);
-  color: var(--text-primary);
+  color: var(--color-text-primary); /* แก้ไข */
   font-size: 0.9rem;
   cursor: pointer;
   transition: background-color 0.2s ease;
@@ -202,7 +202,7 @@
 }
 
 .toggle-switch.active {
-  background-color: var(--accent-color);
+  background-color: var(--color-accent-primary); /* แก้ไข */
 }
 
 .toggle-slider {
@@ -243,7 +243,7 @@
   border-radius: 6px;
   border: 1px solid rgba(255, 69, 58, 0.3);
   background-color: rgba(255, 69, 58, 0.1);
-  color: #ff453a;
+  color: var(--color-accent-danger); /* แก้ไข */
   cursor: pointer;
   display: flex;
   align-items: center;
@@ -259,9 +259,9 @@
 .add-price-btn {
   padding: 8px 16px;
   border-radius: 6px;
-  border: 1px solid var(--accent-color);
+  border: 1px solid var(--color-accent-primary); /* แก้ไข */
   background-color: rgba(10, 132, 255, 0.1);
-  color: var(--accent-color);
+  color: var(--color-accent-primary); /* แก้ไข */
   font-size: 0.9rem;
   cursor: pointer;
   transition: background-color 0.2s ease;
@@ -285,7 +285,7 @@
   padding: 12px 24px;
   border-radius: 8px;
   border: none;
-  background-color: var(--accent-color);
+  background-color: var(--color-accent-primary); /* แก้ไข */
   color: white;
   font-size: 1rem;
   font-weight: 600;
@@ -307,7 +307,7 @@
   border-radius: 8px;
   border: 1px solid rgba(255, 255, 255, 0.2);
   background-color: transparent;
-  color: var(--text-primary);
+  color: var(--color-text-primary); /* แก้ไข */
   font-size: 1rem;
   font-weight: 600;
   cursor: pointer;
@@ -384,7 +384,7 @@
 .product-name-admin {
   font-size: 1rem;
   font-weight: 600;
-  color: var(--text-primary);
+  color: var(--color-text-primary); /* แก้ไข */
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -392,7 +392,7 @@
 
 .product-details {
   font-size: 0.85rem;
-  color: var(--text-secondary);
+  color: var(--color-text-secondary); /* แก้ไข */
   line-height: 1.4;
 }
 
@@ -408,7 +408,7 @@
   border-radius: 6px;
   border: 1px solid rgba(255, 255, 255, 0.2);
   background-color: rgba(255, 255, 255, 0.05);
-  color: var(--text-primary);
+  color: var(--color-text-primary); /* แก้ไข */
   cursor: pointer;
   display: flex;
   align-items: center;
@@ -424,7 +424,7 @@
 .btn-icon.edit {
   border-color: rgba(10, 132, 255, 0.3);
   background-color: rgba(10, 132, 255, 0.1);
-  color: var(--accent-color);
+  color: var(--color-accent-primary); /* แก้ไข */
 }
 
 .btn-icon.edit:hover {
@@ -435,7 +435,7 @@
 .btn-icon.delete {
   border-color: rgba(255, 69, 58, 0.3);
   background-color: rgba(255, 69, 58, 0.1);
-  color: #ff453a;
+  color: var(--color-accent-danger); /* แก้ไข */
 }
 
 .btn-icon.delete:hover {
