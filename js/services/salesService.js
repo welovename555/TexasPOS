@@ -1,6 +1,5 @@
 import { supabaseClient } from '../config.js';
 import { authStore } from '../stores/authStore.js';
-import { shiftStore } from '../stores/shiftStore.js';
 
 const salesService = {
   /**
