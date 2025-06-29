@@ -78,11 +78,12 @@ const productService = {
   },
 
   /**
-   * Fetch all products for admin management
+   * Fetch all products for admin management - แก้ไขปัญหา relationship
    */
   async fetchAllProducts() {
     try {
-      const { data, error } = await supabaseClient
+      // ดึงข้อมูลแยกเป็นส่วนๆ เพื่อหลีกเลี่ยงปัญหา relationship
+      const { data: products, error: productsError } = await supabaseClient
         .from('products')
         .select(`
           id,
@@ -90,14 +91,40 @@ const productService = {
           base_price,
           image_url,
           multi_prices,
-          categories (name),
-          product_stocks (stock_quantity)
+          category_id
         `)
         .eq('is_active', true)
         .order('created_at', { ascending: false });
 
-      if (error) throw error;
-      return { success: true, data };
+      if (productsError) throw productsError;
+
+      // ดึง categories แยก
+      const { data: categories, error: categoriesError } = await supabaseClient
+        .from('categories')
+        .select('id, name');
+
+      if (categoriesError) throw categoriesError;
+
+      // ดึง stocks แยก
+      const { data: stocks, error: stocksError } = await supabaseClient
+        .from('product_stocks')
+        .select('product_id, stock_quantity');
+
+      if (stocksError) throw stocksError;
+
+      // รวมข้อมูลเข้าด้วยกัน
+      const enrichedProducts = products.map(product => {
+        const category = categories.find(cat => cat.id === product.category_id);
+        const stock = stocks.find(s => s.product_id === product.id);
+
+        return {
+          ...product,
+          categories: category ? { name: category.name } : null,
+          product_stocks: stock ? [{ stock_quantity: stock.stock_quantity }] : []
+        };
+      });
+
+      return { success: true, data: enrichedProducts };
 
     } catch (error) {
       console.error('Error fetching all products:', error.message);

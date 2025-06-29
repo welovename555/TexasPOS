@@ -196,20 +196,59 @@
 .price-options {
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: 12px;
 }
 
 .price-option-btn {
-  padding: 12px;
-  border-radius: 8px;
-  background: #3a3a3c;
-  border: 1px solid #555;
+  padding: 16px 20px;
+  border-radius: 12px;
+  background: linear-gradient(135deg, #3a3a3c 0%, #2c2c2e 100%);
+  border: 2px solid #555;
   color: #ffffff;
   font-size: 16px;
+  font-weight: 600;
   cursor: pointer;
-  transition: background-color 0.2s ease;
+  transition: all 0.3s ease;
+  text-align: center;
+  position: relative;
+  overflow: hidden;
 }
 
 .price-option-btn:hover {
-  background: #4a4a4c;
+  background: linear-gradient(135deg, #0a84ff 0%, #3f9eff 100%);
+  border-color: #0a84ff;
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(10, 132, 255, 0.3);
 }
+
+.price-option-btn:active {
+  transform: translateY(0);
+  box-shadow: 0 4px 15px rgba(10, 132, 255, 0.2);
+}
+
+.price-option-btn strong {
+  display: block;
+  font-size: 18px;
+  margin-bottom: 4px;
+}
+
+/* เพิ่ม animation เมื่อ modal เปิด */
+@keyframes slideInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.price-option-btn {
+  animation: slideInUp 0.3s ease forwards;
+}
+
+.price-option-btn:nth-child(2) { animation-delay: 0.1s; }
+.price-option-btn:nth-child(3) { animation-delay: 0.2s; }
+.price-option-btn:nth-child(4) { animation-delay: 0.3s; }
+.price-option-btn:nth-child(5) { animation-delay: 0.4s; }

@@ -24,16 +24,19 @@ const priceSelectorModal = {
 
     const bodyHTML = `
       <div class="price-options">
+        <p style="margin-bottom: 16px; color: #8e8e93; text-align: center;">
+          เลือกราคาสำหรับ: <strong style="color: #ffffff;">${product.name}</strong>
+        </p>
         ${sortedPrices.map(p => `
           <button class="price-option-btn" data-price="${p.price}">
-            ${p.label} - ${p.price} บาท
+            <strong>${p.label}</strong> - ${p.price} บาท
           </button>
         `).join('')}
       </div>
     `;
 
     const modal = Modal.create({
-      title: `เลือกราคา: ${product.name}`,
+      title: `เลือกราคา`,
       body: bodyHTML,
       footer: `<button class="btn btn-cancel" id="close-price-selector">ยกเลิก</button>`
     });
@@ -46,7 +49,7 @@ const priceSelectorModal = {
       priceButtons.forEach(btn => {
         btn.addEventListener('click', () => {
           const selectedPrice = parseFloat(btn.dataset.price);
-          console.log('💰 Selected price:', selectedPrice);
+          console.log('💰 Selected price:', selectedPrice, 'for product:', product.name);
           
           // ส่งสินค้าและราคาที่เลือกไปที่ cartStore
           cartStore.addItem(product, selectedPrice);
