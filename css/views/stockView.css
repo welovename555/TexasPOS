@@ -38,15 +38,15 @@
   padding: 10px 16px 10px 40px;
   border-radius: 8px;
   border: 1px solid rgba(255, 255, 255, 0.2);
-  background-color: var(--content-bg);
-  color: var(--text-primary);
+  background-color: var(--color-bg-content); /* แก้ไข */
+  color: var(--color-text-primary); /* แก้ไข */
   font-size: 1rem;
   width: 250px;
 }
 
 .search-input:focus {
   outline: none;
-  border-color: var(--accent-color);
+  border-color: var(--color-accent-primary); /* แก้ไข */
   box-shadow: 0 0 0 2px rgba(10, 132, 255, 0.2);
 }
 
@@ -55,7 +55,7 @@
   left: 12px;
   width: 16px;
   height: 16px;
-  color: var(--text-secondary);
+  color: var(--color-text-secondary); /* แก้ไข */
   pointer-events: none;
 }
 
@@ -63,15 +63,15 @@
   padding: 10px 16px;
   border-radius: 8px;
   border: 1px solid rgba(255, 255, 255, 0.2);
-  background-color: var(--content-bg);
-  color: var(--text-primary);
+  background-color: var(--color-bg-content); /* แก้ไข */
+  color: var(--color-text-primary); /* แก้ไข */
   font-size: 1rem;
   cursor: pointer;
 }
 
 .sort-select:focus {
   outline: none;
-  border-color: var(--accent-color);
+  border-color: var(--color-accent-primary); /* แก้ไข */
   box-shadow: 0 0 0 2px rgba(10, 132, 255, 0.2);
 }
 
@@ -79,8 +79,8 @@
   padding: 10px 16px;
   border-radius: 8px;
   border: 1px solid rgba(255, 255, 255, 0.2);
-  background-color: var(--content-bg);
-  color: var(--text-primary);
+  background-color: var(--color-bg-content); /* แก้ไข */
+  color: var(--color-text-primary); /* แก้ไข */
   font-size: 1rem;
   cursor: pointer;
   display: flex;
@@ -94,8 +94,8 @@
 }
 
 .filter-btn.active {
-  background-color: var(--accent-color);
-  border-color: var(--accent-color);
+  background-color: var(--color-accent-primary); /* แก้ไข */
+  border-color: var(--color-accent-primary); /* แก้ไข */
   color: white;
 }
 
@@ -103,7 +103,7 @@
   padding: 10px 16px;
   border-radius: 8px;
   border: none;
-  background-color: var(--accent-color);
+  background-color: var(--color-accent-primary); /* แก้ไข */
   color: white;
   font-size: 1rem;
   font-weight: 600;
@@ -132,10 +132,10 @@
 }
 
 .summary-card {
-  background-color: var(--content-bg);
+  background-color: var(--color-bg-content); /* แก้ไข */
   border-radius: 12px;
   padding: 20px;
-  border: 1px solid rgba(255, 255, 255, 0.05);
+  border: 1px solid var(--color-border); /* แก้ไข */
   display: flex;
   align-items: center;
   gap: 16px;
@@ -148,17 +148,17 @@
 
 .summary-card.warning {
   border-color: rgba(255, 149, 0, 0.3);
-  background: linear-gradient(135deg, rgba(255, 149, 0, 0.1) 0%, var(--content-bg) 100%);
+  background: linear-gradient(135deg, rgba(255, 149, 0, 0.1) 0%, var(--color-bg-content) 100%); /* แก้ไข */
 }
 
 .summary-card.danger {
   border-color: rgba(255, 69, 58, 0.3);
-  background: linear-gradient(135deg, rgba(255, 69, 58, 0.1) 0%, var(--content-bg) 100%);
+  background: linear-gradient(135deg, rgba(255, 69, 58, 0.1) 0%, var(--color-bg-content) 100%); /* แก้ไข */
 }
 
 .summary-card.success {
   border-color: rgba(52, 199, 89, 0.3);
-  background: linear-gradient(135deg, rgba(52, 199, 89, 0.1) 0%, var(--content-bg) 100%);
+  background: linear-gradient(135deg, rgba(52, 199, 89, 0.1) 0%, var(--color-bg-content) 100%); /* แก้ไข */
 }
 
 .summary-icon {
@@ -172,7 +172,7 @@
 
 .summary-label {
   font-size: 0.9rem;
-  color: var(--text-secondary);
+  color: var(--color-text-secondary); /* แก้ไข */
   margin-bottom: 4px;
   font-weight: 500;
 }
@@ -180,7 +180,7 @@
 .summary-value {
   font-size: 1.5rem;
   font-weight: 700;
-  color: var(--text-primary);
+  color: var(--color-text-primary); /* แก้ไข */
 }
 
 /* Stock Grid */
@@ -191,10 +191,10 @@
 }
 
 .stock-item {
-  background-color: var(--content-bg);
+  background-color: var(--color-bg-content); /* แก้ไข */
   border-radius: 12px;
   padding: 16px;
-  border: 1px solid rgba(255, 255, 255, 0.05);
+  border: 1px solid var(--color-border); /* แก้ไข */
   display: flex;
   align-items: center;
   gap: 16px;
@@ -208,12 +208,12 @@
 
 .stock-item.low-stock {
   border-color: rgba(255, 149, 0, 0.3);
-  background: linear-gradient(135deg, rgba(255, 149, 0, 0.05) 0%, var(--content-bg) 100%);
+  background: linear-gradient(135deg, rgba(255, 149, 0, 0.05) 0%, var(--color-bg-content) 100%); /* แก้ไข */
 }
 
 .stock-item.out-of-stock {
   border-color: rgba(255, 69, 58, 0.3);
-  background: linear-gradient(135deg, rgba(255, 69, 58, 0.05) 0%, var(--content-bg) 100%);
+  background: linear-gradient(135deg, rgba(255, 69, 58, 0.05) 0%, var(--color-bg-content) 100%); /* แก้ไข */
 }
 
 .stock-item-image {
@@ -238,7 +238,7 @@
 .stock-item-name {
   font-size: 1rem;
   font-weight: 600;
-  color: var(--text-primary);
+  color: var(--color-text-primary); /* แก้ไข */
   margin-bottom: 4px;
   white-space: nowrap;
   overflow: hidden;
@@ -247,14 +247,14 @@
 
 .stock-item-category {
   font-size: 0.8rem;
-  color: var(--text-secondary);
+  color: var(--color-text-secondary); /* แก้ไข */
   margin-bottom: 4px;
 }
 
 .stock-item-price {
   font-size: 0.9rem;
   font-weight: 600;
-  color: #34c759;
+  color: var(--color-accent-secondary); /* แก้ไข */
 }
 
 .stock-item-quantity {
@@ -275,7 +275,7 @@
 
 .stock-badge.in-stock {
   background-color: rgba(52, 199, 89, 0.2);
-  color: #34c759;
+  color: var(--color-accent-secondary); /* แก้ไข */
   border: 1px solid rgba(52, 199, 89, 0.3);
 }
 
@@ -287,7 +287,7 @@
 
 .stock-badge.out-of-stock {
   background-color: rgba(255, 69, 58, 0.2);
-  color: #ff453a;
+  color: var(--color-accent-danger); /* แก้ไข */
   border: 1px solid rgba(255, 69, 58, 0.3);
 }
 
@@ -298,9 +298,9 @@
 .btn-stock-action {
   padding: 8px 12px;
   border-radius: 6px;
-  border: 1px solid var(--accent-color);
+  border: 1px solid var(--color-accent-primary); /* แก้ไข */
   background-color: rgba(10, 132, 255, 0.1);
-  color: var(--accent-color);
+  color: var(--color-accent-primary); /* แก้ไข */
   font-size: 0.85rem;
   font-weight: 600;
   cursor: pointer;
@@ -311,7 +311,7 @@
 }
 
 .btn-stock-action:hover {
-  background-color: var(--accent-color);
+  background-color: var(--color-accent-primary); /* แก้ไข */
   color: white;
 }
 
@@ -332,12 +332,12 @@
 }
 
 .current-stock-info .label {
-  color: var(--text-secondary);
+  color: var(--color-text-secondary); /* แก้ไข */
   font-size: 0.9rem;
 }
 
 .current-stock-info .value {
-  color: var(--text-primary);
+  color: var(--color-text-primary); /* แก้ไข */
   font-weight: 600;
   font-size: 1.1rem;
 }
@@ -346,7 +346,7 @@
   grid-column: 1 / -1;
   text-align: center;
   padding: 60px 20px;
-  color: var(--text-secondary);
+  color: var(--color-text-secondary); /* แก้ไข */
 }
 
 .empty-state-icon {
