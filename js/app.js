@@ -6,7 +6,6 @@ import { stockView } from './views/stockView.js';
 import { priceSelectorModal } from './components/priceSelectorModal.js';
 import { checkoutModal } from './components/checkoutModal.js';
 import { themeManager } from './components/themeManager.js';
-import './stores/shiftStore.js';
 
 const App = {
   currentView: 'sell-view',
