@@ -19,8 +19,8 @@
   padding: 10px 16px; /* ปรับ padding */
   border-radius: 12px; /* ปรับความโค้งมน */
   border: 1px solid rgba(255, 255, 255, 0.1);
-  background-color: var(--content-bg);
-  color: var(--text-secondary);
+  background-color: var(--color-bg-content);
+  color: var(--color-text-secondary);
   font-size: 0.9rem;
   font-weight: 500;
   cursor: pointer;
@@ -35,11 +35,11 @@
 
 .category-filter-btn:hover {
   background-color: rgba(255, 255, 255, 0.05);
-  color: var(--text-primary);
+  color: var(--color-text-primary);
 }
 
 .category-filter-btn.active {
-  background-color: var(--accent-color);
-  color: var(--text-primary);
-  border-color: var(--accent-color);
+  background-color: var(--color-accent-primary);
+  color: var(--color-text-primary);
+  border-color: var(--color-accent-primary);
 }
