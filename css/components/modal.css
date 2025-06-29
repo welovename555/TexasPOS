@@ -193,13 +193,14 @@
   color: #fff;
 }
 
-.price-options {
+/* [แก้ไข] ใช้ชื่อ Class ใหม่ตามหลัก BEM */
+.price-selector-modal__options {
   display: flex;
   flex-direction: column;
   gap: 12px;
 }
 
-.price-option-btn {
+.price-selector-modal__option-btn {
   padding: 16px 20px;
   border-radius: 12px;
   background: linear-gradient(135deg, #3a3a3c 0%, #2c2c2e 100%);
@@ -214,19 +215,19 @@
   overflow: hidden;
 }
 
-.price-option-btn:hover {
+.price-selector-modal__option-btn:hover {
   background: linear-gradient(135deg, #0a84ff 0%, #3f9eff 100%);
   border-color: #0a84ff;
   transform: translateY(-2px);
   box-shadow: 0 8px 25px rgba(10, 132, 255, 0.3);
 }
 
-.price-option-btn:active {
+.price-selector-modal__option-btn:active {
   transform: translateY(0);
   box-shadow: 0 4px 15px rgba(10, 132, 255, 0.2);
 }
 
-.price-option-btn strong {
+.price-selector-modal__option-btn strong {
   display: block;
   font-size: 18px;
   margin-bottom: 4px;
@@ -244,11 +245,13 @@
   }
 }
 
-.price-option-btn {
+.price-selector-modal__option-btn {
   animation: slideInUp 0.3s ease forwards;
+  /* ทำให้ปุ่มแต่ละปุ่มมี delay ไม่เท่ากัน */
+  opacity: 0; 
 }
 
-.price-option-btn:nth-child(2) { animation-delay: 0.1s; }
-.price-option-btn:nth-child(3) { animation-delay: 0.2s; }
-.price-option-btn:nth-child(4) { animation-delay: 0.3s; }
-.price-option-btn:nth-child(5) { animation-delay: 0.4s; }
+.price-selector-modal__option-btn:nth-child(2) { animation-delay: 0.1s; }
+.price-selector-modal__option-btn:nth-child(3) { animation-delay: 0.2s; }
+.price-selector-modal__option-btn:nth-child(4) { animation-delay: 0.3s; }
+.price-selector-modal__option-btn:nth-child(5) { animation-delay: 0.4s; }
