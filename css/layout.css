@@ -1,12 +1,3 @@
-:root {
-  --sidebar-width: 80px;
-  --main-bg: #111315;
-  --content-bg: #1A1D1F;
-  --text-primary: #FFFFFF;
-  --text-secondary: #9A9A9E;
-  --accent-color: #0a84ff;
-}
-
 body {
   margin: 0;
   background-color: var(--main-bg);
