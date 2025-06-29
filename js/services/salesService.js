@@ -8,6 +8,8 @@ const salesService = {
    * @param {Array} cartItems - The items from the cart.
    */
   async _updateStock(cartItems) {
+    console.log('📦 Updating stock for items:', cartItems);
+    
     const stockUpdatePromises = cartItems.map(item =>
       supabaseClient.rpc('decrease_stock', {
         p_product_id: item.product.id,
@@ -20,11 +22,12 @@ const salesService = {
     // Check if any of the stock updates failed
     for (const result of results) {
       if (result.error) {
-        // We throw an error here to be caught by the calling function.
-        // This allows us to potentially handle a rollback or notify the user.
+        console.error('❌ Stock update failed:', result.error);
         throw new Error(`Failed to update stock: ${result.error.message}`);
       }
     }
+    
+    console.log('✅ Stock updated successfully');
   },
 
   /**
@@ -34,10 +37,14 @@ const salesService = {
    * @returns {Object} - An object indicating success or failure.
    */
   async createSale(cartItems, paymentMethod) {
+    console.log('💰 Creating sale:', { cartItems, paymentMethod });
+    
     try {
       const transaction_id = crypto.randomUUID();
       const employee_id = authStore.state.user?.id;
       const shift_id = shiftStore.state.currentShift?.id;
+
+      console.log('🔍 Sale details:', { transaction_id, employee_id, shift_id });
 
       if (!employee_id || !shift_id) {
         throw new Error('ไม่พบข้อมูลพนักงานหรือข้อมูลกะปัจจุบัน');
@@ -54,6 +61,8 @@ const salesService = {
         payment_method: paymentMethod
       }));
 
+      console.log('📊 Sales records to insert:', salesRecords);
+
       // Step 1: Insert all sale records into the 'sales' table.
       const { data, error: salesError } = await supabaseClient
         .from('sales')
@@ -61,19 +70,23 @@ const salesService = {
         .select();
 
       if (salesError) {
+        console.error('❌ Sales insert error:', salesError);
         throw salesError;
       }
+
+      console.log('✅ Sales records inserted:', data);
 
       // Step 2: Update stock quantities for all sold products.
       await this._updateStock(cartItems);
 
       // Step 3: Notify the app that stock has changed.
-      document.dispatchEvent(new CustomEvent('stockUpdated'));
+      document.dispatchEvent(new CustomEvent('stockUpdated', { bubbles: true }));
 
+      console.log('🎉 Sale completed successfully');
       return { success: true, data };
 
     } catch (error) {
-      console.error('Error in createSale process:', error.message);
+      console.error('💥 Error in createSale process:', error);
       return { success: false, error };
     }
   },
@@ -84,6 +97,8 @@ const salesService = {
    * @returns {Object} - Sales data with summary
    */
   async getSalesHistory(date) {
+    console.log('📊 Fetching sales history for date:', date);
+    
     try {
       const startDate = `${date}T00:00:00.000Z`;
       const endDate = `${date}T23:59:59.999Z`;
@@ -113,6 +128,8 @@ const salesService = {
           .reduce((sum, sale) => sum + sale.total_item_price, 0)
       };
 
+      console.log('📈 Sales history fetched:', { salesData: salesData.length, summary });
+      
       return { 
         success: true, 
         data: salesData,
@@ -120,7 +137,7 @@ const salesService = {
       };
 
     } catch (error) {
-      console.error('Error fetching sales history:', error.message);
+      console.error('❌ Error fetching sales history:', error);
       return { success: false, error };
     }
   }

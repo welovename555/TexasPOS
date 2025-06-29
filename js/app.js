@@ -18,15 +18,24 @@ const App = {
   },
 
   addGlobalEventListeners() {
+    // Event สำหรับเปิด Price Selector Modal
     window.addEventListener('openPriceSelector', (e) => {
+      console.log('🎯 Event openPriceSelector received:', e.detail);
       const { product } = e.detail;
       if (product) {
         priceSelectorModal.open(product);
       }
     });
 
+    // Event สำหรับเปิด Checkout Modal
     window.addEventListener('openCheckoutModal', () => {
+      console.log('🛒 Event openCheckoutModal received');
       checkoutModal.open();
+    });
+
+    // Event สำหรับ debug cart updates
+    document.addEventListener('cartUpdated', (e) => {
+      console.log('🛍️ Cart updated:', e.detail);
     });
   },
 

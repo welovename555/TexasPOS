@@ -14,8 +14,12 @@ const sellView = {
   },
 
   async init() {
+    console.log('🏪 Initializing sellView');
     this.container = document.querySelector('#sell-view');
-    if (!this.container) return;
+    if (!this.container) {
+      console.error('❌ Sell view container not found');
+      return;
+    }
 
     this.setupFloatingButton();
     this.setupEventListeners();
@@ -24,24 +28,31 @@ const sellView = {
   },
 
   setupEventListeners() {
+    console.log('🔗 Setting up sellView event listeners');
+    
     // ฟัง event เมื่อมีการอัปเดตสินค้าจาก admin
     document.addEventListener('productsUpdated', () => {
+      console.log('📦 Products updated, reloading...');
       this.loadProducts();
     });
 
     // ฟัง event เมื่อมีการอัปเดตสต็อก
     document.addEventListener('stockUpdated', () => {
+      console.log('📊 Stock updated, reloading...');
       this.loadProducts();
     });
   },
 
   async loadProducts() {
+    console.log('📦 Loading products...');
     Spinner.show();
     
     try {
       this.allCategories = await productService.fetchAllProductsGroupedByCategory();
       
       if (this.allCategories) {
+        console.log('✅ Products loaded:', this.allCategories);
+        
         this.allCategories = this.allCategories.map(cat => {
           const rawName = (cat.name || '').toLowerCase();
           if (rawName.includes('ยา')) return { ...cat, name: 'ยา' };
@@ -59,10 +70,11 @@ const sellView = {
 
         this.render();
       } else {
+        console.error('❌ Failed to load products');
         this.container.innerHTML = `<p class="error-message">ไม่สามารถโหลดข้อมูลสินค้าได้</p>`;
       }
     } catch (error) {
-      console.error('Error loading products:', error);
+      console.error('💥 Error loading products:', error);
       this.container.innerHTML = `<p class="error-message">เกิดข้อผิดพลาด: ${error.message}</p>`;
     } finally {
       Spinner.hide();
@@ -72,6 +84,7 @@ const sellView = {
   render() {
     if (!this.container) return;
 
+    console.log('🎨 Rendering sellView');
     this.container.innerHTML = '';
     this.renderCategoryFilter();
     this.renderProductGrid();
@@ -99,6 +112,7 @@ const sellView = {
       btn.classList.add('active');
     }
     btn.addEventListener('click', () => {
+      console.log('📂 Category selected:', category.name);
       this.activeCategoryId = category.id;
       this.render();
     });
@@ -144,10 +158,18 @@ const sellView = {
 
     if (product.stock_quantity > 0) {
       item.addEventListener('click', () => {
+        console.log('🛍️ Product clicked:', product.name);
+        console.log('💰 Multi prices:', product.multi_prices);
+        
         if (product.multi_prices && Array.isArray(product.multi_prices) && product.multi_prices.length > 1) {
-          const event = new CustomEvent('openPriceSelector', { detail: { product } });
+          console.log('🏷️ Opening price selector for multi-price product');
+          const event = new CustomEvent('openPriceSelector', { 
+            detail: { product },
+            bubbles: true 
+          });
           window.dispatchEvent(event);
         } else {
+          console.log('💰 Adding single-price product to cart');
           cartStore.addItem(product, product.base_price);
         }
       });
@@ -159,6 +181,7 @@ const sellView = {
   },
 
   setupFloatingButton() {
+    console.log('🎈 Setting up floating checkout button');
     const checkoutBtnId = 'checkout-btn-floating';
 
     const createCheckoutButton = () => {
@@ -172,7 +195,9 @@ const sellView = {
       document.body.appendChild(btn);
 
       btn.addEventListener('click', () => {
-        window.dispatchEvent(new CustomEvent('openCheckoutModal'));
+        console.log('🛒 Floating checkout button clicked');
+        const event = new CustomEvent('openCheckoutModal', { bubbles: true });
+        window.dispatchEvent(event);
       });
     };
 
@@ -192,6 +217,7 @@ const sellView = {
 
     createCheckoutButton();
     document.addEventListener('cartUpdated', (e) => {
+      console.log('🛍️ Cart updated in sellView:', e.detail);
       toggleCheckoutButton(e.detail);
     });
   }

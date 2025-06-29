@@ -3,7 +3,13 @@ import { cartStore } from '../stores/cartStore.js';
 
 const priceSelectorModal = {
   open(product) {
-    if (!product.multi_prices || !Array.isArray(product.multi_prices)) return;
+    console.log('🏷️ Opening price selector for:', product);
+    
+    if (!product.multi_prices || !Array.isArray(product.multi_prices)) {
+      console.log('❌ No multi_prices found, adding with base price');
+      cartStore.addItem(product, product.base_price);
+      return;
+    }
 
     // ลำดับราคาที่ต้องการสำหรับ "น้ำผสมฝาเงินขวดใหญ่"
     const desiredOrder = [80, 50, 60, 90];
@@ -20,7 +26,7 @@ const priceSelectorModal = {
       <div class="price-options">
         ${sortedPrices.map(p => `
           <button class="price-option-btn" data-price="${p.price}">
-            ${p.label}
+            ${p.label} - ${p.price} บาท
           </button>
         `).join('')}
       </div>
@@ -32,20 +38,31 @@ const priceSelectorModal = {
       footer: `<button class="btn btn-cancel" id="close-price-selector">ยกเลิก</button>`
     });
 
+    // รอให้ modal แสดงผลก่อนแล้วค่อยเพิ่ม event listeners
     setTimeout(() => {
-      document.querySelectorAll('.price-option-btn').forEach(btn => {
+      const priceButtons = document.querySelectorAll('.price-option-btn');
+      console.log('🎯 Found price buttons:', priceButtons.length);
+      
+      priceButtons.forEach(btn => {
         btn.addEventListener('click', () => {
           const selectedPrice = parseFloat(btn.dataset.price);
+          console.log('💰 Selected price:', selectedPrice);
           
-          // ส่งสินค้าและราคาที่เลือกไปที่ cartStore โดยไม่แก้ไขชื่อ
+          // ส่งสินค้าและราคาที่เลือกไปที่ cartStore
           cartStore.addItem(product, selectedPrice);
           
           modal.close();
         });
       });
 
-      document.getElementById('close-price-selector')?.addEventListener('click', () => modal.close());
-    }, 50);
+      const cancelBtn = document.getElementById('close-price-selector');
+      if (cancelBtn) {
+        cancelBtn.addEventListener('click', () => {
+          console.log('❌ Price selector cancelled');
+          modal.close();
+        });
+      }
+    }, 100);
   }
 };
 
