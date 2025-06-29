@@ -277,17 +277,22 @@ const adminView = {
 
   getPlaceholderImage(productName) {
     const name = productName.toLowerCase();
-    
+
+    // ฟังก์ชันเข้ารหัสที่รองรับอักษร Unicode (ภาษาไทย)
+    const utf8_to_b64 = (str) => {
+        return window.btoa(unescape(encodeURIComponent(str)));
+    };
+
     if (name.includes('น้ำ') || name.includes('ผสม')) {
-      return 'data:image/svg+xml;base64,' + btoa(`<svg width="120" height="120" xmlns="http://www.w3.org/2000/svg"><rect width="120" height="120" fill="#1e3a8a"/><circle cx="60" cy="60" r="30" fill="#3b82f6" opacity="0.8"/><text x="60" y="90" text-anchor="middle" fill="white" font-size="12" font-family="Arial">น้ำ</text></svg>`);
+      return 'data:image/svg+xml;base64,' + utf8_to_b64(`<svg width="120" height="120" xmlns="http://www.w3.org/2000/svg"><rect width="120" height="120" fill="#1e3a8a"/><circle cx="60" cy="60" r="30" fill="#3b82f6" opacity="0.8"/><text x="60" y="90" text-anchor="middle" fill="white" font-size="12" font-family="Arial">น้ำ</text></svg>`);
     } else if (name.includes('บุหรี่')) {
-      return 'data:image/svg+xml;base64,' + btoa(`<svg width="120" height="120" xmlns="http://www.w3.org/2000/svg"><rect width="120" height="120" fill="#7c2d12"/><rect x="30" y="50" width="60" height="20" fill="#ea580c" opacity="0.8"/><text x="60" y="90" text-anchor="middle" fill="white" font-size="12" font-family="Arial">บุหรี่</text></svg>`);
+      return 'data:image/svg+xml;base64,' + utf8_to_b64(`<svg width="120" height="120" xmlns="http://www.w3.org/2000/svg"><rect width="120" height="120" fill="#7c2d12"/><rect x="30" y="50" width="60" height="20" fill="#ea580c" opacity="0.8"/><text x="60" y="90" text-anchor="middle" fill="white" font-size="12" font-family="Arial">บุหรี่</text></svg>`);
     } else if (name.includes('ยา')) {
-      return 'data:image/svg+xml;base64,' + btoa(`<svg width="120" height="120" xmlns="http://www.w3.org/2000/svg"><rect width="120" height="120" fill="#166534"/><path d="M45 30 h30 v60 h-30 z M30 45 h60 v30 h-60 z" fill="#22c55e" opacity="0.8"/><text x="60" y="90" text-anchor="middle" fill="white" font-size="12" font-family="Arial">ยา</text></svg>`);
+      return 'data:image/svg+xml;base64,' + utf8_to_b64(`<svg width="120" height="120" xmlns="http://www.w3.org/2000/svg"><rect width="120" height="120" fill="#166534"/><path d="M45 30 h30 v60 h-30 z M30 45 h60 v30 h-60 z" fill="#22c55e" opacity="0.8"/><text x="60" y="90" text-anchor="middle" fill="white" font-size="12" font-family="Arial">ยา</text></svg>`);
     } else {
-      return 'data:image/svg+xml;base64,' + btoa(`<svg width="120" height="120" xmlns="http://www.w3.org/2000/svg"><rect width="120" height="120" fill="#374151"/><rect x="30" y="30" width="60" height="60" fill="#6b7280" opacity="0.8"/><text x="60" y="90" text-anchor="middle" fill="white" font-size="12" font-family="Arial">สินค้า</text></svg>`);
+      return 'data:image/svg+xml;base64,' + utf8_to_b64(`<svg width="120" height="120" xmlns="http://www.w3.org/2000/svg"><rect width="120" height="120" fill="#374151"/><rect x="30" y="30" width="60" height="60" fill="#6b7280" opacity="0.8"/><text x="60" y="90" text-anchor="middle" fill="white" font-size="12" font-family="Arial">สินค้า</text></svg>`);
     }
-  },
+},
 
   async handleImageUpload(event) {
     const file = event.target.files[0];
