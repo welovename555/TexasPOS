@@ -27,7 +27,6 @@ const stockView = {
       console.log('📊 Stock updated, reloading stock view...');
       this.loadStockData();
     });
-
     // ฟัง event เมื่อมีการอัปเดตสินค้า
     document.addEventListener('productsUpdated', () => {
       console.log('📦 Products updated, reloading stock view...');
@@ -42,17 +41,13 @@ const stockView = {
         <div class="stock-controls">
           <div class="search-container">
             <input type="text" class="search-input" id="stock-search" placeholder="ค้นหาสินค้า...">
-            <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <circle cx="11" cy="11" r="8"></circle>
-              <path d="m21 21-4.35-4.35"></path>
-            </svg>
-          </div>
+            </div>
           <select class="sort-select" id="stock-sort">
             <option value="name">เรียงตามชื่อ</option>
             <option value="stock">เรียงตามสต็อก</option>
             <option value="category">เรียงตามหมวดหมู่</option>
           </select>
-          <button class="filter-btn" id="low-stock-filter">
+           <button class="filter-btn" id="low-stock-filter">
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
               <path d="M22 3H7l-4 4v14a2 2 0 0 0 2 2h15a2 2 0 0 0 2-2V3z"></path>
               <path d="M7 3v4H3"></path>
@@ -71,14 +66,11 @@ const stockView = {
       </div>
 
       <div class="stock-summary" id="stock-summary">
-        <!-- Summary cards will be inserted here -->
-      </div>
+        </div>
 
       <div class="stock-grid" id="stock-grid">
-        <!-- Stock items will be inserted here -->
-      </div>
+        </div>
     `;
-
     this.attachEventListeners();
   },
 
@@ -119,7 +111,6 @@ const stockView = {
 
   async loadStockData() {
     const refreshBtn = document.getElementById('refresh-stock-btn');
-    
     if (refreshBtn) {
       refreshBtn.disabled = true;
       refreshBtn.innerHTML = `
@@ -132,7 +123,6 @@ const stockView = {
 
     try {
       const result = await productService.fetchAllProducts();
-      
       if (result.success) {
         this.products = result.data;
         this.renderSummary();
@@ -161,12 +151,10 @@ const stockView = {
   renderSummary() {
     const summaryContainer = document.getElementById('stock-summary');
     if (!summaryContainer) return;
-
     const totalProducts = this.products.length;
     const lowStockProducts = this.products.filter(p => this.getStockQuantity(p) <= 10).length;
     const outOfStockProducts = this.products.filter(p => this.getStockQuantity(p) === 0).length;
     const totalStockValue = this.products.reduce((sum, p) => sum + (this.getStockQuantity(p) * p.base_price), 0);
-
     summaryContainer.innerHTML = `
       <div class="summary-card">
         <div class="summary-icon">📦</div>
@@ -201,7 +189,6 @@ const stockView = {
 
   filterAndRenderProducts() {
     let filtered = [...this.products];
-
     // Filter by search term
     if (this.searchTerm) {
       filtered = filtered.filter(product => 
@@ -246,7 +233,6 @@ const stockView = {
   renderStockGrid() {
     const stockGrid = document.getElementById('stock-grid');
     if (!stockGrid) return;
-
     if (this.filteredProducts.length === 0) {
       stockGrid.innerHTML = `
         <div class="empty-state">
@@ -309,7 +295,6 @@ const stockView = {
 
   async showAddStockModal(productId, productName, currentStock) {
     const { Modal } = await import('../components/modal.js');
-    
     const modal = Modal.create({
       title: `เพิ่มสต็อก: ${productName}`,
       body: `
@@ -328,12 +313,12 @@ const stockView = {
           </div>
         </div>
       `,
-      footer: `
+      footer: 
+      `
         <button class="btn btn-cancel" id="cancel-add-stock">ยกเลิก</button>
         <button class="btn btn-confirm" id="confirm-add-stock">เพิ่มสต็อก</button>
       `
     });
-
     // Attach events
     setTimeout(() => {
       const confirmBtn = document.getElementById('confirm-add-stock');
