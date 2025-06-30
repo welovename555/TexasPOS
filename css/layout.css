@@ -4,6 +4,8 @@ body {
   color: var(--color-text-primary);
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
   overflow: hidden; /* ป้องกันการ scroll ทั้งหน้า */
+  overscroll-behavior: none; /* ป้องกัน bounce effect */
+  touch-action: pan-y; /* อนุญาตเฉพาะการเลื่อนแนวตั้ง */
 }
 
 .pos-container {
@@ -11,14 +13,16 @@ body {
   flex-direction: column; /* เปลี่ยนเป็น column สำหรับ bottom navigation */
   height: 100vh;
   width: 100vw;
+  overflow: hidden; /* ป้องกันการเลื่อน */
 }
 
 .main-content {
   flex-grow: 1;
   height: calc(100vh - 80px); /* ลบความสูงของ bottom nav */
-  overflow-y: auto; /* ให้ scroll ได้เฉพาะส่วนเนื้อหา */
+  overflow: hidden; /* ป้องกันการเลื่อนโดยตรง */
   padding: 24px;
   box-sizing: border-box;
+  position: relative;
 }
 
 /* ซ่อน Scrollbar แต่ยัง scroll ได้ */
@@ -29,10 +33,32 @@ body {
 
 .content-view {
   display: none;
+  height: 100%;
+  overflow: hidden; /* ป้องกันการเลื่อนโดยตรง */
+  overscroll-behavior: none; /* ป้องกัน bounce effect */
+  touch-action: none; /* ป้องกันการเลื่อนทุกทิศทาง */
 }
 
 .content-view.active {
   display: block;
+}
+
+/* เฉพาะหน้าขายให้เลื่อนได้ */
+#sell-view {
+  overflow-y: auto; /* อนุญาตการเลื่อนแนวตั้ง */
+  overflow-x: auto; /* อนุญาตการเลื่อนแนวนอน */
+  touch-action: auto; /* อนุญาตการเลื่อนทุกทิศทาง */
+  overscroll-behavior: auto; /* อนุญาต bounce effect */
+}
+
+/* หน้าอื่นๆ ล็อคการเลื่อน */
+#history-view,
+#stock-view,
+#admin-view {
+  overflow-y: auto; /* อนุญาตเฉพาะการเลื่อนแนวตั้ง */
+  overflow-x: hidden; /* ป้องกันการเลื่อนแนวนอน */
+  touch-action: pan-y; /* อนุญาตเฉพาะการเลื่อนแนวตั้ง */
+  overscroll-behavior: none; /* ป้องกัน bounce effect */
 }
 
 /* Bottom Navigation Styles */
@@ -296,5 +322,70 @@ body {
     box-shadow: 
       0 12px 35px rgba(59, 130, 246, 0.6),
       0 0 30px rgba(59, 130, 246, 0.5);
+  }
+}
+
+/* Floating Checkout Button - แก้ให้แสดงเหนือ bottom nav */
+.checkout-btn {
+  position: fixed;
+  bottom: 100px; /* เพิ่มระยะห่างจาก bottom nav */
+  left: 20px;
+  right: 20px;
+  z-index: 999; /* ต่ำกว่า bottom nav */
+  background: linear-gradient(135deg, var(--color-accent-secondary) 0%, #27ae60 100%);
+  color: white;
+  padding: 18px 24px;
+  font-size: 1.1rem;
+  font-weight: 700;
+  border: none;
+  border-radius: 16px;
+  box-shadow: 
+    0 8px 25px rgba(52, 199, 89, 0.4),
+    0 4px 15px rgba(0, 0, 0, 0.2);
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  text-align: center;
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  display: none; /* ซ่อนไว้ก่อน */
+}
+
+.checkout-btn:hover {
+  background: linear-gradient(135deg, #27ae60 0%, #2ecc71 100%);
+  transform: translateY(-2px);
+  box-shadow: 
+    0 12px 35px rgba(52, 199, 89, 0.5),
+    0 6px 20px rgba(0, 0, 0, 0.3);
+}
+
+.checkout-btn:active {
+  transform: translateY(0);
+}
+
+/* เพิ่ม animation เมื่อปุ่มปรากฏ */
+.checkout-btn.show {
+  display: block;
+  animation: slideUpCheckout 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+@keyframes slideUpCheckout {
+  from {
+    opacity: 0;
+    transform: translateY(100px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* ปรับสำหรับมือถือ */
+@media (max-width: 480px) {
+  .checkout-btn {
+    bottom: 85px; /* ปรับตามความสูง bottom nav บนมือถือ */
+    left: 16px;
+    right: 16px;
+    padding: 16px 20px;
+    font-size: 1rem;
   }
 }

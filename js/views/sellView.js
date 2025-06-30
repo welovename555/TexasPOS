@@ -185,10 +185,13 @@ const sellView = {
     const checkoutBtnId = 'checkout-btn-floating';
 
     const createCheckoutButton = () => {
-      let btn = document.getElementById(checkoutBtnId);
-      if (btn) return;
+      // ลบปุ่มเก่าถ้ามี
+      const existingBtn = document.getElementById(checkoutBtnId);
+      if (existingBtn) {
+        existingBtn.remove();
+      }
       
-      btn = document.createElement('button');
+      const btn = document.createElement('button');
       btn.id = checkoutBtnId;
       btn.className = 'checkout-btn';
       btn.style.display = 'none';
@@ -199,27 +202,48 @@ const sellView = {
         const event = new CustomEvent('openCheckoutModal', { bubbles: true });
         window.dispatchEvent(event);
       });
+
+      console.log('✅ Checkout button created and added to DOM');
     };
 
     const toggleCheckoutButton = (cartState) => {
       const btn = document.getElementById(checkoutBtnId);
-      if (!btn) return;
+      if (!btn) {
+        console.log('⚠️ Checkout button not found, creating new one');
+        createCheckoutButton();
+        return;
+      }
 
       const itemCount = cartState.items.reduce((sum, item) => sum + item.quantity, 0);
+      console.log('🛍️ Cart item count:', itemCount, 'Total:', cartState.total);
 
       if (itemCount > 0) {
         btn.textContent = `ชำระเงิน (${itemCount} รายการ) - ${cartState.total.toFixed(2)} ฿`;
         btn.style.display = 'block';
+        btn.classList.add('show');
+        console.log('✅ Checkout button shown');
       } else {
         btn.style.display = 'none';
+        btn.classList.remove('show');
+        console.log('❌ Checkout button hidden');
       }
     };
 
+    // สร้างปุ่มทันที
     createCheckoutButton();
+
+    // ฟัง event การอัปเดตตะกร้า
     document.addEventListener('cartUpdated', (e) => {
       console.log('🛍️ Cart updated in sellView:', e.detail);
       toggleCheckoutButton(e.detail);
     });
+
+    // ตรวจสอบสถานะตะกร้าปัจจุบัน
+    const currentCartState = {
+      items: cartStore.getItems(),
+      total: cartStore.getTotal()
+    };
+    toggleCheckoutButton(currentCartState);
   }
 };
 

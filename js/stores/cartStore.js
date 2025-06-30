@@ -54,10 +54,20 @@ const cartStore = {
     console.log('💰 Cart total updated:', this.state.total);
     console.log('🛍️ Current cart items:', this.state.items);
     
-    document.dispatchEvent(new CustomEvent('cartUpdated', { 
-      detail: this.state,
+    // ส่ง event ทันทีหลังจากอัปเดต
+    const event = new CustomEvent('cartUpdated', { 
+      detail: {
+        items: this.state.items,
+        total: this.state.total
+      },
       bubbles: true 
-    }));
+    });
+    
+    // ใช้ setTimeout เพื่อให้แน่ใจว่า DOM พร้อม
+    setTimeout(() => {
+      document.dispatchEvent(event);
+      console.log('📢 Cart updated event dispatched:', this.state);
+    }, 0);
   },
 
   getItems() {
@@ -72,10 +82,19 @@ const cartStore = {
     console.log('🧹 Clearing cart');
     this.state.items = [];
     this.state.total = 0;
-    document.dispatchEvent(new CustomEvent('cartUpdated', { 
-      detail: this.state,
+    
+    const event = new CustomEvent('cartUpdated', { 
+      detail: {
+        items: this.state.items,
+        total: this.state.total
+      },
       bubbles: true 
-    }));
+    });
+    
+    setTimeout(() => {
+      document.dispatchEvent(event);
+      console.log('📢 Cart cleared event dispatched');
+    }, 0);
   }
 };
 

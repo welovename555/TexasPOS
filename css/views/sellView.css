@@ -17,6 +17,8 @@
   /* ปรับแก้บรรทัดนี้: กำหนดขนาดขั้นต่ำให้เล็กลงเพื่อให้ 3 รายการต่อแถวได้ */
   grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
   gap: 16px;
+  /* เพิ่ม padding ด้านล่างเพื่อให้ไม่ทับกับปุ่มชำระเงิน */
+  padding-bottom: 120px;
 }
 
 .product-item {
@@ -92,7 +94,8 @@
     padding: 50px 0;
 }
 
-.checkout-btn {
+/* ลบ old checkout button styles */
+.checkout-btn-old {
   position: fixed;
   bottom: 20px;
   right: 20px;
@@ -109,15 +112,19 @@
   transition: background 0.3s ease;
 }
 
-.checkout-btn:hover {
+.checkout-btn-old:hover {
   background-color: #27ae60;
 }
 
 @media (max-width: 480px) {
-  .checkout-btn {
+  .checkout-btn-old {
     width: calc(100% - 40px);
     left: 20px;
     right: 20px;
     border-radius: 12px;
+  }
+  
+  .product-grid {
+    padding-bottom: 140px; /* เพิ่ม padding สำหรับมือถือ */
   }
 }
