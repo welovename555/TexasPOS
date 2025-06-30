@@ -1,3 +1,5 @@
+// js/views/adminView.js
+
 import { Spinner } from '../components/spinner.js';
 import { Modal } from '../components/modal.js';
 import { productService } from '../services/productService.js';
@@ -62,7 +64,6 @@ const adminView = {
         </div>
       </div>
     `;
-
     this.attachEventListeners();
   },
 
@@ -70,7 +71,6 @@ const adminView = {
     const addProductCard = document.getElementById('add-product-card');
     const manageProductsCard = document.getElementById('manage-products-card');
     const salesReportCard = document.getElementById('sales-report-card');
-
     addProductCard.addEventListener('click', () => this.showAddProductModal());
     manageProductsCard.addEventListener('click', () => this.showCategorySelectionModal());
     salesReportCard.addEventListener('click', () => this.showSalesReportModal());
@@ -82,7 +82,6 @@ const adminView = {
         productService.fetchCategories(),
         productService.fetchAllProducts()
       ]);
-
       if (categoriesResult.success) {
         this.categories = categoriesResult.data;
       }
@@ -110,15 +109,6 @@ const adminView = {
         <button class="btn btn-cancel" id="close-report-modal">❌ ปิด</button>
       `
     });
-
-    // Add custom class for scrollable content
-    const modalContainer = modal.modalElement.querySelector('.modal-container');
-    modalContainer.style.maxHeight = '90vh';
-    modalContainer.style.overflow = 'hidden';
-    
-    const modalBody = modal.modalElement.querySelector('.modal-body');
-    modalBody.className += ' admin-modal-content';
-
     setTimeout(() => this.attachSalesReportEvents(modal, today, today), 100);
   },
 
@@ -184,11 +174,9 @@ const adminView = {
     const quickDateBtns = document.querySelectorAll('.quick-date-btn');
     const exportCsvBtn = document.getElementById('export-csv-btn');
     const exportPdfBtn = document.getElementById('export-pdf-btn');
-
-    // Load initial data
+    
     this.loadSalesReportData(initialStartDate, initialEndDate);
 
-    // Quick date buttons
     quickDateBtns.forEach(btn => {
       btn.addEventListener('click', () => {
         quickDateBtns.forEach(b => b.classList.remove('active'));
@@ -204,7 +192,6 @@ const adminView = {
       });
     });
 
-    // Date inputs
     startDateInput.addEventListener('change', () => {
       quickDateBtns.forEach(b => b.classList.remove('active'));
       this.loadSalesReportData(startDateInput.value, endDateInput.value);
@@ -215,7 +202,6 @@ const adminView = {
       this.loadSalesReportData(startDateInput.value, endDateInput.value);
     });
 
-    // Export buttons
     exportCsvBtn.addEventListener('click', () => {
       this.exportSalesData('csv', startDateInput.value, endDateInput.value);
     });
@@ -224,7 +210,6 @@ const adminView = {
       this.exportSalesData('pdf', startDateInput.value, endDateInput.value);
     });
 
-    // Close button
     const closeBtn = document.getElementById('close-report-modal');
     if (closeBtn) {
       closeBtn.addEventListener('click', () => modal.close());
@@ -272,7 +257,6 @@ const adminView = {
     const summaryContainer = document.getElementById('report-summary');
     if (!summaryContainer) return;
 
-    // Show loading
     summaryContainer.innerHTML = `
       <div class="report-summary-title">📈 สรุปยอดขาย</div>
       <div class="loading-state">
@@ -282,7 +266,6 @@ const adminView = {
     `;
 
     try {
-      // If single day, use existing service
       if (startDate === endDate) {
         const result = await salesService.getSalesHistory(startDate);
         if (result.success) {
@@ -291,7 +274,6 @@ const adminView = {
           this.showReportError(result.error.message);
         }
       } else {
-        // For date range, we'll need to aggregate multiple days
         const summary = await this.getSalesDataForRange(startDate, endDate);
         this.renderReportSummary(summary, startDate, endDate);
       }
@@ -305,15 +287,13 @@ const adminView = {
     const end = new Date(endDate);
     const promises = [];
 
-    // Get data for each day in range
     for (let d = new Date(start); d <= end; d.setDate(d.getDate() + 1)) {
       const dateStr = d.toISOString().split('T')[0];
       promises.push(salesService.getSalesHistory(dateStr));
     }
 
     const results = await Promise.all(promises);
-    
-    // Aggregate results
+
     const aggregated = {
       totalSales: 0,
       totalAmount: 0,
@@ -329,7 +309,6 @@ const adminView = {
         aggregated.transferAmount += result.summary.transferAmount;
       }
     });
-
     return aggregated;
   },
 
@@ -367,7 +346,6 @@ const adminView = {
   showReportError(message) {
     const summaryContainer = document.getElementById('report-summary');
     if (!summaryContainer) return;
-
     summaryContainer.innerHTML = `
       <div class="report-summary-title">⚠️ เกิดข้อผิดพลาด</div>
       <div class="empty-state">
@@ -390,12 +368,10 @@ const adminView = {
   async exportSalesData(format, startDate, endDate) {
     const btn = document.getElementById(`export-${format}-btn`);
     const originalText = btn.innerHTML;
-
     try {
       btn.disabled = true;
       btn.innerHTML = `⏳ กำลังสร้างไฟล์...`;
-
-      // Get data for the date range
+      
       let summary;
       if (startDate === endDate) {
         const result = await salesService.getSalesHistory(startDate);
@@ -415,7 +391,7 @@ const adminView = {
       const dateRange = startDate === endDate 
         ? this.formatThaiDate(startDate)
         : `${this.formatThaiDate(startDate)} - ${this.formatThaiDate(endDate)}`;
-
+        
       if (format === 'csv') {
         this.downloadCSV(summary, dateRange);
       } else if (format === 'pdf') {
@@ -426,7 +402,6 @@ const adminView = {
         `📄 ดาวน์โหลด ${format.toUpperCase()} สำเร็จ!`,
         'ไฟล์ถูกบันทึกลงในเครื่องของคุณแล้ว'
       );
-
     } catch (error) {
       NotificationSystem.error(
         'เกิดข้อผิดพลาด',
@@ -450,7 +425,7 @@ const adminView = {
       [''],
       ['สร้างรายงานเมื่อ', new Date().toLocaleString('th-TH')]
     ].map(row => row.join(',')).join('\n');
-
+    
     const blob = new Blob(['\ufeff' + csvContent], { type: 'text/csv;charset=utf-8;' });
     const link = document.createElement('a');
     link.href = URL.createObjectURL(blob);
@@ -459,7 +434,6 @@ const adminView = {
   },
 
   downloadPDF(summary, dateRange) {
-    // Simple PDF generation using HTML and print
     const printWindow = window.open('', '_blank');
     printWindow.document.write(`
       <!DOCTYPE html>
@@ -520,7 +494,6 @@ const adminView = {
       </body>
       </html>
     `);
-    
     printWindow.document.close();
     printWindow.focus();
     
@@ -539,15 +512,6 @@ const adminView = {
         <button class="btn btn-primary" id="submit-product-btn">✅ เพิ่มสินค้า</button>
       `
     });
-
-    // Add custom class for scrollable content
-    const modalContainer = modal.modalElement.querySelector('.modal-container');
-    modalContainer.style.maxHeight = '90vh';
-    modalContainer.style.overflow = 'hidden';
-    
-    const modalBody = modal.modalElement.querySelector('.modal-body');
-    modalBody.className += ' admin-modal-content';
-
     setTimeout(() => this.attachAddProductEvents(modal), 100);
   },
 
@@ -607,6 +571,7 @@ const adminView = {
                 <span>เปิดใช้งาน</span>
               </div>
             </div>
+            
             <div class="price-options" id="price-options"></div>
             <button type="button" class="add-price-btn" id="add-price-btn" style="display: none;">
               ➕ เพิ่มราคา
@@ -618,7 +583,6 @@ const adminView = {
   },
 
   attachAddProductEvents(modal) {
-    // Image upload
     const uploadBtn = document.getElementById('upload-image-btn');
     const fileInput = document.getElementById('image-file-input');
     const imagePreview = document.getElementById('image-preview');
@@ -627,19 +591,15 @@ const adminView = {
     imagePreview.addEventListener('click', () => fileInput.click());
     fileInput.addEventListener('change', (e) => this.handleImageUpload(e));
 
-    // Multi-price toggle
     const multiPriceToggle = document.getElementById('multi-price-toggle');
     multiPriceToggle.addEventListener('click', () => this.toggleMultiPrice());
 
-    // Add price button
     const addPriceBtn = document.getElementById('add-price-btn');
     addPriceBtn.addEventListener('click', () => this.addPriceOption());
 
-    // Form submission
     const submitBtn = document.getElementById('submit-product-btn');
     submitBtn.addEventListener('click', (e) => this.handleFormSubmit(e, modal));
 
-    // Reset form
     const resetBtn = document.getElementById('reset-form-btn');
     resetBtn.addEventListener('click', () => this.resetAddProductForm());
   },
@@ -701,7 +661,6 @@ const adminView = {
       </div>
     `).join('');
 
-    // Attach event listeners for price options
     priceOptionsContainer.querySelectorAll('.price-option').forEach(optionEl => {
       const index = parseInt(optionEl.dataset.index);
 
@@ -721,7 +680,8 @@ const adminView = {
   },
 
   updatePriceOption(index, field, value) {
-    this.priceOptions[index][field] = field === 'price' ? parseFloat(value) || 0 : value;
+    this.priceOptions[index][field] = field === 'price' ?
+      parseFloat(value) || 0 : value;
   },
 
   addPriceOption() {
@@ -741,11 +701,11 @@ const adminView = {
     
     const submitBtn = document.getElementById('submit-product-btn');
     const originalText = submitBtn.innerHTML;
-    
+
     try {
       submitBtn.disabled = true;
       submitBtn.innerHTML = '⏳ กำลังเพิ่มสินค้า...';
-
+      
       const formData = {
         name: document.getElementById('product-name').value.trim(),
         category_id: document.getElementById('product-category').value,
@@ -785,7 +745,7 @@ const adminView = {
       }
 
       const result = await productService.createProduct(formData);
-      
+
       if (result.success) {
         modal.close();
         NotificationSystem.success(
@@ -824,7 +784,6 @@ const adminView = {
         <div>แตะเพื่อเลือกรูป</div>
       </div>
     `;
-    
     this.isMultiPrice = false;
     this.priceOptions = [{ label: '', price: 0 }];
     document.getElementById('toggle-switch').classList.remove('active');
@@ -837,7 +796,7 @@ const adminView = {
       const productCount = this.products.filter(p => p.category_id === category.id).length;
       return { ...category, productCount };
     });
-
+    
     const modal = Modal.create({
       title: '📂 เลือกหมวดหมู่สินค้า',
       body: `
@@ -854,17 +813,22 @@ const adminView = {
           `).join('')}
         </div>
       `,
-      footer: `<button class="btn btn-cancel">❌ ยกเลิก</button>`
+      footer: `<button class="btn btn-cancel" id="cancel-category-selection">❌ ยกเลิก</button>`
     });
-
+    
     setTimeout(() => {
-      modal.modalElement.querySelectorAll('.category-option').forEach(option => {
-        option.addEventListener('click', () => {
-          const categoryId = option.dataset.categoryId;
-          modal.close();
-          this.showProductSelectionModal(categoryId);
+        modal.modalElement.querySelectorAll('.category-option').forEach(option => {
+            option.addEventListener('click', () => {
+                const categoryId = option.dataset.categoryId;
+                modal.close();
+                this.showProductSelectionModal(categoryId);
+            });
         });
-      });
+
+        const cancelBtn = document.getElementById('cancel-category-selection');
+        if (cancelBtn) {
+            cancelBtn.addEventListener('click', () => modal.close());
+        }
     }, 100);
   },
 
@@ -901,19 +865,32 @@ const adminView = {
         </div>
       `,
       footer: `
-        <button class="btn btn-secondary" onclick="this.closest('.modal-overlay').querySelector('[data-category-id]') ? this.closest('.modal-overlay').remove() : null">⬅️ กลับ</button>
-        <button class="btn btn-cancel">❌ ยกเลิก</button>
+        <button class="btn btn-secondary" id="back-to-categories">⬅️ กลับ</button>
+        <button class="btn btn-cancel" id="cancel-product-selection">❌ ยกเลิก</button>
       `
     });
 
     setTimeout(() => {
-      modal.modalElement.querySelectorAll('.product-option').forEach(option => {
-        option.addEventListener('click', () => {
-          const productId = option.dataset.productId;
-          modal.close();
-          this.showEditProductModal(productId);
+        modal.modalElement.querySelectorAll('.product-option').forEach(option => {
+            option.addEventListener('click', () => {
+                const productId = option.dataset.productId;
+                modal.close();
+                this.showEditProductModal(productId);
+            });
         });
-      });
+        
+        const backBtn = document.getElementById('back-to-categories');
+        if(backBtn) {
+            backBtn.addEventListener('click', () => {
+                modal.close();
+                this.showCategorySelectionModal();
+            });
+        }
+        
+        const cancelBtn = document.getElementById('cancel-product-selection');
+        if (cancelBtn) {
+            cancelBtn.addEventListener('click', () => modal.close());
+        }
     }, 100);
   },
 
@@ -941,7 +918,7 @@ const adminView = {
   showEditProductModal(productId) {
     const product = this.products.find(p => p.id === productId);
     if (!product) return;
-
+    
     const modal = Modal.create({
       title: `✏️ แก้ไข: ${product.name}`,
       body: this.renderEditProductForm(product),
@@ -951,22 +928,12 @@ const adminView = {
         <button class="btn btn-primary" id="save-changes-btn">💾 บันทึก</button>
       `
     });
-
-    // Add custom class for scrollable content
-    const modalContainer = modal.modalElement.querySelector('.modal-container');
-    modalContainer.style.maxHeight = '90vh';
-    modalContainer.style.overflow = 'hidden';
-    
-    const modalBody = modal.modalElement.querySelector('.modal-body');
-    modalBody.className += ' admin-modal-content';
-
     setTimeout(() => this.attachEditProductEvents(modal, product), 100);
   },
 
   renderEditProductForm(product) {
     const category = this.categories.find(c => c.id === product.category_id);
     const stock = this.getStockQuantity(product);
-
     return `
       <div class="edit-product-form">
         <div class="edit-form-section">
@@ -1017,7 +984,7 @@ const adminView = {
         <div class="edit-form-section">
           <h4 class="edit-section-title">🖼️ รูปภาพสินค้า</h4>
           <div class="image-upload-container">
-            <div class="image-preview">
+            <div class="image-preview" id="edit-image-preview">
               ${product.image_url ? 
                 `<img src="${product.image_url}" alt="${product.name}">` : 
                 `<div class="image-placeholder">
@@ -1042,11 +1009,12 @@ const adminView = {
     const updateImageBtn = document.getElementById('update-image-btn');
     const saveBtn = document.getElementById('save-changes-btn');
     const fileInput = document.getElementById('edit-image-file-input');
+    const imagePreview = document.getElementById('edit-image-preview');
 
     deleteBtn.addEventListener('click', () => this.confirmDeleteProduct(product, modal));
     updateImageBtn.addEventListener('click', () => fileInput.click());
+    imagePreview.addEventListener('click', () => fileInput.click());
     saveBtn.addEventListener('click', () => this.saveProductChanges(product, modal));
-
     fileInput.addEventListener('change', (e) => this.handleEditImageUpload(e, product, modal));
   },
 
@@ -1088,7 +1056,6 @@ const adminView = {
 
       const updateResult = await productService.updateProductImage(product.id, uploadResult.url);
       if (updateResult.success) {
-        // Update preview
         const imagePreview = modal.modalElement.querySelector('.image-preview');
         imagePreview.innerHTML = `<img src="${uploadResult.url}" alt="${product.name}">`;
         
@@ -1119,7 +1086,6 @@ const adminView = {
   async saveProductChanges(product, modal) {
     const saveBtn = document.getElementById('save-changes-btn');
     const originalText = saveBtn.innerHTML;
-
     try {
       saveBtn.disabled = true;
       saveBtn.innerHTML = '⏳ กำลังบันทึก...';
@@ -1139,7 +1105,7 @@ const adminView = {
       }
 
       const result = await productService.updateProduct(product.id, updateData);
-      
+
       if (result.success) {
         modal.close();
         NotificationSystem.success(
@@ -1183,7 +1149,6 @@ const adminView = {
   async deleteProduct(product, editModal) {
     try {
       const result = await productService.deleteProduct(product.id);
-      
       if (result.success) {
         editModal.close();
         NotificationSystem.success(
