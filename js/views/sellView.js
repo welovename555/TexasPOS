@@ -30,13 +30,11 @@ const sellView = {
   setupEventListeners() {
     console.log('🔗 Setting up sellView event listeners');
     
-    // ฟัง event เมื่อมีการอัปเดตสินค้าจาก admin
     document.addEventListener('productsUpdated', () => {
       console.log('📦 Products updated, reloading...');
       this.loadProducts();
     });
 
-    // ฟัง event เมื่อมีการอัปเดตสต็อก
     document.addEventListener('stockUpdated', () => {
       console.log('📊 Stock updated, reloading...');
       this.loadProducts();
@@ -138,12 +136,34 @@ const sellView = {
     this.container.appendChild(productGrid);
   },
 
+  // --- [เริ่ม] ฟังก์ชันที่เพิ่มใหม่ ---
+  getCategoryForProduct(product) {
+    return this.allCategories.find(cat => cat.products.some(p => p.id === product.id));
+  },
+
+  createPlaceholder(product) {
+    const category = this.getCategoryForProduct(product);
+    const categoryName = category ? category.name : 'อื่นๆ';
+    const iconSVG = this.categoryIcons[categoryName] || this.categoryIcons['อื่นๆ'];
+
+    const placeholderSVG = `
+        <svg width="100" height="100" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+            <rect width="100" height="100" fill="rgba(255, 255, 255, 0.0)"/>
+            <g transform="translate(38, 38) scale(1.2)">
+                ${iconSVG}
+            </g>
+        </svg>
+    `;
+
+    return `data:image/svg+xml;base64,${btoa(unescape(encodeURIComponent(placeholderSVG)))}`;
+  },
+  // --- [จบ] ฟังก์ชันที่เพิ่มใหม่ ---
+
   createProductItemElement(product) {
     const item = document.createElement('div');
     item.className = 'product-item';
     const stockText = product.stock_quantity > 0 ? `เหลือ: ${product.stock_quantity}` : 'หมด';
     
-    // --- [เริ่ม] ส่วนที่แก้ไข ---
     let priceDisplay;
     const hasMultiPrice = product.multi_prices && Array.isArray(product.multi_prices) && product.multi_prices.length > 1;
 
@@ -152,18 +172,21 @@ const sellView = {
     } else {
       priceDisplay = `<span class="product-item-price">${product.base_price} บาท</span>`;
     }
-    // --- [จบ] ส่วนที่แก้ไข ---
+
+    // --- [เริ่ม] ส่วนที่แก้ไข ---
+    const finalImageUrl = product.image_url || this.createPlaceholder(product);
 
     item.innerHTML = `
       <div class="product-item-image-container">
-        <img class="product-item-image" src="${product.image_url || 'https://jkenfjjxwdckmvqjkdkp.supabase.co/storage/v1/object/public/product-images/placeholder.png'}" alt="${product.name}">
+        <img class="product-item-image" src="${finalImageUrl}" alt="${product.name}">
       </div>
-      <div class="product-item-name">${product.name}</div>
+      <div class.product-item-name">${product.name}</div>
       <div class="product-item-footer">
         ${priceDisplay}
         <span class="product-item-stock">${stockText}</span>
       </div>
     `;
+    // --- [จบ] ส่วนที่แก้ไข ---
 
     if (product.stock_quantity > 0) {
       item.addEventListener('click', () => {
@@ -194,7 +217,6 @@ const sellView = {
     const checkoutBtnId = 'checkout-btn-floating';
 
     const createCheckoutButton = () => {
-      // ลบปุ่มเก่าถ้ามี
       const existingBtn = document.getElementById(checkoutBtnId);
       if (existingBtn) {
         existingBtn.remove();
@@ -238,16 +260,13 @@ const sellView = {
       }
     };
 
-    // สร้างปุ่มทันที
     createCheckoutButton();
 
-    // ฟัง event การอัปเดตตะกร้า
     document.addEventListener('cartUpdated', (e) => {
       console.log('🛍️ Cart updated in sellView:', e.detail);
       toggleCheckoutButton(e.detail);
     });
 
-    // ตรวจสอบสถานะตะกร้าปัจจุบัน
     const currentCartState = {
       items: cartStore.getItems(),
       total: cartStore.getTotal()
