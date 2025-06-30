@@ -29,96 +29,132 @@
 }
 
 .search-input {
-  padding: 10px 16px;
-  border-radius: 8px;
+  padding: 12px 16px;
+  border-radius: 12px;
   border: 1px solid rgba(255, 255, 255, 0.2);
   background-color: var(--color-bg-content);
   color: var(--color-text-primary);
   font-size: 1rem;
-  width: 250px;
+  width: 280px;
+  transition: all 0.2s ease;
 }
 
 .search-input:focus {
   outline: none;
   border-color: var(--color-accent-primary);
-  box-shadow: 0 0 0 2px rgba(10, 132, 255, 0.2);
+  box-shadow: 0 0 0 3px rgba(10, 132, 255, 0.1);
+  transform: translateY(-1px);
 }
 
 .sort-select {
-  padding: 10px 16px;
-  border-radius: 8px;
+  padding: 12px 16px;
+  border-radius: 12px;
   border: 1px solid rgba(255, 255, 255, 0.2);
   background-color: var(--color-bg-content);
   color: var(--color-text-primary);
   font-size: 1rem;
   cursor: pointer;
+  transition: all 0.2s ease;
 }
 
 .sort-select:focus {
   outline: none;
   border-color: var(--color-accent-primary);
-  box-shadow: 0 0 0 2px rgba(10, 132, 255, 0.2);
+  box-shadow: 0 0 0 3px rgba(10, 132, 255, 0.1);
 }
 
 .refresh-btn {
-  padding: 10px 16px;
-  border-radius: 8px;
+  padding: 12px 20px;
+  border-radius: 12px;
   border: none;
-  background-color: var(--color-accent-primary);
+  background: linear-gradient(135deg, var(--color-accent-primary) 0%, #3f9eff 100%);
   color: white;
   font-size: 1rem;
   font-weight: 600;
   cursor: pointer;
-  transition: background-color 0.2s ease;
+  transition: all 0.3s ease;
   display: flex;
   align-items: center;
   gap: 8px;
+  box-shadow: 0 4px 15px rgba(10, 132, 255, 0.3);
 }
 
 .refresh-btn:hover {
-  background-color: #3f9eff;
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(10, 132, 255, 0.4);
 }
 
-/* --- NEW STYLES for Category Filter --- */
+.refresh-btn:active {
+  transform: translateY(0);
+}
+
+/* Category Filter Bar */
 .category-filter-bar {
   display: flex;
-  gap: 10px;
+  gap: 12px;
   margin-bottom: 24px;
   overflow-x: auto;
-  padding-bottom: 10px; /* For scrollbar space */
+  padding-bottom: 8px;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
 }
-.category-filter-bar::-webkit-scrollbar { height: 0; }
+
+.category-filter-bar::-webkit-scrollbar {
+  display: none;
+}
 
 .category-filter-btn {
-  padding: 8px 16px;
-  border-radius: 8px;
-  border: 1px solid var(--color-border);
+  padding: 10px 18px;
+  border-radius: 25px;
+  border: 2px solid rgba(255, 255, 255, 0.1);
   background-color: var(--color-bg-content);
   color: var(--color-text-secondary);
   font-size: 0.9rem;
-  font-weight: 500;
+  font-weight: 600;
   cursor: pointer;
-  transition: all 0.2s ease;
+  transition: all 0.3s ease;
   white-space: nowrap;
+  position: relative;
+  overflow: hidden;
+}
+
+.category-filter-btn::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+  transition: left 0.5s ease;
+}
+
+.category-filter-btn:hover::before {
+  left: 100%;
 }
 
 .category-filter-btn:hover {
   border-color: var(--color-accent-primary);
   color: var(--color-text-primary);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 15px rgba(10, 132, 255, 0.2);
 }
 
 .category-filter-btn.active {
-  background-color: var(--color-accent-primary);
+  background: linear-gradient(135deg, var(--color-accent-primary) 0%, #3f9eff 100%);
   color: var(--color-text-primary);
   border-color: var(--color-accent-primary);
+  box-shadow: 0 4px 15px rgba(10, 132, 255, 0.3);
 }
 
-/* --- NEW STYLES for Stock Table --- */
+/* Stock Table Container */
 .stock-table-container {
-  background-color: var(--color-bg-content);
-  border-radius: 12px;
+  background: linear-gradient(135deg, var(--color-bg-content) 0%, rgba(26, 29, 31, 0.8) 100%);
+  border-radius: 16px;
   overflow: hidden;
-  border: 1px solid var(--color-border);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+  backdrop-filter: blur(10px);
 }
 
 .stock-table {
@@ -127,105 +163,386 @@
 }
 
 .stock-table th, .stock-table td {
-  padding: 12px 16px;
+  padding: 16px 20px;
   text-align: left;
-  border-bottom: 1px solid var(--color-border);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
 }
 
 .stock-table thead {
-  background-color: rgba(255, 255, 255, 0.05);
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.1) 0%, rgba(255, 255, 255, 0.05) 100%);
+  backdrop-filter: blur(10px);
 }
 
 .stock-table th {
-  font-weight: 600;
-  font-size: 0.85rem;
-  color: var(--color-text-secondary);
+  font-weight: 700;
+  font-size: 0.9rem;
+  color: var(--color-text-primary);
   text-transform: uppercase;
-  letter-spacing: 0.5px;
+  letter-spacing: 1px;
+  position: relative;
+}
+
+.stock-table th::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 20px;
+  right: 20px;
+  height: 2px;
+  background: linear-gradient(90deg, var(--color-accent-primary), transparent);
+}
+
+.stock-table tbody tr {
+  transition: all 0.3s ease;
+}
+
+.stock-table tbody tr:hover {
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.05) 0%, rgba(10, 132, 255, 0.02) 100%);
+  transform: translateX(4px);
 }
 
 .stock-table tbody tr:last-child td {
   border-bottom: none;
 }
 
-.stock-table tbody tr:hover {
-  background-color: rgba(255, 255, 255, 0.02);
+/* Product Image Styling - ปรับขนาดให้เท่ากับหน้าขาย */
+.stock-table-image-container {
+  width: 80px;
+  height: 80px;
+  border-radius: 12px;
+  overflow: hidden;
+  background: linear-gradient(135deg, #3a3a3c 0%, #2c2c2e 100%);
+  position: relative;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+  transition: all 0.3s ease;
 }
 
-.stock-table-image-container {
-  width: 50px; /* Resize Image */
-  height: 50px; /* Resize Image */
-  border-radius: 8px;
-  overflow: hidden;
-  background-color: #3a3a3c;
+.stock-table-image-container:hover {
+  transform: scale(1.05);
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
 }
 
 .stock-table-image {
   width: 100%;
   height: 100%;
   object-fit: cover;
+  transition: all 0.3s ease;
 }
 
+.stock-table-image-container:hover .stock-table-image {
+  transform: scale(1.1);
+}
+
+/* Product Name Cell */
 .stock-item-name-cell {
-  font-weight: 600;
+  font-weight: 700;
+  font-size: 1.1rem;
   color: var(--color-text-primary);
+  position: relative;
 }
 
+.stock-item-name-cell::before {
+  content: '';
+  position: absolute;
+  left: -8px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 3px;
+  height: 20px;
+  background: linear-gradient(180deg, var(--color-accent-primary), var(--color-accent-secondary));
+  border-radius: 2px;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.stock-table tbody tr:hover .stock-item-name-cell::before {
+  opacity: 1;
+}
+
+/* Stock Badge Styling */
 .stock-badge {
-  padding: 6px 12px;
+  padding: 8px 16px;
   border-radius: 20px;
   font-size: 0.85rem;
-  font-weight: 600;
-  display: inline-flex; /* Changed from flex */
+  font-weight: 700;
+  display: inline-flex;
   align-items: center;
-  gap: 4px;
+  gap: 6px;
   justify-content: center;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  position: relative;
+  overflow: hidden;
+  transition: all 0.3s ease;
+}
+
+.stock-badge::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+  transition: left 0.5s ease;
+}
+
+.stock-badge:hover::before {
+  left: 100%;
 }
 
 .stock-badge.in-stock {
-  background-color: rgba(52, 199, 89, 0.2);
+  background: linear-gradient(135deg, rgba(52, 199, 89, 0.2) 0%, rgba(52, 199, 89, 0.1) 100%);
   color: var(--color-accent-secondary);
+  border: 1px solid rgba(52, 199, 89, 0.3);
+  box-shadow: 0 4px 15px rgba(52, 199, 89, 0.1);
 }
 
 .stock-badge.low-stock {
-  background-color: rgba(255, 149, 0, 0.2);
+  background: linear-gradient(135deg, rgba(255, 149, 0, 0.2) 0%, rgba(255, 149, 0, 0.1) 100%);
   color: #ff9500;
+  border: 1px solid rgba(255, 149, 0, 0.3);
+  box-shadow: 0 4px 15px rgba(255, 149, 0, 0.1);
+  animation: pulse 2s infinite;
 }
 
 .stock-badge.out-of-stock {
-  background-color: rgba(255, 69, 58, 0.2);
+  background: linear-gradient(135deg, rgba(255, 69, 58, 0.2) 0%, rgba(255, 69, 58, 0.1) 100%);
   color: var(--color-accent-danger);
+  border: 1px solid rgba(255, 69, 58, 0.3);
+  box-shadow: 0 4px 15px rgba(255, 69, 58, 0.1);
 }
 
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.7; }
+}
+
+/* Action Button Styling */
 .btn-stock-action {
-  padding: 8px 12px;
-  border-radius: 6px;
-  border: 1px solid var(--color-accent-primary);
-  background-color: rgba(10, 132, 255, 0.1);
+  padding: 10px 16px;
+  border-radius: 12px;
+  border: 2px solid var(--color-accent-primary);
+  background: linear-gradient(135deg, rgba(10, 132, 255, 0.1) 0%, rgba(10, 132, 255, 0.05) 100%);
   color: var(--color-accent-primary);
-  font-size: 0.85rem;
-  font-weight: 600;
+  font-size: 0.9rem;
+  font-weight: 700;
   cursor: pointer;
-  transition: all 0.2s ease;
+  transition: all 0.3s ease;
   display: flex;
   align-items: center;
-  gap: 6px;
+  gap: 8px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  position: relative;
+  overflow: hidden;
+}
+
+.btn-stock-action::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(10, 132, 255, 0.1), transparent);
+  transition: left 0.5s ease;
+}
+
+.btn-stock-action:hover::before {
+  left: 100%;
 }
 
 .btn-stock-action:hover {
-  background-color: var(--color-accent-primary);
+  background: linear-gradient(135deg, var(--color-accent-primary) 0%, #3f9eff 100%);
   color: white;
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(10, 132, 255, 0.3);
 }
 
+.btn-stock-action:active {
+  transform: translateY(0);
+}
+
+.btn-stock-action svg {
+  transition: transform 0.3s ease;
+}
+
+.btn-stock-action:hover svg {
+  transform: rotate(90deg);
+}
+
+/* Price Cell */
+.price-cell {
+  font-weight: 700;
+  font-size: 1.1rem;
+  color: var(--color-accent-secondary);
+  position: relative;
+}
+
+.price-cell::after {
+  content: '฿';
+  position: absolute;
+  right: -12px;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 0.8rem;
+  opacity: 0.7;
+}
+
+/* Category Cell */
+.category-cell {
+  color: var(--color-text-secondary);
+  font-weight: 500;
+  font-style: italic;
+}
+
+/* Empty State */
 .empty-state {
-  grid-column: 1 / -1; /* This might need removal if not used in a grid */
   text-align: center;
-  padding: 60px 20px;
+  padding: 80px 20px;
   color: var(--color-text-secondary);
 }
 
 .empty-state-icon {
-  font-size: 3rem;
-  margin-bottom: 16px;
-  opacity: 0.5;
+  font-size: 4rem;
+  margin-bottom: 20px;
+  opacity: 0.6;
+  animation: float 3s ease-in-out infinite;
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0px); }
+  50% { transform: translateY(-10px); }
+}
+
+.empty-state-text {
+  font-size: 1.3rem;
+  font-weight: 600;
+  margin-bottom: 8px;
+  color: var(--color-text-primary);
+}
+
+.empty-state-subtext {
+  font-size: 1rem;
+  opacity: 0.8;
+}
+
+/* Loading Animation */
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+.spin {
+  animation: spin 1s linear infinite;
+}
+
+/* Responsive Design */
+@media (max-width: 1200px) {
+  .stock-controls {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  
+  .search-input {
+    width: 100%;
+  }
+}
+
+@media (max-width: 768px) {
+  .stock-header {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  
+  .stock-title {
+    font-size: 1.8rem;
+    text-align: center;
+  }
+  
+  .stock-controls {
+    justify-content: center;
+  }
+  
+  .stock-table-container {
+    overflow-x: auto;
+    border-radius: 12px;
+  }
+  
+  .stock-table {
+    min-width: 700px;
+  }
+  
+  .stock-table th,
+  .stock-table td {
+    padding: 12px 16px;
+    font-size: 0.9rem;
+  }
+  
+  .stock-table-image-container {
+    width: 60px;
+    height: 60px;
+  }
+  
+  .category-filter-bar {
+    justify-content: flex-start;
+  }
+}
+
+@media (max-width: 480px) {
+  .stock-table th,
+  .stock-table td {
+    padding: 10px 12px;
+    font-size: 0.8rem;
+  }
+  
+  .stock-table-image-container {
+    width: 50px;
+    height: 50px;
+  }
+  
+  .btn-stock-action {
+    padding: 8px 12px;
+    font-size: 0.8rem;
+  }
+  
+  .stock-badge {
+    padding: 6px 12px;
+    font-size: 0.75rem;
+  }
+}
+
+/* Add Stock Modal Styling */
+.add-stock-form {
+  padding: 20px 0;
+}
+
+.add-stock-form .form-group {
+  margin-bottom: 20px;
+}
+
+.add-stock-form .form-label {
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--color-text-primary);
+  margin-bottom: 8px;
+  display: block;
+}
+
+.add-stock-form .form-input {
+  width: 100%;
+  padding: 12px 16px;
+  border-radius: 8px;
+  border: 2px solid rgba(255, 255, 255, 0.2);
+  background-color: rgba(255, 255, 255, 0.05);
+  color: var(--color-text-primary);
+  font-size: 1.1rem;
+  transition: all 0.3s ease;
+}
+
+.add-stock-form .form-input:focus {
+  outline: none;
+  border-color: var(--color-accent-primary);
+  box-shadow: 0 0 0 3px rgba(10, 132, 255, 0.1);
+  background-color: rgba(255, 255, 255, 0.08);
 }
