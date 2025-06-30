@@ -1,5 +1,9 @@
+/* css/views/historyView.css */
+
 .history-view {
   padding: 0;
+  /* [FIX] Add padding to the bottom to avoid being obscured by the bottom navigation */
+  padding-bottom: 90px;
 }
 
 .history-header {
