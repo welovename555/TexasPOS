@@ -1,0 +1,23 @@
+# โค้ด 1/1: ไฟล์สำหรับทำให้ Supabase ทำงานอยู่เสมอ (เวอร์ชันพร้อมใช้งาน)
+# Path: .github/workflows/supabase-keep-alive.yml
+
+name: Supabase Keep Alive
+
+on:
+  schedule:
+    # ทำงานทุกๆ 3 วัน (เวลาเที่ยงคืน UTC)
+    # คุณสามารถปรับเปลี่ยนตารางเวลาได้ตามต้องการ
+    # ดูตัวอย่างการตั้งค่า cron เพิ่มเติมได้ที่: https://crontab.guru/
+    - cron: '0 0 */3 * *'
+
+jobs:
+  keep-alive:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Ping Supabase Instance
+        run: |
+          # ยิง Request ไปยังตาราง 'products' เพื่อรีเซ็ตตัวนับเวลา
+          curl -X GET \
+            "https://jkenfjjxwdckmvqjkdkp.supabase.co/rest/v1/products?select=*&limit=1" \
+            -H "apikey: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImprZW5mamp4d2Rja212cWprZGtwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTA4MjA5NjIsImV4cCI6MjA2NjM5Njk2Mn0.3VOZpt4baNnC5-qpYq6dC9UZ0gcfI2V4aTdi1itxmXI" \
+            -H "Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImprZW5mamp4d2Rja212cWprZGtwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTA4MjA5NjIsImV4cCI6MjA2NjM5Njk2Mn0.3VOZpt4baNnC5-qpYq6dC9UZ0gcfI2V4aTdi1itxmXI"
