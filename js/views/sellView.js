@@ -30,13 +30,11 @@ const sellView = {
   setupEventListeners() {
     console.log('🔗 Setting up sellView event listeners');
     
-    // ฟัง event เมื่อมีการอัปเดตสินค้าจาก admin
     document.addEventListener('productsUpdated', () => {
       console.log('📦 Products updated, reloading...');
       this.loadProducts();
     });
 
-    // ฟัง event เมื่อมีการอัปเดตสต็อก
     document.addEventListener('stockUpdated', () => {
       console.log('📊 Stock updated, reloading...');
       this.loadProducts();
@@ -141,34 +139,30 @@ const sellView = {
   createProductItemElement(product) {
     const item = document.createElement('div');
     item.className = 'product-item';
-    const stockText = product.stock_quantity > 0 ? `เหลือ: ${product.stock_quantity}` : 'หมด';
     
     // --- [เริ่ม] ส่วนที่แก้ไข ---
-    let priceDisplay;
+    const stockText = product.stock_quantity > 0 ? `สต็อก: ${product.stock_quantity}` : 'สินค้าหมด';
     const hasMultiPrice = product.multi_prices && Array.isArray(product.multi_prices) && product.multi_prices.length > 1;
 
+    let priceHtml;
     if (hasMultiPrice) {
-      priceDisplay = `<span class="product-item-price multi-price-text">หลายราคา</span>`;
+      priceHtml = `<div class="product-item-price multi-price-text">หลายราคา</div>`;
     } else {
-      priceDisplay = `<span class="product-item-price">${product.base_price} บาท</span>`;
+      priceHtml = `<div class="product-item-price">${product.base_price} บาท</div>`;
     }
-    // --- [จบ] ส่วนที่แก้ไข ---
 
     item.innerHTML = `
-      <div class="product-item-image-container">
-        <img class="product-item-image" src="${product.image_url || 'https://jkenfjjxwdckmvqjkdkp.supabase.co/storage/v1/object/public/product-images/placeholder.png'}" alt="${product.name}">
-      </div>
-      <div class="product-item-name">${product.name}</div>
-      <div class="product-item-footer">
-        ${priceDisplay}
-        <span class="product-item-stock">${stockText}</span>
+      <div class="product-item-details">
+        <div class="product-item-name">${product.name}</div>
+        ${priceHtml}
+        <div class="product-item-stock">${stockText}</div>
       </div>
     `;
+    // --- [จบ] ส่วนที่แก้ไข ---
 
     if (product.stock_quantity > 0) {
       item.addEventListener('click', () => {
         console.log('🛍️ Product clicked:', product.name);
-        console.log('💰 Multi prices:', product.multi_prices);
         
         if (hasMultiPrice) {
           console.log('🏷️ Opening price selector for multi-price product');
@@ -194,11 +188,8 @@ const sellView = {
     const checkoutBtnId = 'checkout-btn-floating';
 
     const createCheckoutButton = () => {
-      // ลบปุ่มเก่าถ้ามี
       const existingBtn = document.getElementById(checkoutBtnId);
-      if (existingBtn) {
-        existingBtn.remove();
-      }
+      if (existingBtn) existingBtn.remove();
       
       const btn = document.createElement('button');
       btn.id = checkoutBtnId;
@@ -207,47 +198,31 @@ const sellView = {
       document.body.appendChild(btn);
 
       btn.addEventListener('click', () => {
-        console.log('🛒 Floating checkout button clicked');
         const event = new CustomEvent('openCheckoutModal', { bubbles: true });
         window.dispatchEvent(event);
       });
-
-      console.log('✅ Checkout button created and added to DOM');
     };
 
     const toggleCheckoutButton = (cartState) => {
       const btn = document.getElementById(checkoutBtnId);
       if (!btn) {
-        console.log('⚠️ Checkout button not found, creating new one');
         createCheckoutButton();
         return;
       }
 
       const itemCount = cartState.items.reduce((sum, item) => sum + item.quantity, 0);
-      console.log('🛍️ Cart item count:', itemCount, 'Total:', cartState.total);
 
       if (itemCount > 0) {
         btn.textContent = `ชำระเงิน (${itemCount} รายการ) - ${cartState.total.toFixed(2)} ฿`;
-        btn.style.display = 'block';
         btn.classList.add('show');
-        console.log('✅ Checkout button shown');
       } else {
-        btn.style.display = 'none';
         btn.classList.remove('show');
-        console.log('❌ Checkout button hidden');
       }
     };
 
-    // สร้างปุ่มทันที
     createCheckoutButton();
-
-    // ฟัง event การอัปเดตตะกร้า
-    document.addEventListener('cartUpdated', (e) => {
-      console.log('🛍️ Cart updated in sellView:', e.detail);
-      toggleCheckoutButton(e.detail);
-    });
-
-    // ตรวจสอบสถานะตะกร้าปัจจุบัน
+    document.addEventListener('cartUpdated', (e) => toggleCheckoutButton(e.detail));
+    
     const currentCartState = {
       items: cartStore.getItems(),
       total: cartStore.getTotal()
