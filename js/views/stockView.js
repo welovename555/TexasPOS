@@ -31,24 +31,26 @@ const stockView = {
                 <h1 class="stock-title">จัดการสต็อกสินค้า</h1>
                 <div class="stock-controls">
                     <input type="text" class="search-input" id="stock-search" placeholder="🔍 ค้นหาสินค้า...">
-                    <select class="sort-select" id="stock-sort">
-                        <option value="name">เรียงตามชื่อ</option>
-                        <option value="stock">เรียงตามสต็อก</option>
-                        <option value="category">เรียงตามหมวดหมู่</option>
-                    </select>
-                    <button class="refresh-btn" id="refresh-stock-btn">
-                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <polyline points="23 4 23 10 17 10"></polyline>
-                            <polyline points="1 20 1 14 7 14"></polyline>
-                            <path d="m20.49 9A9 9 0 0 0 5.64 5.64L1 10m22 4l-4.64 4.36A9 9 0 0 1 3.51 15"></path>
-                        </svg>
-                        รีเฟรช
-                    </button>
+                    <div class="controls-row">
+                        <select class="sort-select" id="stock-sort">
+                            <option value="name">เรียงตามชื่อ</option>
+                            <option value="stock">เรียงตามสต็อก</option>
+                            <option value="category">เรียงตามหมวดหมู่</option>
+                        </select>
+                        <button class="refresh-btn" id="refresh-stock-btn">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <polyline points="23 4 23 10 17 10"></polyline>
+                                <polyline points="1 20 1 14 7 14"></polyline>
+                                <path d="m20.49 9A9 9 0 0 0 5.64 5.64L1 10m22 4l-4.64 4.36A9 9 0 0 1 3.51 15"></path>
+                            </svg>
+                            รีเฟรช
+                        </button>
+                    </div>
                 </div>
             </div>
             <div id="stock-category-filter-bar" class="category-filter-bar"></div>
-            <div class="stock-table-container" id="stock-table-container">
-                <div class="loading-placeholder" style="text-align: center; padding: 60px; color: var(--color-text-secondary);">
+            <div class="stock-cards-container" id="stock-cards-container">
+                <div class="loading-placeholder" style="text-align: center; padding: 60px; color: var(--color-text-secondary); grid-column: 1 / -1;">
                     <div style="font-size: 2rem; margin-bottom: 16px;">📦</div>
                     <div>กำลังโหลดข้อมูลสต็อก...</div>
                 </div>
@@ -77,7 +79,7 @@ const stockView = {
 
     async loadData() {
         const refreshBtn = document.getElementById('refresh-stock-btn');
-        const tableContainer = document.getElementById('stock-table-container');
+        const cardsContainer = document.getElementById('stock-cards-container');
         
         if (refreshBtn) {
             refreshBtn.disabled = true;
@@ -90,9 +92,9 @@ const stockView = {
         }
 
         // Show loading state
-        if (tableContainer) {
-            tableContainer.innerHTML = `
-                <div class="loading-placeholder" style="text-align: center; padding: 60px; color: var(--color-text-secondary);">
+        if (cardsContainer) {
+            cardsContainer.innerHTML = `
+                <div class="loading-placeholder" style="text-align: center; padding: 60px; color: var(--color-text-secondary); grid-column: 1 / -1;">
                     <div style="font-size: 2rem; margin-bottom: 16px; animation: float 3s ease-in-out infinite;">📦</div>
                     <div style="font-size: 1.2rem; margin-bottom: 8px;">กำลังโหลดข้อมูลสต็อก...</div>
                     <div style="font-size: 0.9rem; opacity: 0.7;">กรุณารอสักครู่</div>
@@ -193,7 +195,7 @@ const stockView = {
         filtered.sort((a, b) => {
             switch (this.sortBy) {
                 case 'stock': 
-                    return this.getStockQuantity(b) - this.getStockQuantity(a); // เรียงจากมากไปน้อย
+                    return this.getStockQuantity(b) - this.getStockQuantity(a);
                 case 'category': 
                     return (a.categories?.name || '').localeCompare(b.categories?.name || '');
                 default: 
@@ -202,17 +204,17 @@ const stockView = {
         });
 
         this.filteredProducts = filtered;
-        this.renderStockTable();
-        this.renderCategoryFilters(); // Re-render to update active state
+        this.renderStockCards();
+        this.renderCategoryFilters();
     },
 
-    renderStockTable() {
-        const container = document.getElementById('stock-table-container');
+    renderStockCards() {
+        const container = document.getElementById('stock-cards-container');
         if (!container) return;
 
         if (this.filteredProducts.length === 0) {
             container.innerHTML = `
-                <div class="empty-state">
+                <div class="empty-state" style="grid-column: 1 / -1;">
                     <div class="empty-state-icon">🔍</div>
                     <div class="empty-state-text">ไม่พบสินค้าที่ค้นหา</div>
                     <div class="empty-state-subtext">ลองเปลี่ยนคำค้นหาหรือเลือกหมวดหมู่อื่น</div>
@@ -221,24 +223,8 @@ const stockView = {
             return;
         }
 
-        const tableHTML = `
-            <table class="stock-table">
-                <thead>
-                    <tr>
-                        <th>รูปภาพ</th>
-                        <th>ชื่อสินค้า</th>
-                        <th>หมวดหมู่</th>
-                        <th>ราคา</th>
-                        <th>สต็อก</th>
-                        <th>จัดการ</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    ${this.filteredProducts.map(p => this.renderTableRow(p)).join('')}
-                </tbody>
-            </table>
-        `;
-        container.innerHTML = tableHTML;
+        const cardsHTML = this.filteredProducts.map(p => this.renderStockCard(p)).join('');
+        container.innerHTML = cardsHTML;
         
         // Attach event listeners for action buttons
         container.querySelectorAll('.btn-stock-action').forEach(btn => {
@@ -249,41 +235,43 @@ const stockView = {
         });
     },
 
-    renderTableRow(product) {
+    renderStockCard(product) {
         const stock = this.getStockQuantity(product);
         const stockStatus = this.getStockStatus(stock);
         const imageUrl = product.image_url || this.getPlaceholderImage(product.name);
         const categoryName = product.categories?.name || 'ไม่ระบุ';
 
         return `
-            <tr>
-                <td>
-                    <div class="stock-table-image-container">
-                        <img src="${imageUrl}" alt="${product.name}" class="stock-table-image">
+            <div class="stock-card">
+                <div class="stock-card-content">
+                    <div class="stock-card-image-container">
+                        <img src="${imageUrl}" alt="${product.name}" class="stock-card-image">
                     </div>
-                </td>
-                <td class="stock-item-name-cell">${product.name}</td>
-                <td class="category-cell">${categoryName}</td>
-                <td class="price-cell">${product.base_price.toFixed(2)}</td>
-                <td>
-                    <div class="stock-badge ${stockStatus.class}">
-                        ${stockStatus.icon} ${stock}
+                    <div class="stock-card-info">
+                        <div class="stock-card-name">${product.name}</div>
+                        <div class="stock-card-details">
+                            <div class="stock-card-category">${categoryName}</div>
+                            <div class="stock-card-price">${product.base_price.toFixed(2)}</div>
+                        </div>
                     </div>
-                </td>
-                <td>
-                    <button class="btn-stock-action" 
-                            data-product-id="${product.id}" 
-                            data-product-name="${product.name}" 
-                            data-current-stock="${stock}">
-                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <circle cx="12" cy="12" r="10"></circle>
-                            <line x1="12" y1="8" x2="12" y2="16"></line>
-                            <line x1="8" y1="12" x2="16" y2="12"></line>
-                        </svg>
-                        เพิ่ม
-                    </button>
-                </td>
-            </tr>
+                    <div class="stock-card-actions">
+                        <div class="stock-badge ${stockStatus.class}">
+                            ${stockStatus.icon} ${stock}
+                        </div>
+                        <button class="btn-stock-action" 
+                                data-product-id="${product.id}" 
+                                data-product-name="${product.name}" 
+                                data-current-stock="${stock}">
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <circle cx="12" cy="12" r="10"></circle>
+                                <line x1="12" y1="8" x2="12" y2="16"></line>
+                                <line x1="8" y1="12" x2="16" y2="12"></line>
+                            </svg>
+                            เพิ่ม
+                        </button>
+                    </div>
+                </div>
+            </div>
         `;
     },
 
@@ -295,58 +283,58 @@ const stockView = {
 
         if (name.includes('น้ำ') || name.includes('ผสม')) {
             return 'data:image/svg+xml;base64,' + utf8_to_b64(`
-                <svg width="80" height="80" xmlns="http://www.w3.org/2000/svg">
+                <svg width="60" height="60" xmlns="http://www.w3.org/2000/svg">
                     <defs>
                         <linearGradient id="waterGrad" x1="0%" y1="0%" x2="100%" y2="100%">
                             <stop offset="0%" style="stop-color:#1e3a8a;stop-opacity:1" />
                             <stop offset="100%" style="stop-color:#3b82f6;stop-opacity:1" />
                         </linearGradient>
                     </defs>
-                    <rect width="80" height="80" fill="url(#waterGrad)" rx="12"/>
-                    <circle cx="40" cy="40" r="20" fill="#60a5fa" opacity="0.8"/>
-                    <text x="40" y="65" text-anchor="middle" fill="white" font-size="10" font-family="Arial">🥤</text>
+                    <rect width="60" height="60" fill="url(#waterGrad)" rx="8"/>
+                    <circle cx="30" cy="30" r="15" fill="#60a5fa" opacity="0.8"/>
+                    <text x="30" y="50" text-anchor="middle" fill="white" font-size="8" font-family="Arial">🥤</text>
                 </svg>
             `);
         } else if (name.includes('บุหรี่')) {
             return 'data:image/svg+xml;base64,' + utf8_to_b64(`
-                <svg width="80" height="80" xmlns="http://www.w3.org/2000/svg">
+                <svg width="60" height="60" xmlns="http://www.w3.org/2000/svg">
                     <defs>
                         <linearGradient id="smokeGrad" x1="0%" y1="0%" x2="100%" y2="100%">
                             <stop offset="0%" style="stop-color:#7c2d12;stop-opacity:1" />
                             <stop offset="100%" style="stop-color:#ea580c;stop-opacity:1" />
                         </linearGradient>
                     </defs>
-                    <rect width="80" height="80" fill="url(#smokeGrad)" rx="12"/>
-                    <rect x="20" y="35" width="40" height="10" fill="#f97316" opacity="0.8" rx="5"/>
-                    <text x="40" y="65" text-anchor="middle" fill="white" font-size="10" font-family="Arial">🚬</text>
+                    <rect width="60" height="60" fill="url(#smokeGrad)" rx="8"/>
+                    <rect x="15" y="25" width="30" height="8" fill="#f97316" opacity="0.8" rx="4"/>
+                    <text x="30" y="50" text-anchor="middle" fill="white" font-size="8" font-family="Arial">🚬</text>
                 </svg>
             `);
         } else if (name.includes('ยา')) {
             return 'data:image/svg+xml;base64,' + utf8_to_b64(`
-                <svg width="80" height="80" xmlns="http://www.w3.org/2000/svg">
+                <svg width="60" height="60" xmlns="http://www.w3.org/2000/svg">
                     <defs>
                         <linearGradient id="medGrad" x1="0%" y1="0%" x2="100%" y2="100%">
                             <stop offset="0%" style="stop-color:#166534;stop-opacity:1" />
                             <stop offset="100%" style="stop-color:#22c55e;stop-opacity:1" />
                         </linearGradient>
                     </defs>
-                    <rect width="80" height="80" fill="url(#medGrad)" rx="12"/>
-                    <path d="M30 20 h20 v40 h-20 z M20 30 h40 v20 h-40 z" fill="#4ade80" opacity="0.8"/>
-                    <text x="40" y="65" text-anchor="middle" fill="white" font-size="10" font-family="Arial">💊</text>
+                    <rect width="60" height="60" fill="url(#medGrad)" rx="8"/>
+                    <path d="M22 15 h16 v30 h-16 z M15 22 h30 v16 h-30 z" fill="#4ade80" opacity="0.8"/>
+                    <text x="30" y="50" text-anchor="middle" fill="white" font-size="8" font-family="Arial">💊</text>
                 </svg>
             `);
         } else {
             return 'data:image/svg+xml;base64,' + utf8_to_b64(`
-                <svg width="80" height="80" xmlns="http://www.w3.org/2000/svg">
+                <svg width="60" height="60" xmlns="http://www.w3.org/2000/svg">
                     <defs>
                         <linearGradient id="defaultGrad" x1="0%" y1="0%" x2="100%" y2="100%">
                             <stop offset="0%" style="stop-color:#374151;stop-opacity:1" />
                             <stop offset="100%" style="stop-color:#6b7280;stop-opacity:1" />
                         </linearGradient>
                     </defs>
-                    <rect width="80" height="80" fill="url(#defaultGrad)" rx="12"/>
-                    <rect x="20" y="20" width="40" height="40" fill="#9ca3af" opacity="0.8" rx="8"/>
-                    <text x="40" y="65" text-anchor="middle" fill="white" font-size="10" font-family="Arial">📦</text>
+                    <rect width="60" height="60" fill="url(#defaultGrad)" rx="8"/>
+                    <rect x="15" y="15" width="30" height="30" fill="#9ca3af" opacity="0.8" rx="6"/>
+                    <text x="30" y="50" text-anchor="middle" fill="white" font-size="8" font-family="Arial">📦</text>
                 </svg>
             `);
         }
@@ -416,21 +404,7 @@ const stockView = {
                     modal.close();
                     
                     // Show success message
-                    const successMsg = document.createElement('div');
-                    successMsg.style.cssText = `
-                        position: fixed; top: 20px; right: 20px; z-index: 9999;
-                        background: linear-gradient(135deg, #22c55e, #16a34a);
-                        color: white; padding: 16px 24px; border-radius: 12px;
-                        box-shadow: 0 8px 25px rgba(34, 197, 94, 0.3);
-                        font-weight: 600; animation: slideIn 0.3s ease;
-                    `;
-                    successMsg.innerHTML = `✅ เพิ่มสต็อก ${quantity} ชิ้น สำเร็จ!`;
-                    document.body.appendChild(successMsg);
-                    
-                    setTimeout(() => {
-                        successMsg.style.animation = 'slideOut 0.3s ease';
-                        setTimeout(() => successMsg.remove(), 300);
-                    }, 3000);
+                    this.showSuccessMessage(`✅ เพิ่มสต็อก ${quantity} ชิ้น สำเร็จ!`);
                     
                     this.loadData();
                 } else {
@@ -444,8 +418,27 @@ const stockView = {
                 confirmBtn.innerHTML = '✅ เพิ่มสต็อก';
             }
         });
+    },
 
-        // Add CSS for animations
+    showSuccessMessage(message) {
+        const successMsg = document.createElement('div');
+        successMsg.style.cssText = `
+            position: fixed; top: 20px; right: 20px; z-index: 9999;
+            background: linear-gradient(135deg, #22c55e, #16a34a);
+            color: white; padding: 16px 24px; border-radius: 12px;
+            box-shadow: 0 8px 25px rgba(34, 197, 94, 0.3);
+            font-weight: 600; animation: slideIn 0.3s ease;
+            max-width: 300px; text-align: center;
+        `;
+        successMsg.innerHTML = message;
+        document.body.appendChild(successMsg);
+        
+        setTimeout(() => {
+            successMsg.style.animation = 'slideOut 0.3s ease';
+            setTimeout(() => successMsg.remove(), 300);
+        }, 3000);
+
+        // Add CSS for animations if not exists
         if (!document.getElementById('stock-animations')) {
             const style = document.createElement('style');
             style.id = 'stock-animations';
@@ -458,20 +451,16 @@ const stockView = {
                     from { transform: translateX(0); opacity: 1; }
                     to { transform: translateX(100%); opacity: 0; }
                 }
-                @keyframes float {
-                    0%, 100% { transform: translateY(0px); }
-                    50% { transform: translateY(-10px); }
-                }
             `;
             document.head.appendChild(style);
         }
     },
 
     showError(message) {
-        const container = document.getElementById('stock-table-container');
+        const container = document.getElementById('stock-cards-container');
         if (container) {
             container.innerHTML = `
-                <div class="empty-state">
+                <div class="empty-state" style="grid-column: 1 / -1;">
                     <div class="empty-state-icon">⚠️</div>
                     <div class="empty-state-text">เกิดข้อผิดพลาด</div>
                     <div class="empty-state-subtext">${message}</div>
