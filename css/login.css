@@ -7,7 +7,7 @@
   height: 100vh;
   padding: 20px;
   /* [เพิ่ม] เพิ่ม padding-bottom สำหรับ Safe Area ของ iPhone */
-  padding-bottom: calc(35px + env(safe-area-inset-bottom));
+  padding-bottom: calc(43px + env(safe-area-inset-bottom));
   box-sizing: border-box;
   text-align: center;
   position: relative;
