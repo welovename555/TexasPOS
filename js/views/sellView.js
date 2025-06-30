@@ -143,7 +143,16 @@ const sellView = {
     item.className = 'product-item';
     const stockText = product.stock_quantity > 0 ? `เหลือ: ${product.stock_quantity}` : 'หมด';
     
-    const priceDisplay = `${product.base_price} บาท`;
+    // --- [เริ่ม] ส่วนที่แก้ไข ---
+    let priceDisplay;
+    const hasMultiPrice = product.multi_prices && Array.isArray(product.multi_prices) && product.multi_prices.length > 1;
+
+    if (hasMultiPrice) {
+      priceDisplay = `<span class="product-item-price multi-price-text">หลายราคา</span>`;
+    } else {
+      priceDisplay = `<span class="product-item-price">${product.base_price} บาท</span>`;
+    }
+    // --- [จบ] ส่วนที่แก้ไข ---
 
     item.innerHTML = `
       <div class="product-item-image-container">
@@ -151,7 +160,7 @@ const sellView = {
       </div>
       <div class="product-item-name">${product.name}</div>
       <div class="product-item-footer">
-        <span class="product-item-price">${priceDisplay}</span>
+        ${priceDisplay}
         <span class="product-item-stock">${stockText}</span>
       </div>
     `;
@@ -161,7 +170,7 @@ const sellView = {
         console.log('🛍️ Product clicked:', product.name);
         console.log('💰 Multi prices:', product.multi_prices);
         
-        if (product.multi_prices && Array.isArray(product.multi_prices) && product.multi_prices.length > 1) {
+        if (hasMultiPrice) {
           console.log('🏷️ Opening price selector for multi-price product');
           const event = new CustomEvent('openPriceSelector', { 
             detail: { product },
