@@ -1,115 +1,346 @@
+/* ===== Modern Login Design ===== */
 .login-container {
   display: flex;
   flex-direction: column;
-  justify-content: space-around;
+  justify-content: center;
   align-items: center;
   height: 100vh;
   padding: 20px;
   box-sizing: border-box;
   text-align: center;
-  background-color: #1c1c1e; /* สีพื้นหลังเข้ม */
+  position: relative;
+  overflow: hidden;
+  
+  /* Dynamic Gradient Background */
+  background: linear-gradient(135deg, 
+    #667eea 0%, 
+    #764ba2 25%, 
+    #f093fb 50%, 
+    #f5576c 75%, 
+    #4facfe 100%
+  );
+  background-size: 400% 400%;
+  animation: gradientShift 15s ease infinite;
 }
 
+/* Animated Background */
+@keyframes gradientShift {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+/* Floating Particles */
+.login-container::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-image: 
+    radial-gradient(circle at 20% 80%, rgba(255, 255, 255, 0.1) 2px, transparent 2px),
+    radial-gradient(circle at 80% 20%, rgba(255, 255, 255, 0.15) 1px, transparent 1px),
+    radial-gradient(circle at 40% 40%, rgba(255, 255, 255, 0.1) 1.5px, transparent 1.5px);
+  background-size: 100px 100px, 150px 150px, 200px 200px;
+  animation: floatParticles 20s linear infinite;
+  pointer-events: none;
+}
+
+@keyframes floatParticles {
+  0% { transform: translateY(0px) rotate(0deg); }
+  100% { transform: translateY(-100px) rotate(360deg); }
+}
+
+/* Main Content Container */
 .pin-display {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 16px;
+  gap: 24px;
   color: #fff;
+  position: relative;
+  z-index: 10;
+  
+  /* Glass Effect */
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(20px);
+  border-radius: 24px;
+  padding: 40px 30px;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  box-shadow: 
+    0 25px 50px rgba(0, 0, 0, 0.2),
+    inset 0 1px 0 rgba(255, 255, 255, 0.3);
+  
+  /* Floating Animation */
+  animation: floatContainer 6s ease-in-out infinite;
 }
 
+@keyframes floatContainer {
+  0%, 100% { transform: translateY(0px); }
+  50% { transform: translateY(-10px); }
+}
+
+/* Logo Styling */
 .pin-display .logo {
-  font-size: 2.5rem;
-  font-weight: bold;
+  font-size: 3rem;
+  font-weight: 900;
+  background: linear-gradient(135deg, #fff 0%, #f0f9ff 50%, #dbeafe 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  text-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+  letter-spacing: 2px;
+  animation: logoGlow 3s ease-in-out infinite alternate;
 }
 
+@keyframes logoGlow {
+  0% { filter: drop-shadow(0 0 10px rgba(255, 255, 255, 0.3)); }
+  100% { filter: drop-shadow(0 0 20px rgba(255, 255, 255, 0.6)); }
+}
+
+/* Subtitle */
+.pin-display p {
+  font-size: 1.1rem;
+  font-weight: 500;
+  color: rgba(255, 255, 255, 0.9);
+  margin: 0;
+  letter-spacing: 0.5px;
+}
+
+/* PIN Dots Container */
 .pin-dots-container {
   display: flex;
-  gap: 20px;
-  height: 24px;
-  margin: 10px 0;
+  gap: 16px;
+  height: 32px;
+  margin: 20px 0;
+  align-items: center;
 }
 
+/* Individual PIN Dots */
 .pin-dot {
-  width: 18px;
-  height: 18px;
+  width: 20px;
+  height: 20px;
   border-radius: 50%;
-  background-color: transparent;
-  border: 2px solid #555;
-  transition: background-color 0.2s ease;
+  background: rgba(255, 255, 255, 0.2);
+  border: 2px solid rgba(255, 255, 255, 0.4);
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+  overflow: hidden;
+}
+
+.pin-dot::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 0;
+  height: 0;
+  background: linear-gradient(135deg, #60a5fa, #3b82f6);
+  border-radius: 50%;
+  transform: translate(-50%, -50%);
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .pin-dot.filled {
-  background-color: #0a84ff;
-  border-color: #0a84ff;
+  background: linear-gradient(135deg, #60a5fa, #3b82f6);
+  border-color: #3b82f6;
+  box-shadow: 
+    0 0 20px rgba(59, 130, 246, 0.6),
+    inset 0 2px 4px rgba(255, 255, 255, 0.3);
+  transform: scale(1.1);
 }
 
+.pin-dot.filled::before {
+  width: 8px;
+  height: 8px;
+  background: rgba(255, 255, 255, 0.8);
+}
+
+/* PIN Pad Container */
 .pin-pad-container {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
-  gap: 20px;
+  gap: 16px;
   width: 100%;
-  max-width: 300px;
+  max-width: 280px;
+  margin-top: 20px;
 }
 
+/* PIN Buttons */
 .pin-btn {
   font-size: 1.8rem;
-  background-color: #2c2c2e;
+  font-weight: 600;
+  background: rgba(255, 255, 255, 0.15);
   color: #fff;
-  border: none;
-  border-radius: 50%;
-  width: 75px;
-  height: 75px;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  border-radius: 20px;
+  width: 80px;
+  height: 80px;
   display: flex;
   justify-content: center;
   align-items: center;
   cursor: pointer;
-  transition: background-color 0.2s ease;
   margin: 0 auto;
+  position: relative;
+  overflow: hidden;
+  backdrop-filter: blur(10px);
+  
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 
+    0 8px 16px rgba(0, 0, 0, 0.1),
+    inset 0 1px 0 rgba(255, 255, 255, 0.2);
+}
+
+/* Ripple Effect */
+.pin-btn::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 0;
+  height: 0;
+  background: rgba(255, 255, 255, 0.3);
+  border-radius: 50%;
+  transform: translate(-50%, -50%);
+  transition: all 0.6s ease;
+}
+
+.pin-btn:active::before {
+  width: 120px;
+  height: 120px;
+}
+
+/* Button Hover & Active States */
+.pin-btn:hover {
+  background: rgba(255, 255, 255, 0.25);
+  border-color: rgba(255, 255, 255, 0.5);
+  transform: translateY(-2px);
+  box-shadow: 
+    0 12px 24px rgba(0, 0, 0, 0.15),
+    inset 0 1px 0 rgba(255, 255, 255, 0.3);
 }
 
 .pin-btn:active {
-  background-color: #48484a;
+  transform: translateY(0px) scale(0.95);
+  background: rgba(255, 255, 255, 0.3);
+  box-shadow: 
+    0 4px 8px rgba(0, 0, 0, 0.2),
+    inset 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
+/* Special Buttons (Clear & Backspace) */
+.pin-btn[data-value="C"],
+.pin-btn[data-value="<"] {
+  background: rgba(239, 68, 68, 0.2);
+  border-color: rgba(239, 68, 68, 0.4);
+  color: #fecaca;
+}
+
+.pin-btn[data-value="C"]:hover,
+.pin-btn[data-value="<"]:hover {
+  background: rgba(239, 68, 68, 0.3);
+  border-color: rgba(239, 68, 68, 0.6);
+}
+
+/* Error Message */
 .error-message {
-  color: #ff453a;
-  height: 20px;
-  font-weight: 500;
+  color: #fecaca;
+  height: 24px;
+  font-weight: 600;
+  font-size: 1rem;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+  letter-spacing: 0.5px;
 }
 
+/* Loading Overlay */
 .loading-overlay {
   position: fixed;
   top: 0;
   left: 0;
   width: 100%;
   height: 100%;
-  background: rgba(0, 0, 0, 0.7);
+  background: rgba(0, 0, 0, 0.8);
+  backdrop-filter: blur(5px);
   display: none;
   justify-content: center;
   align-items: center;
-  z-index: 100;
+  z-index: 1000;
 }
 
 .loading-overlay .spinner {
-  width: 50px;
-  height: 50px;
-  border: 5px solid #444;
-  border-top-color: #fff;
+  width: 60px;
+  height: 60px;
+  border: 4px solid rgba(255, 255, 255, 0.2);
+  border-top-color: #60a5fa;
   border-radius: 50%;
   animation: spin 1s linear infinite;
+  filter: drop-shadow(0 0 10px rgba(96, 165, 250, 0.5));
 }
 
+/* Shake Animation for Errors */
 .pin-display.shake {
-  animation: shake 0.5s ease;
+  animation: shakeError 0.6s ease-in-out;
 }
 
-@keyframes shake {
-  0%, 100% { transform: translateX(0); }
-  10%, 30%, 50%, 70%, 90% { transform: translateX(-10px); }
-  20%, 40%, 60%, 80% { transform: translateX(10px); }
+@keyframes shakeError {
+  0%, 100% { transform: translateX(0) translateY(-10px); }
+  10%, 30%, 50%, 70%, 90% { transform: translateX(-8px) translateY(-10px); }
+  20%, 40%, 60%, 80% { transform: translateX(8px) translateY(-10px); }
 }
 
 @keyframes spin {
   to { transform: rotate(360deg); }
+}
+
+/* Responsive Design */
+@media (max-width: 480px) {
+  .pin-display {
+    padding: 30px 20px;
+    margin: 0 10px;
+  }
+  
+  .pin-display .logo {
+    font-size: 2.5rem;
+  }
+  
+  .pin-btn {
+    width: 70px;
+    height: 70px;
+    font-size: 1.6rem;
+  }
+  
+  .pin-pad-container {
+    gap: 12px;
+    max-width: 240px;
+  }
+}
+
+@media (max-width: 360px) {
+  .pin-btn {
+    width: 60px;
+    height: 60px;
+    font-size: 1.4rem;
+  }
+  
+  .pin-pad-container {
+    max-width: 200px;
+  }
+}
+
+/* Success Animation */
+@keyframes successPulse {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.05); }
+  100% { transform: scale(1); }
+}
+
+.pin-display.success {
+  animation: successPulse 0.6s ease-in-out;
+}
+
+.pin-display.success .pin-dot.filled {
+  background: linear-gradient(135deg, #10b981, #059669);
+  border-color: #10b981;
+  box-shadow: 0 0 20px rgba(16, 185, 129, 0.6);
 }

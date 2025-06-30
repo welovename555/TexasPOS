@@ -4,47 +4,29 @@ const themeManager = {
       name: 'Dark Mode',
       icon: '🌙',
       colors: {
-        '--main-bg': '#111315',
-        '--content-bg': '#1A1D1F',
-        '--text-primary': '#FFFFFF',
-        '--text-secondary': '#9A9A9E',
-        '--accent-color': '#0a84ff',
+        '--color-bg-main': '#111315',
+        '--color-bg-content': '#1A1D1F',
+        '--color-text-primary': '#FFFFFF',
+        '--color-text-secondary': '#9A9A9E',
+        '--color-accent-primary': '#0a84ff',
+        '--color-accent-secondary': '#34c759',
+        '--color-accent-danger': '#ff453a',
+        '--color-border': 'rgba(255, 255, 255, 0.1)',
         '--sidebar-width': '80px'
       }
     },
-    blue: {
-      name: 'Ocean Blue',
-      icon: '🌊',
+    light: {
+      name: 'Light Mode',
+      icon: '☀️',
       colors: {
-        '--main-bg': '#0f1419',
-        '--content-bg': '#1e2a3a',
-        '--text-primary': '#e6f3ff',
-        '--text-secondary': '#8bb8e8',
-        '--accent-color': '#00d4ff',
-        '--sidebar-width': '80px'
-      }
-    },
-    purple: {
-      name: 'Purple Night',
-      icon: '🌌',
-      colors: {
-        '--main-bg': '#1a0d2e',
-        '--content-bg': '#2d1b4e',
-        '--text-primary': '#f0e6ff',
-        '--text-secondary': '#b794d1',
-        '--accent-color': '#8b5cf6',
-        '--sidebar-width': '80px'
-      }
-    },
-    green: {
-      name: 'Forest Green',
-      icon: '🌲',
-      colors: {
-        '--main-bg': '#0d1b0d',
-        '--content-bg': '#1a2e1a',
-        '--text-primary': '#e6ffe6',
-        '--text-secondary': '#94c794',
-        '--accent-color': '#10b981',
+        '--color-bg-main': '#f8fafc',
+        '--color-bg-content': '#ffffff',
+        '--color-text-primary': '#1e293b',
+        '--color-text-secondary': '#64748b',
+        '--color-accent-primary': '#3b82f6',
+        '--color-accent-secondary': '#10b981',
+        '--color-accent-danger': '#ef4444',
+        '--color-border': 'rgba(0, 0, 0, 0.1)',
         '--sidebar-width': '80px'
       }
     }
@@ -122,7 +104,7 @@ const themeManager = {
     
     const themeOptions = Object.entries(this.themes).map(([key, theme]) => `
       <button class="theme-option ${key === this.currentTheme ? 'active' : ''}" data-theme="${key}">
-        <div class="theme-preview" style="background: ${theme.colors['--content-bg']}; border-color: ${theme.colors['--accent-color']};">
+        <div class="theme-preview" style="background: ${theme.colors['--color-bg-content']}; border-color: ${theme.colors['--color-accent-primary']};">
           <div class="theme-icon">${theme.icon}</div>
         </div>
         <div class="theme-name">${theme.name}</div>
@@ -133,7 +115,7 @@ const themeManager = {
       title: 'เลือกธีม',
       body: `
         <div class="theme-selector">
-          <p style="margin-bottom: 20px; color: var(--text-secondary); text-align: center;">
+          <p style="margin-bottom: 20px; color: var(--color-text-secondary); text-align: center;">
             เลือกธีมที่คุณชอบ
           </p>
           <div class="theme-options">
@@ -164,37 +146,63 @@ const themeManager = {
           flex-direction: column;
           align-items: center;
           gap: 12px;
-          padding: 16px;
-          border: 2px solid rgba(255, 255, 255, 0.1);
-          border-radius: 12px;
-          background: rgba(255, 255, 255, 0.02);
+          padding: 20px 16px;
+          border: 2px solid var(--color-border);
+          border-radius: 16px;
+          background: var(--color-bg-content);
           cursor: pointer;
-          transition: all 0.3s ease;
-          color: var(--text-primary);
+          transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+          color: var(--color-text-primary);
+          position: relative;
+          overflow: hidden;
+        }
+        
+        .theme-option::before {
+          content: '';
+          position: absolute;
+          top: 0;
+          left: -100%;
+          width: 100%;
+          height: 100%;
+          background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+          transition: left 0.6s ease;
+        }
+        
+        .theme-option:hover::before {
+          left: 100%;
         }
         
         .theme-option:hover {
-          border-color: var(--accent-color);
-          background: rgba(255, 255, 255, 0.05);
-          transform: translateY(-2px);
+          border-color: var(--color-accent-primary);
+          background: var(--color-bg-main);
+          transform: translateY(-4px);
+          box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
         }
         
         .theme-option.active {
-          border-color: var(--accent-color);
-          background: rgba(10, 132, 255, 0.1);
-          box-shadow: 0 0 20px rgba(10, 132, 255, 0.3);
+          border-color: var(--color-accent-primary);
+          background: linear-gradient(135deg, var(--color-accent-primary)15, var(--color-bg-content));
+          box-shadow: 0 8px 25px rgba(59, 130, 246, 0.25);
+          transform: translateY(-2px);
         }
         
         .theme-preview {
           width: 60px;
           height: 40px;
-          border-radius: 8px;
+          border-radius: 12px;
           border: 2px solid;
           display: flex;
           align-items: center;
           justify-content: center;
           position: relative;
           overflow: hidden;
+          box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+          transition: all 0.3s ease;
+        }
+        
+        .theme-option:hover .theme-preview {
+          transform: scale(1.1);
+          box-shadow: 0 6px 20px rgba(0, 0, 0, 0.2);
         }
         
         .theme-preview::before {
@@ -204,23 +212,35 @@ const themeManager = {
           left: 0;
           right: 0;
           bottom: 0;
-          background: linear-gradient(45deg, transparent 30%, rgba(255, 255, 255, 0.1) 50%, transparent 70%);
+          background: linear-gradient(45deg, transparent 30%, rgba(255, 255, 255, 0.2) 50%, transparent 70%);
+          animation: shimmer 2s infinite;
+        }
+        
+        @keyframes shimmer {
+          0% { transform: translateX(-100%); }
+          100% { transform: translateX(100%); }
         }
         
         .theme-icon {
-          font-size: 1.5rem;
+          font-size: 1.8rem;
           z-index: 1;
+          filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.1));
         }
         
         .theme-name {
-          font-size: 0.9rem;
+          font-size: 1rem;
           font-weight: 600;
           text-align: center;
+          letter-spacing: 0.5px;
         }
         
         @media (max-width: 480px) {
           .theme-options {
             grid-template-columns: 1fr;
+          }
+          
+          .theme-option {
+            padding: 16px;
           }
         }
       `;
