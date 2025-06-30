@@ -1,3 +1,5 @@
+/* css/components/modal.css */
+
 .modal-overlay {
   display: none;
   position: fixed;
@@ -18,17 +20,23 @@
   opacity: 1;
 }
 
+/* === [REVISED] Modal Container for Better Scrolling === */
 .modal-container {
   background-color: #2c2c2e;
   color: #ffffff;
-  padding: 24px;
   border-radius: 16px;
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
   width: 90%;
   max-width: 500px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
   transform: scale(0.95);
   transition: transform 0.3s ease;
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  
+  /* New Flexbox properties for scrolling */
+  display: flex;
+  flex-direction: column;
+  max-height: 85vh; /* Set a max height */
+  overflow: hidden; /* Hide overflow on the container itself */
 }
 
 .modal-overlay.active .modal-container {
@@ -40,8 +48,8 @@
   justify-content: space-between;
   align-items: center;
   border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-  padding-bottom: 16px;
-  margin-bottom: 16px;
+  padding: 16px 24px; /* Revised */
+  flex-shrink: 0; /* Prevent header from shrinking */
 }
 
 .modal-title {
@@ -65,14 +73,36 @@
   color: #ffffff;
 }
 
+/* Revised Modal Body for Scrolling */
 .modal-body {
-  margin-bottom: 24px;
+  padding: 24px;
+  overflow-y: auto; /* Allow vertical scrolling */
+  flex-grow: 1; /* Allow body to take up available space */
 }
 
+/* Custom scrollbar for a cleaner look */
+.modal-body::-webkit-scrollbar {
+    width: 6px;
+}
+.modal-body::-webkit-scrollbar-track {
+    background: transparent;
+}
+.modal-body::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.2);
+    border-radius: 3px;
+}
+.modal-body::-webkit-scrollbar-thumb:hover {
+    background: rgba(255, 255, 255, 0.3);
+}
+
+/* Revised Modal Footer */
 .modal-footer {
   display: flex;
   justify-content: flex-end;
   gap: 12px;
+  padding: 16px 24px;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  flex-shrink: 0; /* Prevent footer from shrinking */
 }
 
 /* Cart items styling */
