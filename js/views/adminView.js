@@ -1,4 +1,5 @@
 import { Spinner } from '../components/spinner.js';
+import { Modal } from '../components/modal.js';
 import { productService } from '../services/productService.js';
 import { authStore } from '../stores/authStore.js';
 
@@ -39,97 +40,17 @@ const adminView = {
         <p class="admin-subtitle">เพิ่มสินค้าใหม่และจัดการข้อมูลสินค้า</p>
       </div>
 
-      <div class="admin-sections">
-        <div class="admin-section">
-          <h2 class="section-title">
-            <svg class="section-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <circle cx="12" cy="12" r="10"></circle>
-              <line x1="12" y1="8" x2="12" y2="16"></line>
-              <line x1="8" y1="12" x2="16" y2="12"></line>
-            </svg>
-            เพิ่มสินค้าใหม่
-          </h2>
-          
-          <form class="product-form" id="add-product-form">
-            <div class="form-row">
-              <div class="form-group">
-                <label class="form-label">ชื่อสินค้า *</label>
-                <input type="text" class="form-input" id="product-name" required>
-              </div>
-              <div class="form-group">
-                <label class="form-label">หมวดหมู่ *</label>
-                <select class="form-select" id="product-category" required>
-                  <option value="">เลือกหมวดหมู่</option>
-                </select>
-              </div>
-            </div>
-
-            <div class="form-row">
-              <div class="form-group">
-                <label class="form-label">ราคาหลัก (บาท) *</label>
-                <input type="number" class="form-input" id="product-price" step="0.01" min="0" required>
-              </div>
-              <div class="form-group">
-                <label class="form-label">สต็อกเริ่มต้น</label>
-                <input type="number" class="form-input" id="product-stock" min="0" value="0">
-              </div>
-            </div>
-
-            <div class="form-group full-width">
-              <label class="form-label">รูปภาพสินค้า</label>
-              <div class="image-upload-container">
-                <div class="image-preview" id="image-preview">
-                  <div class="image-placeholder">
-                    <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                      <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
-                      <circle cx="8.5" cy="8.5" r="1.5"></circle>
-                      <polyline points="21,15 16,10 5,21"></polyline>
-                    </svg>
-                    <div>คลิกเพื่อเลือกรูป</div>
-                  </div>
-                </div>
-                <button type="button" class="image-upload-btn" id="upload-image-btn">เลือกรูปภาพ</button>
-                <input type="file" class="file-input" id="image-file-input" accept="image/*">
-              </div>
-            </div>
-
-            <div class="form-group full-width">
-              <div class="multi-price-container">
-                <div class="multi-price-header">
-                  <label class="form-label">ระบบหลายราคา</label>
-                  <div class="multi-price-toggle" id="multi-price-toggle">
-                    <div class="toggle-switch" id="toggle-switch">
-                      <div class="toggle-slider"></div>
-                    </div>
-                    <span>เปิดใช้งานหลายราคา</span>
-                  </div>
-                </div>
-                <div class="price-options" id="price-options">
-                  </div>
-                <button type="button" class="add-price-btn" id="add-price-btn" style="display: none;">
-                  + เพิ่มราคา
-                </button>
-              </div>
-            </div>
-
-            <div class="form-actions">
-              <button type="button" class="btn-secondary" id="reset-form-btn">ล้างฟอร์ม</button>
-              <button type="submit" class="btn-primary" id="submit-product-btn">เพิ่มสินค้า</button>
-            </div>
-          </form>
+      <div class="admin-dashboard">
+        <div class="admin-card add-product" id="add-product-card">
+          <span class="admin-card-icon">➕</span>
+          <h3 class="admin-card-title">เพิ่มสินค้าใหม่</h3>
+          <p class="admin-card-description">เพิ่มสินค้าใหม่เข้าสู่ระบบ</p>
         </div>
-
-        <div class="admin-section">
-          <h2 class="section-title">
-            <svg class="section-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"></path>
-              <rect x="8" y="2" width="8" height="4" rx="1" ry="1"></rect>
-            </svg>
-            จัดการสินค้า
-          </h2>
-          
-          <div class="product-list" id="product-list">
-            </div>
+        
+        <div class="admin-card manage-products" id="manage-products-card">
+          <span class="admin-card-icon">⚙️</span>
+          <h3 class="admin-card-title">จัดการสินค้า</h3>
+          <p class="admin-card-description">แก้ไขหรือลบสินค้าที่มีอยู่</p>
         </div>
       </div>
     `;
@@ -138,11 +59,128 @@ const adminView = {
   },
 
   attachEventListeners() {
+    const addProductCard = document.getElementById('add-product-card');
+    const manageProductsCard = document.getElementById('manage-products-card');
+
+    addProductCard.addEventListener('click', () => this.showAddProductModal());
+    manageProductsCard.addEventListener('click', () => this.showCategorySelectionModal());
+  },
+
+  async loadInitialData() {
+    try {
+      const [categoriesResult, productsResult] = await Promise.all([
+        productService.fetchCategories(),
+        productService.fetchAllProducts()
+      ]);
+
+      if (categoriesResult.success) {
+        this.categories = categoriesResult.data;
+      }
+
+      if (productsResult.success) {
+        this.products = productsResult.data;
+      }
+
+    } catch (error) {
+      console.error('Error loading initial data:', error);
+    }
+  },
+
+  showAddProductModal() {
+    const modal = Modal.create({
+      title: '➕ เพิ่มสินค้าใหม่',
+      body: this.renderAddProductForm(),
+      footer: `
+        <button class="btn btn-secondary" id="reset-form-btn">🔄 ล้างฟอร์ม</button>
+        <button class="btn btn-primary" id="submit-product-btn">✅ เพิ่มสินค้า</button>
+      `
+    });
+
+    // Add custom class for scrollable content
+    const modalContainer = modal.modalElement.querySelector('.modal-container');
+    modalContainer.style.maxHeight = '90vh';
+    modalContainer.style.overflow = 'hidden';
+    
+    const modalBody = modal.modalElement.querySelector('.modal-body');
+    modalBody.className += ' admin-modal-content';
+
+    setTimeout(() => this.attachAddProductEvents(modal), 100);
+  },
+
+  renderAddProductForm() {
+    return `
+      <form class="product-form" id="add-product-form">
+        <div class="form-group">
+          <label class="form-label">📝 ชื่อสินค้า *</label>
+          <input type="text" class="form-input" id="product-name" placeholder="กรอกชื่อสินค้า" required>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">📂 หมวดหมู่ *</label>
+          <select class="form-select" id="product-category" required>
+            <option value="">เลือกหมวดหมู่</option>
+            ${this.categories.map(cat => `<option value="${cat.id}">${cat.name}</option>`).join('')}
+          </select>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">💰 ราคาหลัก (บาท) *</label>
+            <input type="number" class="form-input" id="product-price" step="0.01" min="0" placeholder="0.00" required>
+          </div>
+          <div class="form-group">
+            <label class="form-label">📦 สต็อกเริ่มต้น</label>
+            <input type="number" class="form-input" id="product-stock" min="0" value="0" placeholder="0">
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">🖼️ รูปภาพสินค้า</label>
+          <div class="image-upload-container">
+            <div class="image-preview" id="image-preview">
+              <div class="image-placeholder">
+                <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
+                  <circle cx="8.5" cy="8.5" r="1.5"></circle>
+                  <polyline points="21,15 16,10 5,21"></polyline>
+                </svg>
+                <div>แตะเพื่อเลือกรูป</div>
+              </div>
+            </div>
+            <button type="button" class="image-upload-btn" id="upload-image-btn">📷 เลือกรูปภาพ</button>
+            <input type="file" class="file-input" id="image-file-input" accept="image/*">
+          </div>
+        </div>
+
+        <div class="form-group">
+          <div class="multi-price-container">
+            <div class="multi-price-header">
+              <label class="form-label">🏷️ ระบบหลายราคา</label>
+              <div class="multi-price-toggle" id="multi-price-toggle">
+                <div class="toggle-switch" id="toggle-switch">
+                  <div class="toggle-slider"></div>
+                </div>
+                <span>เปิดใช้งาน</span>
+              </div>
+            </div>
+            <div class="price-options" id="price-options"></div>
+            <button type="button" class="add-price-btn" id="add-price-btn" style="display: none;">
+              ➕ เพิ่มราคา
+            </button>
+          </div>
+        </div>
+      </form>
+    `;
+  },
+
+  attachAddProductEvents(modal) {
     // Image upload
     const uploadBtn = document.getElementById('upload-image-btn');
     const fileInput = document.getElementById('image-file-input');
+    const imagePreview = document.getElementById('image-preview');
     
     uploadBtn.addEventListener('click', () => fileInput.click());
+    imagePreview.addEventListener('click', () => fileInput.click());
     fileInput.addEventListener('change', (e) => this.handleImageUpload(e));
 
     // Multi-price toggle
@@ -154,145 +192,13 @@ const adminView = {
     addPriceBtn.addEventListener('click', () => this.addPriceOption());
 
     // Form submission
-    const form = document.getElementById('add-product-form');
-    form.addEventListener('submit', (e) => this.handleFormSubmit(e));
+    const submitBtn = document.getElementById('submit-product-btn');
+    submitBtn.addEventListener('click', (e) => this.handleFormSubmit(e, modal));
 
     // Reset form
     const resetBtn = document.getElementById('reset-form-btn');
-    resetBtn.addEventListener('click', () => this.resetForm());
+    resetBtn.addEventListener('click', () => this.resetAddProductForm());
   },
-
-  async loadInitialData() {
-    Spinner.show();
-    
-    try {
-      const categoriesResult = await productService.fetchCategories();
-      if (categoriesResult.success) {
-        this.categories = categoriesResult.data;
-        this.populateCategoryDropdown();
-      }
-
-      const productsResult = await productService.fetchAllProducts();
-      if (productsResult.success) {
-        this.products = productsResult.data;
-        this.renderProductList();
-      }
-
-    } catch (error) {
-      console.error('Error loading initial data:', error);
-    } finally {
-      Spinner.hide();
-    }
-  },
-
-  populateCategoryDropdown() {
-    const categorySelect = document.getElementById('product-category');
-    categorySelect.innerHTML = '<option value="">เลือกหมวดหมู่</option>';
-    
-    this.categories.forEach(category => {
-      const option = document.createElement('option');
-      option.value = category.id;
-      option.textContent = category.name;
-      categorySelect.appendChild(option);
-    });
-  },
-
-  renderProductList() {
-    const productList = document.getElementById('product-list');
-    
-    if (!this.products || this.products.length === 0) {
-      productList.innerHTML = `
-        <div class="empty-state">
-          <div class="empty-state-icon">📦</div>
-          <div class="empty-state-text">ยังไม่มีสินค้า</div>
-          <div class="empty-state-subtext">เพิ่มสินค้าใหม่เพื่อเริ่มต้นการขาย</div>
-        </div>
-      `;
-      return;
-    }
-    
-    // Helper function to escape characters for HTML attributes
-    const escapeHTML = (str) => {
-        if (typeof str !== 'string') return '';
-        return str.replace(/"/g, '&quot;').replace(/'/g, '&#39;');
-    };
-
-    productList.innerHTML = this.products.map(product => {
-      const stock = product.product_stocks?.[0]?.stock_quantity ?? 0;
-      const category = product.categories?.name || 'ไม่ระบุ';
-      const hasMultiPrice = product.multi_prices && product.multi_prices.length > 0;
-      const imageUrl = product.image_url || this.getPlaceholderImage(product.name);
-
-      return `
-        <div class="product-item-admin" data-product-id="${product.id}">
-          <div class="product-image-container">
-            <img src="${imageUrl}" 
-                 alt="${escapeHTML(product.name)}" 
-                 class="product-image-small ${!product.image_url ? 'placeholder-image' : ''}">
-            ${!product.image_url ? '<div class="image-overlay">ไม่มีรูป</div>' : ''}
-          </div>
-          <div class="product-info">
-            <div class="product-name-admin">${product.name}</div>
-            <div class="product-details">
-              ${category} • ราคา ${product.base_price} บาท • สต็อก ${stock}
-              ${hasMultiPrice ? ' • มีหลายราคา' : ''}
-            </div>
-          </div>
-          <div class="product-actions">
-            <button class="btn-icon edit" title="แก้ไขรูป">
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
-                <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
-              </svg>
-            </button>
-            <button class="btn-icon delete" data-product-name="${escapeHTML(product.name)}" title="ลบสินค้า">
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <polyline points="3,6 5,6 21,6"></polyline>
-                <path d="m19,6v14a2,2 0 0,1 -2,2H7a2,2 0 0,1 -2,-2V6m3,0V4a2,2 0 0,1 2,-2h4a2,2 0 0,1 2,2v2"></path>
-                <line x1="10" y1="11" x2="10" y2="17"></line>
-                <line x1="14" y1="11" x2="14" y2="17"></line>
-              </svg>
-            </button>
-          </div>
-        </div>
-      `;
-    }).join('');
-
-    // Attach event listeners after rendering
-    productList.querySelectorAll('.product-item-admin').forEach(item => {
-        const productId = item.dataset.productId;
-        
-        const editBtn = item.querySelector('.btn-icon.edit');
-        if (editBtn) {
-            editBtn.addEventListener('click', () => this.editProductImage(productId));
-        }
-
-        const deleteBtn = item.querySelector('.btn-icon.delete');
-        if (deleteBtn) {
-            const productName = deleteBtn.dataset.productName;
-            deleteBtn.addEventListener('click', () => this.deleteProduct(productId, productName));
-        }
-    });
-  },
-
-  getPlaceholderImage(productName) {
-    const name = productName.toLowerCase();
-
-    // ฟังก์ชันเข้ารหัสที่รองรับอักษร Unicode (ภาษาไทย)
-    const utf8_to_b64 = (str) => {
-        return window.btoa(unescape(encodeURIComponent(str)));
-    };
-
-    if (name.includes('น้ำ') || name.includes('ผสม')) {
-      return 'data:image/svg+xml;base64,' + utf8_to_b64(`<svg width="120" height="120" xmlns="http://www.w3.org/2000/svg"><rect width="120" height="120" fill="#1e3a8a"/><circle cx="60" cy="60" r="30" fill="#3b82f6" opacity="0.8"/><text x="60" y="90" text-anchor="middle" fill="white" font-size="12" font-family="Arial">น้ำ</text></svg>`);
-    } else if (name.includes('บุหรี่')) {
-      return 'data:image/svg+xml;base64,' + utf8_to_b64(`<svg width="120" height="120" xmlns="http://www.w3.org/2000/svg"><rect width="120" height="120" fill="#7c2d12"/><rect x="30" y="50" width="60" height="20" fill="#ea580c" opacity="0.8"/><text x="60" y="90" text-anchor="middle" fill="white" font-size="12" font-family="Arial">บุหรี่</text></svg>`);
-    } else if (name.includes('ยา')) {
-      return 'data:image/svg+xml;base64,' + utf8_to_b64(`<svg width="120" height="120" xmlns="http://www.w3.org/2000/svg"><rect width="120" height="120" fill="#166534"/><path d="M45 30 h30 v60 h-30 z M30 45 h60 v30 h-60 z" fill="#22c55e" opacity="0.8"/><text x="60" y="90" text-anchor="middle" fill="white" font-size="12" font-family="Arial">ยา</text></svg>`);
-    } else {
-      return 'data:image/svg+xml;base64,' + utf8_to_b64(`<svg width="120" height="120" xmlns="http://www.w3.org/2000/svg"><rect width="120" height="120" fill="#374151"/><rect x="30" y="30" width="60" height="60" fill="#6b7280" opacity="0.8"/><text x="60" y="90" text-anchor="middle" fill="white" font-size="12" font-family="Arial">สินค้า</text></svg>`);
-    }
-},
 
   async handleImageUpload(event) {
     const file = event.target.files[0];
@@ -327,11 +233,11 @@ const adminView = {
     addPriceBtn.style.display = this.isMultiPrice ? 'block' : 'none';
 
     if (this.isMultiPrice && this.priceOptions.length === 0) {
-        this.priceOptions = [{ label: '', price: 0 }];
+      this.priceOptions = [{ label: '', price: 0 }];
     }
     
     if (this.isMultiPrice) {
-        this.renderPriceOptions();
+      this.renderPriceOptions();
     }
   },
 
@@ -347,19 +253,19 @@ const adminView = {
 
     // Attach event listeners for price options
     priceOptionsContainer.querySelectorAll('.price-option').forEach(optionEl => {
-        const index = parseInt(optionEl.dataset.index);
+      const index = parseInt(optionEl.dataset.index);
 
-        optionEl.querySelector('.price-label-input').addEventListener('change', (e) => {
-            this.updatePriceOption(index, 'label', e.target.value);
-        });
+      optionEl.querySelector('.price-label-input').addEventListener('change', (e) => {
+        this.updatePriceOption(index, 'label', e.target.value);
+      });
 
-        optionEl.querySelector('.price-value-input').addEventListener('change', (e) => {
-            this.updatePriceOption(index, 'price', e.target.value);
-        });
+      optionEl.querySelector('.price-value-input').addEventListener('change', (e) => {
+        this.updatePriceOption(index, 'price', e.target.value);
+      });
 
-        optionEl.querySelector('.remove-price-btn').addEventListener('click', () => {
-            this.removePriceOption(index);
-        });
+      optionEl.querySelector('.remove-price-btn').addEventListener('click', () => {
+        this.removePriceOption(index);
+      });
     });
   },
 
@@ -379,15 +285,15 @@ const adminView = {
     }
   },
 
-  async handleFormSubmit(event) {
+  async handleFormSubmit(event, modal) {
     event.preventDefault();
     
     const submitBtn = document.getElementById('submit-product-btn');
-    const originalText = submitBtn.textContent;
+    const originalText = submitBtn.innerHTML;
     
     try {
       submitBtn.disabled = true;
-      submitBtn.textContent = 'กำลังเพิ่มสินค้า...';
+      submitBtn.innerHTML = '⏳ กำลังเพิ่มสินค้า...';
 
       const formData = {
         name: document.getElementById('product-name').value.trim(),
@@ -424,8 +330,8 @@ const adminView = {
       const result = await productService.createProduct(formData);
       
       if (result.success) {
-        alert('เพิ่มสินค้าสำเร็จ!');
-        this.resetForm();
+        modal.close();
+        this.showSuccessMessage('✅ เพิ่มสินค้าสำเร็จ!');
         this.loadInitialData();
         document.dispatchEvent(new CustomEvent('productsUpdated'));
       } else {
@@ -436,11 +342,11 @@ const adminView = {
       alert('เกิดข้อผิดพลาด: ' + error.message);
     } finally {
       submitBtn.disabled = false;
-      submitBtn.textContent = originalText;
+      submitBtn.innerHTML = originalText;
     }
   },
 
-  resetForm() {
+  resetAddProductForm() {
     document.getElementById('add-product-form').reset();
     document.getElementById('image-preview').innerHTML = `
       <div class="image-placeholder">
@@ -449,7 +355,7 @@ const adminView = {
           <circle cx="8.5" cy="8.5" r="1.5"></circle>
           <polyline points="21,15 16,10 5,21"></polyline>
         </svg>
-        <div>คลิกเพื่อเลือกรูป</div>
+        <div>แตะเพื่อเลือกรูป</div>
       </div>
     `;
     
@@ -458,67 +364,324 @@ const adminView = {
     document.getElementById('toggle-switch').classList.remove('active');
     document.getElementById('price-options').classList.remove('active');
     document.getElementById('add-price-btn').style.display = 'none';
-    this.renderPriceOptions(); // Clear the options visually
   },
 
-  async editProductImage(productId) {
-    const fileInput = document.createElement('input');
-    fileInput.type = 'file';
-    fileInput.accept = 'image/*';
-    
-    fileInput.onchange = async (e) => {
-      const file = e.target.files[0];
-      if (!file) return;
+  showCategorySelectionModal() {
+    const categoriesWithCounts = this.categories.map(category => {
+      const productCount = this.products.filter(p => p.category_id === category.id).length;
+      return { ...category, productCount };
+    });
 
-      if (!file.type.startsWith('image/')) {
-        alert('กรุณาเลือกไฟล์รูปภาพเท่านั้น');
-        return;
-      }
-      if (file.size > 5 * 1024 * 1024) {
-        alert('ขนาดไฟล์ต้องไม่เกิน 5MB');
-        return;
-      }
+    const modal = Modal.create({
+      title: '📂 เลือกหมวดหมู่สินค้า',
+      body: `
+        <div class="category-selection">
+          ${categoriesWithCounts.map(category => `
+            <div class="category-option" data-category-id="${category.id}">
+              <span class="category-option-icon">${this.getCategoryIcon(category.name)}</span>
+              <div class="category-option-info">
+                <div class="category-option-name">${category.name}</div>
+                <div class="category-option-count">${category.productCount} สินค้า</div>
+              </div>
+              <span class="product-option-arrow">›</span>
+            </div>
+          `).join('')}
+        </div>
+      `,
+      footer: `<button class="btn btn-cancel">❌ ยกเลิก</button>`
+    });
 
-      try {
-        Spinner.show();
-        const uploadResult = await productService.uploadProductImage(file);
-        if (!uploadResult.success) {
-          alert('ไม่สามารถอัปโหลดรูปภาพได้: ' + uploadResult.error.message);
-          return;
-        }
+    setTimeout(() => {
+      modal.modalElement.querySelectorAll('.category-option').forEach(option => {
+        option.addEventListener('click', () => {
+          const categoryId = option.dataset.categoryId;
+          modal.close();
+          this.showProductSelectionModal(categoryId);
+        });
+      });
+    }, 100);
+  },
 
-        const updateResult = await productService.updateProductImage(productId, uploadResult.url);
-        if (updateResult.success) {
-          alert('อัปเดตรูปภาพสำเร็จ!');
-          this.loadInitialData();
-          document.dispatchEvent(new CustomEvent('productsUpdated'));
-        } else {
-          alert('ไม่สามารถอัปเดตรูปภาพได้: ' + updateResult.error.message);
-        }
+  getCategoryIcon(categoryName) {
+    const name = categoryName.toLowerCase();
+    if (name.includes('น้ำ') || name.includes('ผสม')) return '🥤';
+    if (name.includes('บุหรี่')) return '🚬';
+    if (name.includes('ยา')) return '💊';
+    return '📦';
+  },
 
-      } catch (error) {
-        alert('เกิดข้อผิดพลาด: ' + error.message);
-      } finally {
-        Spinner.hide();
-      }
+  showProductSelectionModal(categoryId) {
+    const categoryProducts = this.products.filter(p => p.category_id === categoryId);
+    const category = this.categories.find(c => c.id === categoryId);
+
+    const modal = Modal.create({
+      title: `🛍️ เลือกสินค้าใน ${category?.name || 'หมวดหมู่'}`,
+      body: `
+        <div class="product-selection">
+          ${categoryProducts.map(product => `
+            <div class="product-option" data-product-id="${product.id}">
+              <img src="${product.image_url || this.getPlaceholderImage(product.name)}" 
+                   alt="${product.name}" class="product-option-image">
+              <div class="product-option-info">
+                <div class="product-option-name">${product.name}</div>
+                <div class="product-option-details">
+                  ราคา ${product.base_price} บาท • สต็อก ${this.getStockQuantity(product)}
+                  ${product.multi_prices && product.multi_prices.length > 0 ? ' • มีหลายราคา' : ''}
+                </div>
+              </div>
+              <span class="product-option-arrow">›</span>
+            </div>
+          `).join('')}
+        </div>
+      `,
+      footer: `
+        <button class="btn btn-secondary" onclick="this.closest('.modal-overlay').querySelector('[data-category-id]') ? this.closest('.modal-overlay').remove() : null">⬅️ กลับ</button>
+        <button class="btn btn-cancel">❌ ยกเลิก</button>
+      `
+    });
+
+    setTimeout(() => {
+      modal.modalElement.querySelectorAll('.product-option').forEach(option => {
+        option.addEventListener('click', () => {
+          const productId = option.dataset.productId;
+          modal.close();
+          this.showEditProductModal(productId);
+        });
+      });
+    }, 100);
+  },
+
+  getPlaceholderImage(productName) {
+    const name = productName.toLowerCase();
+    const utf8_to_b64 = (str) => {
+      return window.btoa(unescape(encodeURIComponent(str)));
     };
 
-    fileInput.click();
+    if (name.includes('น้ำ') || name.includes('ผสม')) {
+      return 'data:image/svg+xml;base64,' + utf8_to_b64(`<svg width="60" height="60" xmlns="http://www.w3.org/2000/svg"><rect width="60" height="60" fill="#1e3a8a" rx="8"/><circle cx="30" cy="30" r="15" fill="#3b82f6" opacity="0.8"/><text x="30" y="45" text-anchor="middle" fill="white" font-size="8" font-family="Arial">🥤</text></svg>`);
+    } else if (name.includes('บุหรี่')) {
+      return 'data:image/svg+xml;base64,' + utf8_to_b64(`<svg width="60" height="60" xmlns="http://www.w3.org/2000/svg"><rect width="60" height="60" fill="#7c2d12" rx="8"/><rect x="15" y="25" width="30" height="8" fill="#ea580c" opacity="0.8" rx="4"/><text x="30" y="45" text-anchor="middle" fill="white" font-size="8" font-family="Arial">🚬</text></svg>`);
+    } else if (name.includes('ยา')) {
+      return 'data:image/svg+xml;base64,' + utf8_to_b64(`<svg width="60" height="60" xmlns="http://www.w3.org/2000/svg"><rect width="60" height="60" fill="#166534" rx="8"/><path d="M22 15 h16 v30 h-16 z M15 22 h30 v16 h-30 z" fill="#22c55e" opacity="0.8"/><text x="30" y="45" text-anchor="middle" fill="white" font-size="8" font-family="Arial">💊</text></svg>`);
+    } else {
+      return 'data:image/svg+xml;base64,' + utf8_to_b64(`<svg width="60" height="60" xmlns="http://www.w3.org/2000/svg"><rect width="60" height="60" fill="#374151" rx="8"/><rect x="15" y="15" width="30" height="30" fill="#6b7280" opacity="0.8" rx="6"/><text x="30" y="45" text-anchor="middle" fill="white" font-size="8" font-family="Arial">📦</text></svg>`);
+    }
   },
 
-  async deleteProduct(productId, productName) {
-    const confirmed = confirm(`คุณต้องการลบสินค้า "${productName}" หรือไม่?\n\nการลบจะไม่สามารถกู้คืนได้`);
-    if (!confirmed) return;
+  getStockQuantity(product) {
+    return product.product_stocks?.[0]?.stock_quantity ?? 0;
+  },
 
-    const doubleConfirmed = confirm(`ยืนยันอีกครั้ง: ลบสินค้า "${productName}" ใช่หรือไม่?`);
-    if (!doubleConfirmed) return;
+  showEditProductModal(productId) {
+    const product = this.products.find(p => p.id === productId);
+    if (!product) return;
+
+    const modal = Modal.create({
+      title: `✏️ แก้ไข: ${product.name}`,
+      body: this.renderEditProductForm(product),
+      footer: `
+        <button class="btn btn-danger" id="delete-product-btn">🗑️ ลบสินค้า</button>
+        <button class="btn btn-secondary" id="update-image-btn">📷 เปลี่ยนรูป</button>
+        <button class="btn btn-primary" id="save-changes-btn">💾 บันทึก</button>
+      `
+    });
+
+    // Add custom class for scrollable content
+    const modalContainer = modal.modalElement.querySelector('.modal-container');
+    modalContainer.style.maxHeight = '90vh';
+    modalContainer.style.overflow = 'hidden';
+    
+    const modalBody = modal.modalElement.querySelector('.modal-body');
+    modalBody.className += ' admin-modal-content';
+
+    setTimeout(() => this.attachEditProductEvents(modal, product), 100);
+  },
+
+  renderEditProductForm(product) {
+    const category = this.categories.find(c => c.id === product.category_id);
+    const stock = this.getStockQuantity(product);
+
+    return `
+      <div class="edit-product-form">
+        <div class="edit-form-section">
+          <h4 class="edit-section-title">📝 ข้อมูลพื้นฐาน</h4>
+          <div class="form-group">
+            <label class="form-label">ชื่อสินค้า</label>
+            <input type="text" class="form-input" id="edit-product-name" value="${product.name}">
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label">ราคาหลัก (บาท)</label>
+              <input type="number" class="form-input" id="edit-product-price" step="0.01" min="0" value="${product.base_price}">
+            </div>
+            <div class="form-group">
+              <label class="form-label">หมวดหมู่</label>
+              <select class="form-select" id="edit-product-category">
+                ${this.categories.map(cat => 
+                  `<option value="${cat.id}" ${cat.id === product.category_id ? 'selected' : ''}>${cat.name}</option>`
+                ).join('')}
+              </select>
+            </div>
+          </div>
+        </div>
+
+        <div class="edit-form-section">
+          <h4 class="edit-section-title">📊 ข้อมูลเพิ่มเติม</h4>
+          <div class="form-group">
+            <label class="form-label">สต็อกปัจจุบัน: <strong style="color: var(--color-accent-secondary);">${stock} ชิ้น</strong></label>
+            <p style="font-size: 0.8rem; color: var(--color-text-secondary); margin: 4px 0 0 0;">
+              💡 ใช้หน้าจัดการสต็อกเพื่อเพิ่มสต็อก
+            </p>
+          </div>
+          ${product.multi_prices && product.multi_prices.length > 0 ? `
+            <div class="form-group">
+              <label class="form-label">ระบบหลายราคา</label>
+              <div style="background: rgba(255,255,255,0.02); padding: 12px; border-radius: 8px; border: 1px solid rgba(255,255,255,0.1);">
+                ${product.multi_prices.map(price => `
+                  <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
+                    <span>${price.label || 'ไม่มีป้ายกำกับ'}</span>
+                    <strong>${price.price} บาท</strong>
+                  </div>
+                `).join('')}
+              </div>
+            </div>
+          ` : ''}
+        </div>
+
+        <div class="edit-form-section">
+          <h4 class="edit-section-title">🖼️ รูปภาพสินค้า</h4>
+          <div class="image-upload-container">
+            <div class="image-preview">
+              ${product.image_url ? 
+                `<img src="${product.image_url}" alt="${product.name}">` : 
+                `<div class="image-placeholder">
+                  <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
+                    <circle cx="8.5" cy="8.5" r="1.5"></circle>
+                    <polyline points="21,15 16,10 5,21"></polyline>
+                  </svg>
+                  <div>ไม่มีรูปภาพ</div>
+                </div>`
+              }
+            </div>
+          </div>
+        </div>
+      </div>
+      <input type="file" id="edit-image-file-input" accept="image/*" style="display: none;">
+    `;
+  },
+
+  attachEditProductEvents(modal, product) {
+    const deleteBtn = document.getElementById('delete-product-btn');
+    const updateImageBtn = document.getElementById('update-image-btn');
+    const saveBtn = document.getElementById('save-changes-btn');
+    const fileInput = document.getElementById('edit-image-file-input');
+
+    deleteBtn.addEventListener('click', () => this.confirmDeleteProduct(product, modal));
+    updateImageBtn.addEventListener('click', () => fileInput.click());
+    saveBtn.addEventListener('click', () => this.saveProductChanges(product, modal));
+
+    fileInput.addEventListener('change', (e) => this.handleEditImageUpload(e, product, modal));
+  },
+
+  async handleEditImageUpload(event, product, modal) {
+    const file = event.target.files[0];
+    if (!file) return;
+
+    if (!file.type.startsWith('image/')) {
+      alert('กรุณาเลือกไฟล์รูปภาพเท่านั้น');
+      return;
+    }
+
+    if (file.size > 5 * 1024 * 1024) {
+      alert('ขนาดไฟล์ต้องไม่เกิน 5MB');
+      return;
+    }
+
+    const updateImageBtn = document.getElementById('update-image-btn');
+    const originalText = updateImageBtn.innerHTML;
 
     try {
-      Spinner.show();
-      const result = await productService.deleteProduct(productId);
+      updateImageBtn.disabled = true;
+      updateImageBtn.innerHTML = '⏳ กำลังอัปโหลด...';
+
+      const uploadResult = await productService.uploadProductImage(file);
+      if (!uploadResult.success) {
+        alert('ไม่สามารถอัปโหลดรูปภาพได้: ' + uploadResult.error.message);
+        return;
+      }
+
+      const updateResult = await productService.updateProductImage(product.id, uploadResult.url);
+      if (updateResult.success) {
+        // Update preview
+        const imagePreview = modal.modalElement.querySelector('.image-preview');
+        imagePreview.innerHTML = `<img src="${uploadResult.url}" alt="${product.name}">`;
+        
+        this.showSuccessMessage('✅ อัปเดตรูปภาพสำเร็จ!');
+        this.loadInitialData();
+        document.dispatchEvent(new CustomEvent('productsUpdated'));
+      } else {
+        alert('ไม่สามารถอัปเดตรูปภาพได้: ' + updateResult.error.message);
+      }
+
+    } catch (error) {
+      alert('เกิดข้อผิดพลาด: ' + error.message);
+    } finally {
+      updateImageBtn.disabled = false;
+      updateImageBtn.innerHTML = originalText;
+    }
+  },
+
+  async saveProductChanges(product, modal) {
+    // This would require implementing an update product service
+    // For now, just show a message
+    alert('ฟีเจอร์แก้ไขข้อมูลสินค้าจะเพิ่มในอนาคต\nปัจจุบันสามารถเปลี่ยนรูปภาพและลบสินค้าได้เท่านั้น');
+  },
+
+  confirmDeleteProduct(product, modal) {
+    const confirmModal = Modal.create({
+      title: '⚠️ ยืนยันการลบสินค้า',
+      body: `
+        <div style="text-align: center; padding: 20px 0;">
+          <div style="font-size: 3rem; margin-bottom: 16px;">🗑️</div>
+          <h3 style="color: var(--color-accent-danger); margin-bottom: 12px;">คุณแน่ใจหรือไม่?</h3>
+          <p style="margin-bottom: 16px;">คุณกำลังจะลบสินค้า:</p>
+          <div style="background: rgba(255,69,58,0.1); padding: 12px; border-radius: 8px; border: 1px solid rgba(255,69,58,0.3);">
+            <strong style="color: var(--color-text-primary);">${product.name}</strong>
+          </div>
+          <p style="margin-top: 16px; color: var(--color-text-secondary); font-size: 0.9rem;">
+            การลบจะไม่สามารถกู้คืนได้
+          </p>
+        </div>
+      `,
+      footer: `
+        <button class="btn btn-secondary">❌ ยกเลิก</button>
+        <button class="btn btn-danger" id="confirm-delete-btn">🗑️ ลบสินค้า</button>
+      `
+    });
+
+    setTimeout(() => {
+      const confirmDeleteBtn = document.getElementById('confirm-delete-btn');
+      confirmDeleteBtn.addEventListener('click', async () => {
+        await this.deleteProduct(product, confirmModal, modal);
+      });
+    }, 100);
+  },
+
+  async deleteProduct(product, confirmModal, editModal) {
+    const confirmDeleteBtn = document.getElementById('confirm-delete-btn');
+    const originalText = confirmDeleteBtn.innerHTML;
+
+    try {
+      confirmDeleteBtn.disabled = true;
+      confirmDeleteBtn.innerHTML = '⏳ กำลังลบ...';
+
+      const result = await productService.deleteProduct(product.id);
       
       if (result.success) {
-        alert('ลบสินค้าสำเร็จ!');
+        confirmModal.close();
+        editModal.close();
+        this.showSuccessMessage('✅ ลบสินค้าสำเร็จ!');
         this.loadInitialData();
         document.dispatchEvent(new CustomEvent('productsUpdated'));
       } else {
@@ -528,8 +691,21 @@ const adminView = {
     } catch (error) {
       alert('เกิดข้อผิดพลาด: ' + error.message);
     } finally {
-      Spinner.hide();
+      confirmDeleteBtn.disabled = false;
+      confirmDeleteBtn.innerHTML = originalText;
     }
+  },
+
+  showSuccessMessage(message) {
+    const successMsg = document.createElement('div');
+    successMsg.className = 'success-message';
+    successMsg.innerHTML = message;
+    document.body.appendChild(successMsg);
+    
+    setTimeout(() => {
+      successMsg.style.animation = 'slideOut 0.3s ease';
+      setTimeout(() => successMsg.remove(), 300);
+    }, 3000);
   }
 };
 

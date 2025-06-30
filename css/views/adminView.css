@@ -4,10 +4,11 @@
 
 .admin-header {
   margin-bottom: 32px;
+  text-align: center;
 }
 
 .admin-title {
-  font-size: 2.2rem;
+  font-size: 2rem;
   font-weight: 800;
   color: #FFFFFF;
   margin: 0 0 8px 0;
@@ -17,48 +18,120 @@
 }
 
 .admin-subtitle {
-  color: var(--color-text-secondary); /* แก้ไข */
+  color: var(--color-text-secondary);
   font-size: 1rem;
   margin: 0;
 }
 
-.admin-sections {
+/* Dashboard Cards */
+.admin-dashboard {
   display: grid;
-  gap: 32px;
+  grid-template-columns: 1fr;
+  gap: 20px;
+  max-width: 500px;
+  margin: 0 auto;
 }
 
-.admin-section {
-  background-color: var(--color-bg-content); /* แก้ไข */
-  border-radius: 16px;
+.admin-card {
+  background: linear-gradient(135deg, var(--color-bg-content) 0%, rgba(26, 29, 31, 0.8) 100%);
+  border-radius: 20px;
   padding: 24px;
-  border: 1px solid rgba(255, 255, 255, 0.05);
-}
-
-.section-title {
-  font-size: 1.4rem;
-  font-weight: 700;
-  color: var(--color-text-primary); /* แก้ไข */
-  margin: 0 0 20px 0;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+  backdrop-filter: blur(10px);
+  cursor: pointer;
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+  min-height: 120px;
   display: flex;
+  flex-direction: column;
+  justify-content: center;
   align-items: center;
-  gap: 12px;
+  text-align: center;
 }
 
-.section-icon {
-  width: 24px;
-  height: 24px;
-  color: var(--color-accent-primary); /* แก้ไข */
+.admin-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+  transition: left 0.5s ease;
 }
 
-/* Add Product Form */
+.admin-card:hover::before {
+  left: 100%;
+}
+
+.admin-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.4);
+  border-color: var(--color-accent-primary);
+}
+
+.admin-card:active {
+  transform: translateY(-2px);
+}
+
+.admin-card-icon {
+  font-size: 2.5rem;
+  margin-bottom: 12px;
+  display: block;
+}
+
+.admin-card-title {
+  font-size: 1.3rem;
+  font-weight: 700;
+  color: var(--color-text-primary);
+  margin: 0 0 8px 0;
+}
+
+.admin-card-description {
+  font-size: 0.9rem;
+  color: var(--color-text-secondary);
+  margin: 0;
+  line-height: 1.4;
+}
+
+.admin-card.add-product {
+  background: linear-gradient(135deg, rgba(52, 199, 89, 0.1) 0%, rgba(52, 199, 89, 0.05) 100%);
+  border-color: rgba(52, 199, 89, 0.2);
+}
+
+.admin-card.add-product:hover {
+  border-color: var(--color-accent-secondary);
+  box-shadow: 0 12px 40px rgba(52, 199, 89, 0.2);
+}
+
+.admin-card.manage-products {
+  background: linear-gradient(135deg, rgba(10, 132, 255, 0.1) 0%, rgba(10, 132, 255, 0.05) 100%);
+  border-color: rgba(10, 132, 255, 0.2);
+}
+
+.admin-card.manage-products:hover {
+  border-color: var(--color-accent-primary);
+  box-shadow: 0 12px 40px rgba(10, 132, 255, 0.2);
+}
+
+/* Modal Styles */
+.admin-modal-content {
+  max-height: 80vh;
+  overflow-y: auto;
+}
+
+/* Add Product Form in Modal */
 .product-form {
   display: grid;
   gap: 20px;
+  padding: 10px 0;
 }
 
 .form-row {
   display: grid;
-  grid-template-columns: 1fr 1fr;
+  grid-template-columns: 1fr;
   gap: 16px;
 }
 
@@ -68,34 +141,32 @@
   gap: 8px;
 }
 
-.form-group.full-width {
-  grid-column: 1 / -1;
-}
-
 .form-label {
-  font-size: 0.9rem;
+  font-size: 0.95rem;
   font-weight: 600;
-  color: var(--color-text-primary); /* แก้ไข */
+  color: var(--color-text-primary);
 }
 
 .form-input,
 .form-select,
 .form-textarea {
-  padding: 12px 16px;
-  border-radius: 8px;
-  border: 1px solid rgba(255, 255, 255, 0.2);
+  padding: 14px 16px;
+  border-radius: 12px;
+  border: 2px solid rgba(255, 255, 255, 0.2);
   background-color: rgba(255, 255, 255, 0.05);
-  color: var(--color-text-primary); /* แก้ไข */
+  color: var(--color-text-primary);
   font-size: 1rem;
-  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+  transition: all 0.3s ease;
+  box-sizing: border-box;
 }
 
 .form-input:focus,
 .form-select:focus,
 .form-textarea:focus {
   outline: none;
-  border-color: var(--color-accent-primary); /* แก้ไข */
-  box-shadow: 0 0 0 2px rgba(10, 132, 255, 0.2);
+  border-color: var(--color-accent-primary);
+  box-shadow: 0 0 0 3px rgba(10, 132, 255, 0.1);
+  background-color: rgba(255, 255, 255, 0.08);
 }
 
 .form-textarea {
@@ -107,27 +178,18 @@
   cursor: pointer;
 }
 
-.form-input[type="number"] {
-  -moz-appearance: textfield;
-}
-
-.form-input[type="number"]::-webkit-outer-spin-button,
-.form-input[type="number"]::-webkit-inner-spin-button {
-  -webkit-appearance: none;
-  margin: 0;
-}
-
 /* Image Upload */
 .image-upload-container {
   display: flex;
   flex-direction: column;
   gap: 12px;
+  align-items: center;
 }
 
 .image-preview {
-  width: 120px;
-  height: 120px;
-  border-radius: 8px;
+  width: 100px;
+  height: 100px;
+  border-radius: 12px;
   border: 2px dashed rgba(255, 255, 255, 0.2);
   display: flex;
   align-items: center;
@@ -135,35 +197,52 @@
   background-color: rgba(255, 255, 255, 0.02);
   overflow: hidden;
   position: relative;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.image-preview:hover {
+  border-color: var(--color-accent-primary);
+  background-color: rgba(255, 255, 255, 0.05);
 }
 
 .image-preview img {
   width: 100%;
   height: 100%;
   object-fit: cover;
-  border-radius: 6px;
+  border-radius: 10px;
 }
 
 .image-placeholder {
-  color: var(--color-text-secondary); /* แก้ไข */
+  color: var(--color-text-secondary);
   text-align: center;
   font-size: 0.8rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+}
+
+.image-placeholder svg {
+  width: 32px;
+  height: 32px;
+  opacity: 0.6;
 }
 
 .image-upload-btn {
-  padding: 8px 16px;
-  border-radius: 6px;
+  padding: 10px 20px;
+  border-radius: 10px;
   border: 1px solid rgba(255, 255, 255, 0.2);
   background-color: rgba(255, 255, 255, 0.05);
-  color: var(--color-text-primary); /* แก้ไข */
+  color: var(--color-text-primary);
   font-size: 0.9rem;
   cursor: pointer;
-  transition: background-color 0.2s ease;
-  align-self: flex-start;
+  transition: all 0.3s ease;
 }
 
 .image-upload-btn:hover {
   background-color: rgba(255, 255, 255, 0.1);
+  border-color: var(--color-accent-primary);
 }
 
 .file-input {
@@ -173,7 +252,7 @@
 /* Multi-Price System */
 .multi-price-container {
   border: 1px solid rgba(255, 255, 255, 0.1);
-  border-radius: 8px;
+  border-radius: 12px;
   padding: 16px;
   background-color: rgba(255, 255, 255, 0.02);
 }
@@ -188,36 +267,37 @@
 .multi-price-toggle {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 12px;
   cursor: pointer;
 }
 
 .toggle-switch {
-  width: 44px;
-  height: 24px;
+  width: 50px;
+  height: 28px;
   background-color: rgba(255, 255, 255, 0.2);
-  border-radius: 12px;
+  border-radius: 14px;
   position: relative;
-  transition: background-color 0.2s ease;
+  transition: background-color 0.3s ease;
 }
 
 .toggle-switch.active {
-  background-color: var(--color-accent-primary); /* แก้ไข */
+  background-color: var(--color-accent-primary);
 }
 
 .toggle-slider {
-  width: 20px;
-  height: 20px;
+  width: 24px;
+  height: 24px;
   background-color: white;
   border-radius: 50%;
   position: absolute;
   top: 2px;
   left: 2px;
-  transition: transform 0.2s ease;
+  transition: transform 0.3s ease;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
 }
 
 .toggle-switch.active .toggle-slider {
-  transform: translateX(20px);
+  transform: translateX(22px);
 }
 
 .price-options {
@@ -232,24 +312,24 @@
 
 .price-option {
   display: grid;
-  grid-template-columns: 1fr 120px 40px;
+  grid-template-columns: 1fr 100px 40px;
   gap: 12px;
   align-items: center;
 }
 
 .remove-price-btn {
-  width: 32px;
-  height: 32px;
-  border-radius: 6px;
+  width: 36px;
+  height: 36px;
+  border-radius: 8px;
   border: 1px solid rgba(255, 69, 58, 0.3);
   background-color: rgba(255, 69, 58, 0.1);
-  color: var(--color-accent-danger); /* แก้ไข */
+  color: var(--color-accent-danger);
   cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
   font-size: 1.2rem;
-  transition: background-color 0.2s ease;
+  transition: all 0.3s ease;
 }
 
 .remove-price-btn:hover {
@@ -257,14 +337,14 @@
 }
 
 .add-price-btn {
-  padding: 8px 16px;
-  border-radius: 6px;
-  border: 1px solid var(--color-accent-primary); /* แก้ไข */
+  padding: 10px 16px;
+  border-radius: 8px;
+  border: 1px solid var(--color-accent-primary);
   background-color: rgba(10, 132, 255, 0.1);
-  color: var(--color-accent-primary); /* แก้ไข */
+  color: var(--color-accent-primary);
   font-size: 0.9rem;
   cursor: pointer;
-  transition: background-color 0.2s ease;
+  transition: all 0.3s ease;
   align-self: flex-start;
 }
 
@@ -272,204 +352,349 @@
   background-color: rgba(10, 132, 255, 0.2);
 }
 
-/* Form Actions */
-.form-actions {
-  display: flex;
+/* Category Selection Modal */
+.category-selection {
+  display: grid;
+  grid-template-columns: 1fr;
   gap: 12px;
-  justify-content: flex-end;
-  padding-top: 20px;
-  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  padding: 10px 0;
 }
 
-.btn-primary {
-  padding: 12px 24px;
-  border-radius: 8px;
-  border: none;
-  background-color: var(--color-accent-primary); /* แก้ไข */
-  color: white;
-  font-size: 1rem;
-  font-weight: 600;
+.category-option {
+  padding: 16px 20px;
+  border-radius: 12px;
+  border: 2px solid rgba(255, 255, 255, 0.1);
+  background: linear-gradient(135deg, var(--color-bg-content) 0%, rgba(26, 29, 31, 0.8) 100%);
+  color: var(--color-text-primary);
   cursor: pointer;
-  transition: background-color 0.2s ease;
-}
-
-.btn-primary:hover {
-  background-color: #3f9eff;
-}
-
-.btn-primary:disabled {
-  background-color: #555555;
-  cursor: not-allowed;
-}
-
-.btn-secondary {
-  padding: 12px 24px;
-  border-radius: 8px;
-  border: 1px solid rgba(255, 255, 255, 0.2);
-  background-color: transparent;
-  color: var(--color-text-primary); /* แก้ไข */
-  font-size: 1rem;
-  font-weight: 600;
-  cursor: pointer;
-  transition: background-color 0.2s ease;
-}
-
-.btn-secondary:hover {
-  background-color: rgba(255, 255, 255, 0.05);
-}
-
-/* Product Management */
-.product-list {
-  display: grid;
-  gap: 16px;
-}
-
-.product-item-admin {
-  display: grid;
-  grid-template-columns: 100px 1fr auto;
-  gap: 16px;
+  transition: all 0.3s ease;
+  display: flex;
   align-items: center;
-  padding: 16px;
-  background-color: rgba(255, 255, 255, 0.02);
-  border-radius: 8px;
-  border: 1px solid rgba(255, 255, 255, 0.05);
-  transition: all 0.2s ease;
-}
-
-.product-item-admin:hover {
-  background-color: rgba(255, 255, 255, 0.05);
-  transform: translateY(-1px);
-}
-
-.product-image-container {
+  gap: 12px;
+  font-size: 1rem;
+  font-weight: 600;
   position: relative;
-  width: 100px;
-  height: 100px;
-  border-radius: 8px;
   overflow: hidden;
-  background-color: rgba(255, 255, 255, 0.05);
+  min-height: 60px;
 }
 
-.product-image-small {
+.category-option::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
   width: 100%;
   height: 100%;
-  object-fit: cover;
-  border-radius: 6px;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+  transition: left 0.5s ease;
 }
 
-.product-image-small.placeholder-image {
-  opacity: 0.8;
+.category-option:hover::before {
+  left: 100%;
 }
 
-.image-overlay {
+.category-option:hover {
+  border-color: var(--color-accent-primary);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(10, 132, 255, 0.2);
+}
+
+.category-option-icon {
+  font-size: 1.5rem;
+}
+
+.category-option-info {
+  flex: 1;
+}
+
+.category-option-name {
+  font-size: 1.1rem;
+  margin-bottom: 4px;
+}
+
+.category-option-count {
+  font-size: 0.8rem;
+  color: var(--color-text-secondary);
+}
+
+/* Product Selection Modal */
+.product-selection {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 10px;
+  padding: 10px 0;
+  max-height: 60vh;
+  overflow-y: auto;
+}
+
+.product-option {
+  padding: 12px 16px;
+  border-radius: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  background-color: rgba(255, 255, 255, 0.02);
+  color: var(--color-text-primary);
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: grid;
+  grid-template-columns: 60px 1fr auto;
+  gap: 12px;
+  align-items: center;
+  position: relative;
+  overflow: hidden;
+}
+
+.product-option::before {
+  content: '';
   position: absolute;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  background: linear-gradient(transparent, rgba(0, 0, 0, 0.8));
-  color: white;
-  font-size: 0.7rem;
-  text-align: center;
-  padding: 4px;
-  font-weight: 500;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.05), transparent);
+  transition: left 0.5s ease;
 }
 
-.product-info {
+.product-option:hover::before {
+  left: 100%;
+}
+
+.product-option:hover {
+  border-color: var(--color-accent-primary);
+  background-color: rgba(255, 255, 255, 0.05);
+  transform: translateX(4px);
+}
+
+.product-option-image {
+  width: 60px;
+  height: 60px;
+  border-radius: 8px;
+  object-fit: cover;
+  background-color: rgba(255, 255, 255, 0.1);
+}
+
+.product-option-info {
   display: flex;
   flex-direction: column;
   gap: 4px;
   min-width: 0;
 }
 
-.product-name-admin {
+.product-option-name {
   font-size: 1rem;
   font-weight: 600;
-  color: var(--color-text-primary); /* แก้ไข */
-  white-space: nowrap;
+  line-height: 1.3;
   overflow: hidden;
   text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
-.product-details {
-  font-size: 0.85rem;
-  color: var(--color-text-secondary); /* แก้ไข */
-  line-height: 1.4;
+.product-option-details {
+  font-size: 0.8rem;
+  color: var(--color-text-secondary);
 }
 
-.product-actions {
-  display: flex;
-  gap: 8px;
-  flex-shrink: 0;
+.product-option-arrow {
+  color: var(--color-text-secondary);
+  font-size: 1.2rem;
 }
 
-.btn-icon {
-  width: 36px;
-  height: 36px;
-  border-radius: 6px;
-  border: 1px solid rgba(255, 255, 255, 0.2);
-  background-color: rgba(255, 255, 255, 0.05);
-  color: var(--color-text-primary); /* แก้ไข */
-  cursor: pointer;
+/* Edit Product Modal */
+.edit-product-form {
+  display: grid;
+  gap: 16px;
+  padding: 10px 0;
+}
+
+.edit-form-section {
+  padding: 16px;
+  border-radius: 12px;
+  background-color: rgba(255, 255, 255, 0.02);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.edit-section-title {
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--color-text-primary);
+  margin: 0 0 12px 0;
   display: flex;
   align-items: center;
-  justify-content: center;
-  transition: all 0.2s ease;
+  gap: 8px;
 }
 
-.btn-icon:hover {
-  background-color: rgba(255, 255, 255, 0.1);
-  transform: translateY(-1px);
+.edit-actions {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  margin-top: 20px;
 }
 
-.btn-icon.edit {
-  border-color: rgba(10, 132, 255, 0.3);
-  background-color: rgba(10, 132, 255, 0.1);
-  color: var(--color-accent-primary); /* แก้ไข */
+.btn-danger {
+  background: linear-gradient(135deg, rgba(255, 69, 58, 0.2) 0%, rgba(255, 69, 58, 0.1) 100%);
+  color: var(--color-accent-danger);
+  border: 2px solid rgba(255, 69, 58, 0.3);
 }
 
-.btn-icon.edit:hover {
-  background-color: rgba(10, 132, 255, 0.2);
-  box-shadow: 0 4px 12px rgba(10, 132, 255, 0.3);
+.btn-danger:hover {
+  background: linear-gradient(135deg, var(--color-accent-danger) 0%, #ff6b5a 100%);
+  color: white;
 }
 
-.btn-icon.delete {
-  border-color: rgba(255, 69, 58, 0.3);
-  background-color: rgba(255, 69, 58, 0.1);
-  color: var(--color-accent-danger); /* แก้ไข */
-}
-
-.btn-icon.delete:hover {
-  background-color: rgba(255, 69, 58, 0.2);
-  box-shadow: 0 4px 12px rgba(255, 69, 58, 0.3);
-}
-
-@media (max-width: 768px) {
+/* Responsive Design */
+@media (min-width: 768px) {
+  .admin-dashboard {
+    grid-template-columns: repeat(2, 1fr);
+    max-width: 600px;
+  }
+  
   .form-row {
-    grid-template-columns: 1fr;
-  }
-  
-  .form-actions {
-    flex-direction: column;
-  }
-  
-  .product-item-admin {
-    grid-template-columns: 80px 1fr;
-    gap: 12px;
-  }
-  
-  .product-actions {
-    grid-column: 1 / -1;
-    justify-content: center;
-    margin-top: 8px;
+    grid-template-columns: 1fr 1fr;
   }
   
   .price-option {
-    grid-template-columns: 1fr;
-    gap: 8px;
+    grid-template-columns: 1fr 120px 40px;
   }
+  
+  .edit-actions {
+    grid-template-columns: auto auto auto;
+    justify-content: flex-end;
+  }
+}
 
-  .product-image-container {
-    width: 80px;
-    height: 80px;
-  }
+/* Button Styles */
+.btn {
+  border: none;
+  border-radius: 10px;
+  padding: 12px 20px;
+  font-weight: 600;
+  font-size: 0.95rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-height: 44px;
+}
+
+.btn:hover {
+  transform: translateY(-1px);
+}
+
+.btn:active {
+  transform: translateY(0);
+}
+
+.btn-primary {
+  background: linear-gradient(135deg, var(--color-accent-primary) 0%, #3f9eff 100%);
+  color: white;
+  box-shadow: 0 4px 15px rgba(10, 132, 255, 0.3);
+}
+
+.btn-primary:hover {
+  box-shadow: 0 8px 25px rgba(10, 132, 255, 0.4);
+}
+
+.btn-primary:disabled {
+  background: #555555;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.btn-secondary {
+  background-color: rgba(255, 255, 255, 0.05);
+  color: var(--color-text-primary);
+  border: 2px solid rgba(255, 255, 255, 0.2);
+}
+
+.btn-secondary:hover {
+  background-color: rgba(255, 255, 255, 0.1);
+  border-color: var(--color-accent-primary);
+}
+
+.btn-cancel {
+  background-color: rgba(255, 255, 255, 0.05);
+  color: var(--color-text-secondary);
+  border: 2px solid rgba(255, 255, 255, 0.1);
+}
+
+.btn-cancel:hover {
+  background-color: rgba(255, 255, 255, 0.1);
+  color: var(--color-text-primary);
+}
+
+/* Access Denied */
+.empty-state {
+  text-align: center;
+  padding: 80px 20px;
+  color: var(--color-text-secondary);
+}
+
+.empty-state-icon {
+  font-size: 4rem;
+  margin-bottom: 20px;
+  opacity: 0.6;
+}
+
+.empty-state-text {
+  font-size: 1.3rem;
+  font-weight: 600;
+  margin-bottom: 8px;
+  color: var(--color-text-primary);
+}
+
+.empty-state-subtext {
+  font-size: 1rem;
+  opacity: 0.8;
+}
+
+/* Loading States */
+.loading-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 40px 20px;
+  color: var(--color-text-secondary);
+}
+
+.loading-spinner {
+  width: 40px;
+  height: 40px;
+  border: 3px solid rgba(255, 255, 255, 0.1);
+  border-top-color: var(--color-accent-primary);
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  margin-bottom: 16px;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+/* Success Message */
+.success-message {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  z-index: 9999;
+  background: linear-gradient(135deg, #22c55e, #16a34a);
+  color: white;
+  padding: 16px 24px;
+  border-radius: 12px;
+  box-shadow: 0 8px 25px rgba(34, 197, 94, 0.3);
+  font-weight: 600;
+  animation: slideIn 0.3s ease;
+  max-width: 300px;
+  text-align: center;
+}
+
+@keyframes slideIn {
+  from { transform: translateX(100%); opacity: 0; }
+  to { transform: translateX(0); opacity: 1; }
+}
+
+@keyframes slideOut {
+  from { transform: translateX(0); opacity: 1; }
+  to { transform: translateX(100%); opacity: 0; }
 }
