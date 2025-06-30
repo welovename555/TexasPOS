@@ -1117,12 +1117,53 @@ const adminView = {
   },
 
   async saveProductChanges(product, modal) {
-    // This would require implementing an update product service
-    // For now, just show a message
-    NotificationSystem.info(
-      'ฟีเจอร์ยังไม่พร้อม',
-      'ฟีเจอร์แก้ไขข้อมูลสินค้าจะเพิ่มในอนาคต\nปัจจุบันสามารถเปลี่ยนรูปภาพและลบสินค้าได้เท่านั้น'
-    );
+    const saveBtn = document.getElementById('save-changes-btn');
+    const originalText = saveBtn.innerHTML;
+
+    try {
+      saveBtn.disabled = true;
+      saveBtn.innerHTML = '⏳ กำลังบันทึก...';
+
+      const updateData = {
+        name: document.getElementById('edit-product-name').value.trim(),
+        base_price: parseFloat(document.getElementById('edit-product-price').value),
+        category_id: document.getElementById('edit-product-category').value
+      };
+
+      if (!updateData.name || isNaN(updateData.base_price) || !updateData.category_id) {
+        NotificationSystem.warning(
+          'ข้อมูลไม่ครบถ้วน',
+          'กรุณากรอกข้อมูลให้ครบถ้วนและถูกต้อง'
+        );
+        return;
+      }
+
+      const result = await productService.updateProduct(product.id, updateData);
+      
+      if (result.success) {
+        modal.close();
+        NotificationSystem.success(
+          '✅ บันทึกข้อมูลสำเร็จ!',
+          `อัปเดตข้อมูล "${updateData.name}" เรียบร้อยแล้ว`
+        );
+        this.loadInitialData();
+        document.dispatchEvent(new CustomEvent('productsUpdated'));
+      } else {
+        NotificationSystem.error(
+          'ไม่สามารถบันทึกข้อมูลได้',
+          result.error.message
+        );
+      }
+
+    } catch (error) {
+      NotificationSystem.error(
+        'เกิดข้อผิดพลาด',
+        error.message
+      );
+    } finally {
+      saveBtn.disabled = false;
+      saveBtn.innerHTML = originalText;
+    }
   },
 
   async confirmDeleteProduct(product, modal) {

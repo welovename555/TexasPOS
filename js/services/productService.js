@@ -238,6 +238,27 @@ const productService = {
       console.error('Error deleting product:', error.message);
       return { success: false, error };
     }
+  },
+
+  /**
+   * Update product details
+   */
+  async updateProduct(productId, updateData) {
+    try {
+      const { data, error } = await supabaseClient
+        .from('products')
+        .update(updateData)
+        .eq('id', productId)
+        .select()
+        .single();
+
+      if (error) throw error;
+      return { success: true, data };
+
+    } catch (error) {
+      console.error('Error updating product:', error.message);
+      return { success: false, error };
+    }
   }
 };
 
