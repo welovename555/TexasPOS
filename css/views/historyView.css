@@ -16,7 +16,7 @@
   font-weight: 800;
   color: #FFFFFF;
   margin: 0;
-  background: -webkit-linear-gradient(45deg, var(--color-accent-secondary), var(--color-accent-primary)); /* แก้ไข */
+  background: -webkit-linear-gradient(45deg, var(--color-accent-secondary), var(--color-accent-primary));
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
 }
@@ -32,15 +32,15 @@
   padding: 10px 16px;
   border-radius: 8px;
   border: 1px solid rgba(255, 255, 255, 0.2);
-  background-color: var(--color-bg-content); /* แก้ไข */
-  color: var(--color-text-primary); /* แก้ไข */
+  background-color: var(--color-bg-content);
+  color: var(--color-text-primary);
   font-size: 1rem;
   cursor: pointer;
 }
 
 .date-picker:focus {
   outline: none;
-  border-color: var(--color-accent-primary); /* แก้ไข */
+  border-color: var(--color-accent-primary);
   box-shadow: 0 0 0 2px rgba(10, 132, 255, 0.2);
 }
 
@@ -48,7 +48,7 @@
   padding: 10px 16px;
   border-radius: 8px;
   border: none;
-  background-color: var(--color-accent-primary); /* แก้ไข */
+  background-color: var(--color-accent-primary);
   color: white;
   font-size: 1rem;
   font-weight: 600;
@@ -68,50 +68,107 @@
   cursor: not-allowed;
 }
 
+/* 📱 Mobile-first: 2x2 Grid Layout for Summary Cards */
 .sales-summary {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-  gap: 16px;
+  grid-template-columns: 1fr 1fr;
+  grid-template-rows: 1fr 1fr;
+  gap: 12px;
   margin-bottom: 24px;
 }
 
 .summary-card {
-  background-color: var(--color-bg-content); /* แก้ไข */
-  border-radius: 12px;
-  padding: 20px;
-  border: 1px solid var(--color-border); /* แก้ไข */
+  background: linear-gradient(135deg, var(--color-bg-content) 0%, rgba(26, 29, 31, 0.8) 100%);
+  border-radius: 16px;
+  padding: 16px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+  backdrop-filter: blur(10px);
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+  text-align: center;
+}
+
+.summary-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.05), transparent);
+  transition: left 0.5s ease;
+}
+
+.summary-card:hover::before {
+  left: 100%;
+}
+
+.summary-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.3);
 }
 
 .summary-label {
-  font-size: 0.9rem;
-  color: var(--color-text-secondary); /* แก้ไข */
+  font-size: 0.8rem;
+  color: var(--color-text-secondary);
   margin-bottom: 8px;
   font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
 }
 
 .summary-value {
-  font-size: 1.8rem;
+  font-size: 1.4rem;
   font-weight: 700;
-  color: var(--color-text-primary); /* แก้ไข */
+  color: var(--color-text-primary);
+  line-height: 1.2;
 }
 
 .summary-value.cash {
-  color: var(--color-accent-secondary); /* แก้ไข */
+  color: var(--color-accent-secondary);
 }
 
 .summary-value.transfer {
-  color: var(--color-accent-primary); /* แก้ไข */
+  color: var(--color-accent-primary);
 }
 
 .summary-value.total {
   color: #ff9500;
+  font-size: 1.6rem;
+}
+
+/* เพิ่ม icons สำหรับแต่ละการ์ด */
+.summary-card.total-card {
+  background: linear-gradient(135deg, rgba(255, 149, 0, 0.1) 0%, rgba(255, 149, 0, 0.05) 100%);
+  border-color: rgba(255, 149, 0, 0.2);
+}
+
+.summary-card.cash-card {
+  background: linear-gradient(135deg, rgba(52, 199, 89, 0.1) 0%, rgba(52, 199, 89, 0.05) 100%);
+  border-color: rgba(52, 199, 89, 0.2);
+}
+
+.summary-card.transfer-card {
+  background: linear-gradient(135deg, rgba(10, 132, 255, 0.1) 0%, rgba(10, 132, 255, 0.05) 100%);
+  border-color: rgba(10, 132, 255, 0.2);
+}
+
+.summary-card.count-card {
+  background: linear-gradient(135deg, rgba(138, 43, 226, 0.1) 0%, rgba(138, 43, 226, 0.05) 100%);
+  border-color: rgba(138, 43, 226, 0.2);
+}
+
+.summary-card .summary-value.count {
+  color: #8a2be2;
 }
 
 .history-table-container {
-  background-color: var(--color-bg-content); /* แก้ไข */
+  background-color: var(--color-bg-content);
   border-radius: 12px;
   overflow: hidden;
-  border: 1px solid var(--color-border); /* แก้ไข */
+  border: 1px solid var(--color-border);
 }
 
 .history-table {
@@ -122,11 +179,11 @@
 
 .history-table th {
   background-color: rgba(255, 255, 255, 0.05);
-  color: var(--color-text-secondary); /* แก้ไข */
+  color: var(--color-text-secondary);
   font-weight: 600;
   padding: 16px 12px;
   text-align: left;
-  border-bottom: 1px solid var(--color-border); /* แก้ไข */
+  border-bottom: 1px solid var(--color-border);
   font-size: 0.85rem;
   text-transform: uppercase;
   letter-spacing: 0.5px;
@@ -134,8 +191,8 @@
 
 .history-table td {
   padding: 16px 12px;
-  border-bottom: 1px solid var(--color-border); /* แก้ไข */
-  color: var(--color-text-primary); /* แก้ไข */
+  border-bottom: 1px solid var(--color-border);
+  color: var(--color-text-primary);
 }
 
 .history-table tbody tr:hover {
@@ -157,28 +214,28 @@
 
 .payment-method.cash {
   background-color: rgba(52, 199, 89, 0.2);
-  color: var(--color-accent-secondary); /* แก้ไข */
+  color: var(--color-accent-secondary);
 }
 
 .payment-method.transfer {
   background-color: rgba(10, 132, 255, 0.2);
-  color: var(--color-accent-primary); /* แก้ไข */
+  color: var(--color-accent-primary);
 }
 
 .price-cell {
   font-weight: 600;
-  color: var(--color-accent-secondary); /* แก้ไข */
+  color: var(--color-accent-secondary);
 }
 
 .employee-name {
   font-weight: 500;
-  color: var(--color-text-secondary); /* แก้ไข */
+  color: var(--color-text-secondary);
 }
 
 .empty-state {
   text-align: center;
   padding: 60px 20px;
-  color: var(--color-text-secondary); /* แก้ไข */
+  color: var(--color-text-secondary);
 }
 
 .empty-state-icon {
@@ -197,14 +254,29 @@
   opacity: 0.7;
 }
 
-@media (max-width: 768px) {
+/* 📱 Responsive สำหรับหน้าจอใหญ่ขึ้น */
+@media (min-width: 768px) {
   .history-header {
-    flex-direction: column;
-    align-items: stretch;
+    flex-direction: row;
+    align-items: center;
   }
   
   .history-controls {
-    justify-content: center;
+    justify-content: flex-end;
+  }
+  
+  /* เปลี่ยนเป็น 4 คอลัมน์สำหรับหน้าจอใหญ่ */
+  .sales-summary {
+    grid-template-columns: repeat(4, 1fr);
+    grid-template-rows: 1fr;
+  }
+  
+  .summary-value {
+    font-size: 1.6rem;
+  }
+  
+  .summary-value.total {
+    font-size: 1.8rem;
   }
   
   .history-table-container {
@@ -217,11 +289,40 @@
   
   .history-table th,
   .history-table td {
-    padding: 12px 8px;
-    font-size: 0.8rem;
+    padding: 16px 12px;
+    font-size: 0.9rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .history-header {
+    flex-direction: column;
+    align-items: stretch;
   }
   
-  .sales-summary {
-    grid-template-columns: 1fr;
+  .history-controls {
+    justify-content: center;
+  }
+  
+  .summary-card {
+    padding: 12px;
+  }
+  
+  .summary-label {
+    font-size: 0.7rem;
+  }
+  
+  .summary-value {
+    font-size: 1.2rem;
+  }
+  
+  .summary-value.total {
+    font-size: 1.4rem;
+  }
+  
+  .history-table th,
+  .history-table td {
+    padding: 12px 8px;
+    font-size: 0.8rem;
   }
 }

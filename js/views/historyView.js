@@ -124,21 +124,21 @@ const historyView = {
     if (!summaryContainer) return;
 
     summaryContainer.innerHTML = `
-      <div class="summary-card">
-        <div class="summary-label">ยอดขายรวม</div>
+      <div class="summary-card total-card">
+        <div class="summary-label">💰 ยอดขายรวม</div>
         <div class="summary-value total">${summary.totalAmount.toFixed(2)} ฿</div>
       </div>
-      <div class="summary-card">
-        <div class="summary-label">เงินสด</div>
+      <div class="summary-card cash-card">
+        <div class="summary-label">💵 เงินสด</div>
         <div class="summary-value cash">${summary.cashAmount.toFixed(2)} ฿</div>
       </div>
-      <div class="summary-card">
-        <div class="summary-label">โอนเงิน</div>
+      <div class="summary-card transfer-card">
+        <div class="summary-label">💳 โอนเงิน</div>
         <div class="summary-value transfer">${summary.transferAmount.toFixed(2)} ฿</div>
       </div>
-      <div class="summary-card">
-        <div class="summary-label">จำนวนรายการ</div>
-        <div class="summary-value">${summary.totalSales} รายการ</div>
+      <div class="summary-card count-card">
+        <div class="summary-label">📊 จำนวนรายการ</div>
+        <div class="summary-value count">${summary.totalSales} รายการ</div>
       </div>
     `;
   },
@@ -195,9 +195,9 @@ const historyView = {
 
     if (summaryContainer) {
       summaryContainer.innerHTML = `
-        <div class="summary-card">
-          <div class="summary-label">ข้อผิดพลาด</div>
-          <div class="summary-value" style="color: #ff453a;">${message}</div>
+        <div class="summary-card" style="grid-column: 1 / -1;">
+          <div class="summary-label">⚠️ ข้อผิดพลาด</div>
+          <div class="summary-value" style="color: #ff453a; font-size: 1rem;">${message}</div>
         </div>
       `;
     }
