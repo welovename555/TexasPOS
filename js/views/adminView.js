@@ -1,6 +1,7 @@
 import { Spinner } from '../components/spinner.js';
 import { Modal } from '../components/modal.js';
 import { productService } from '../services/productService.js';
+import { salesService } from '../services/salesService.js';
 import { authStore } from '../stores/authStore.js';
 
 const adminView = {
@@ -37,7 +38,7 @@ const adminView = {
     this.container.innerHTML = `
       <div class="admin-header">
         <h1 class="admin-title">จัดการระบบ</h1>
-        <p class="admin-subtitle">เพิ่มสินค้าใหม่และจัดการข้อมูลสินค้า</p>
+        <p class="admin-subtitle">เพิ่มสินค้าใหม่ จัดการข้อมูลสินค้า และดูรายงานการขาย</p>
       </div>
 
       <div class="admin-dashboard">
@@ -52,6 +53,12 @@ const adminView = {
           <h3 class="admin-card-title">จัดการสินค้า</h3>
           <p class="admin-card-description">แก้ไขหรือลบสินค้าที่มีอยู่</p>
         </div>
+
+        <div class="admin-card sales-report" id="sales-report-card">
+          <span class="admin-card-icon">📊</span>
+          <h3 class="admin-card-title">สรุปยอดขาย</h3>
+          <p class="admin-card-description">ดูรายงานและดาวน์โหลดข้อมูล</p>
+        </div>
       </div>
     `;
 
@@ -61,9 +68,11 @@ const adminView = {
   attachEventListeners() {
     const addProductCard = document.getElementById('add-product-card');
     const manageProductsCard = document.getElementById('manage-products-card');
+    const salesReportCard = document.getElementById('sales-report-card');
 
     addProductCard.addEventListener('click', () => this.showAddProductModal());
     manageProductsCard.addEventListener('click', () => this.showCategorySelectionModal());
+    salesReportCard.addEventListener('click', () => this.showSalesReportModal());
   },
 
   async loadInitialData() {
@@ -84,6 +93,427 @@ const adminView = {
     } catch (error) {
       console.error('Error loading initial data:', error);
     }
+  },
+
+  // 📊 Sales Report Modal
+  showSalesReportModal() {
+    const today = new Date().toISOString().split('T')[0];
+    const modal = Modal.create({
+      title: '📊 สรุปยอดขาย',
+      body: this.renderSalesReportForm(today, today),
+      footer: `
+        <button class="btn btn-cancel" id="close-report-modal">❌ ปิด</button>
+      `
+    });
+
+    // Add custom class for scrollable content
+    const modalContainer = modal.modalElement.querySelector('.modal-container');
+    modalContainer.style.maxHeight = '90vh';
+    modalContainer.style.overflow = 'hidden';
+    
+    const modalBody = modal.modalElement.querySelector('.modal-body');
+    modalBody.className += ' admin-modal-content';
+
+    setTimeout(() => this.attachSalesReportEvents(modal, today, today), 100);
+  },
+
+  renderSalesReportForm(startDate, endDate) {
+    return `
+      <div class="sales-report-form">
+        <div class="quick-date-buttons">
+          <button class="quick-date-btn" data-period="today">📅 วันนี้</button>
+          <button class="quick-date-btn" data-period="yesterday">📅 เมื่อวาน</button>
+          <button class="quick-date-btn" data-period="week">📅 สัปดาห์นี้</button>
+          <button class="quick-date-btn" data-period="month">📅 เดือนนี้</button>
+        </div>
+
+        <div class="date-range-container">
+          <div class="form-group">
+            <label class="form-label">📅 วันที่เริ่มต้น</label>
+            <input type="date" class="form-input" id="report-start-date" value="${startDate}">
+          </div>
+          <div class="form-group">
+            <label class="form-label">📅 วันที่สิ้นสุด</label>
+            <input type="date" class="form-input" id="report-end-date" value="${endDate}">
+          </div>
+        </div>
+
+        <div class="report-summary" id="report-summary">
+          <div class="report-summary-title">📈 สรุปยอดขาย</div>
+          <div class="loading-state">
+            <div class="loading-spinner"></div>
+            <div>กำลังโหลดข้อมูล...</div>
+          </div>
+        </div>
+
+        <div class="export-buttons">
+          <button class="btn-export csv" id="export-csv-btn">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+              <polyline points="14,2 14,8 20,8"></polyline>
+              <line x1="16" y1="13" x2="8" y2="13"></line>
+              <line x1="16" y1="17" x2="8" y2="17"></line>
+              <polyline points="10,9 9,9 8,9"></polyline>
+            </svg>
+            ดาวน์โหลด CSV
+          </button>
+          <button class="btn-export pdf" id="export-pdf-btn">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+              <polyline points="14,2 14,8 20,8"></polyline>
+              <line x1="16" y1="13" x2="8" y2="13"></line>
+              <line x1="16" y1="17" x2="8" y2="17"></line>
+              <line x1="12" y1="18" x2="12" y2="12"></line>
+              <line x1="9" y1="15" x2="15" y2="15"></line>
+            </svg>
+            ดาวน์โหลด PDF
+          </button>
+        </div>
+      </div>
+    `;
+  },
+
+  attachSalesReportEvents(modal, initialStartDate, initialEndDate) {
+    const startDateInput = document.getElementById('report-start-date');
+    const endDateInput = document.getElementById('report-end-date');
+    const quickDateBtns = document.querySelectorAll('.quick-date-btn');
+    const exportCsvBtn = document.getElementById('export-csv-btn');
+    const exportPdfBtn = document.getElementById('export-pdf-btn');
+
+    // Load initial data
+    this.loadSalesReportData(initialStartDate, initialEndDate);
+
+    // Quick date buttons
+    quickDateBtns.forEach(btn => {
+      btn.addEventListener('click', () => {
+        quickDateBtns.forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+
+        const period = btn.dataset.period;
+        const dates = this.getDateRange(period);
+        
+        startDateInput.value = dates.start;
+        endDateInput.value = dates.end;
+        
+        this.loadSalesReportData(dates.start, dates.end);
+      });
+    });
+
+    // Date inputs
+    startDateInput.addEventListener('change', () => {
+      quickDateBtns.forEach(b => b.classList.remove('active'));
+      this.loadSalesReportData(startDateInput.value, endDateInput.value);
+    });
+
+    endDateInput.addEventListener('change', () => {
+      quickDateBtns.forEach(b => b.classList.remove('active'));
+      this.loadSalesReportData(startDateInput.value, endDateInput.value);
+    });
+
+    // Export buttons
+    exportCsvBtn.addEventListener('click', () => {
+      this.exportSalesData('csv', startDateInput.value, endDateInput.value);
+    });
+
+    exportPdfBtn.addEventListener('click', () => {
+      this.exportSalesData('pdf', startDateInput.value, endDateInput.value);
+    });
+
+    // Close button
+    const closeBtn = document.getElementById('close-report-modal');
+    if (closeBtn) {
+      closeBtn.addEventListener('click', () => modal.close());
+    }
+  },
+
+  getDateRange(period) {
+    const today = new Date();
+    const yesterday = new Date(today);
+    yesterday.setDate(yesterday.getDate() - 1);
+
+    switch (period) {
+      case 'today':
+        return {
+          start: today.toISOString().split('T')[0],
+          end: today.toISOString().split('T')[0]
+        };
+      case 'yesterday':
+        return {
+          start: yesterday.toISOString().split('T')[0],
+          end: yesterday.toISOString().split('T')[0]
+        };
+      case 'week':
+        const startOfWeek = new Date(today);
+        startOfWeek.setDate(today.getDate() - today.getDay());
+        return {
+          start: startOfWeek.toISOString().split('T')[0],
+          end: today.toISOString().split('T')[0]
+        };
+      case 'month':
+        const startOfMonth = new Date(today.getFullYear(), today.getMonth(), 1);
+        return {
+          start: startOfMonth.toISOString().split('T')[0],
+          end: today.toISOString().split('T')[0]
+        };
+      default:
+        return {
+          start: today.toISOString().split('T')[0],
+          end: today.toISOString().split('T')[0]
+        };
+    }
+  },
+
+  async loadSalesReportData(startDate, endDate) {
+    const summaryContainer = document.getElementById('report-summary');
+    if (!summaryContainer) return;
+
+    // Show loading
+    summaryContainer.innerHTML = `
+      <div class="report-summary-title">📈 สรุปยอดขาย</div>
+      <div class="loading-state">
+        <div class="loading-spinner"></div>
+        <div>กำลังโหลดข้อมูล...</div>
+      </div>
+    `;
+
+    try {
+      // If single day, use existing service
+      if (startDate === endDate) {
+        const result = await salesService.getSalesHistory(startDate);
+        if (result.success) {
+          this.renderReportSummary(result.summary, startDate, endDate);
+        } else {
+          this.showReportError(result.error.message);
+        }
+      } else {
+        // For date range, we'll need to aggregate multiple days
+        const summary = await this.getSalesDataForRange(startDate, endDate);
+        this.renderReportSummary(summary, startDate, endDate);
+      }
+    } catch (error) {
+      this.showReportError(error.message);
+    }
+  },
+
+  async getSalesDataForRange(startDate, endDate) {
+    const start = new Date(startDate);
+    const end = new Date(endDate);
+    const promises = [];
+
+    // Get data for each day in range
+    for (let d = new Date(start); d <= end; d.setDate(d.getDate() + 1)) {
+      const dateStr = d.toISOString().split('T')[0];
+      promises.push(salesService.getSalesHistory(dateStr));
+    }
+
+    const results = await Promise.all(promises);
+    
+    // Aggregate results
+    const aggregated = {
+      totalSales: 0,
+      totalAmount: 0,
+      cashAmount: 0,
+      transferAmount: 0
+    };
+
+    results.forEach(result => {
+      if (result.success) {
+        aggregated.totalSales += result.summary.totalSales;
+        aggregated.totalAmount += result.summary.totalAmount;
+        aggregated.cashAmount += result.summary.cashAmount;
+        aggregated.transferAmount += result.summary.transferAmount;
+      }
+    });
+
+    return aggregated;
+  },
+
+  renderReportSummary(summary, startDate, endDate) {
+    const summaryContainer = document.getElementById('report-summary');
+    if (!summaryContainer) return;
+
+    const dateRange = startDate === endDate 
+      ? `วันที่ ${this.formatThaiDate(startDate)}`
+      : `${this.formatThaiDate(startDate)} - ${this.formatThaiDate(endDate)}`;
+
+    summaryContainer.innerHTML = `
+      <div class="report-summary-title">📈 สรุปยอดขาย (${dateRange})</div>
+      <div class="report-summary-grid">
+        <div class="report-summary-item">
+          <div class="report-summary-label">💰 ยอดรวม</div>
+          <div class="report-summary-value total">${summary.totalAmount.toFixed(2)} ฿</div>
+        </div>
+        <div class="report-summary-item">
+          <div class="report-summary-label">💵 เงินสด</div>
+          <div class="report-summary-value cash">${summary.cashAmount.toFixed(2)} ฿</div>
+        </div>
+        <div class="report-summary-item">
+          <div class="report-summary-label">💳 โอนเงิน</div>
+          <div class="report-summary-value transfer">${summary.transferAmount.toFixed(2)} ฿</div>
+        </div>
+        <div class="report-summary-item">
+          <div class="report-summary-label">📊 รายการ</div>
+          <div class="report-summary-value">${summary.totalSales} รายการ</div>
+        </div>
+      </div>
+    `;
+  },
+
+  showReportError(message) {
+    const summaryContainer = document.getElementById('report-summary');
+    if (!summaryContainer) return;
+
+    summaryContainer.innerHTML = `
+      <div class="report-summary-title">⚠️ เกิดข้อผิดพลาด</div>
+      <div class="empty-state">
+        <div class="empty-state-icon">⚠️</div>
+        <div class="empty-state-text">ไม่สามารถโหลดข้อมูลได้</div>
+        <div class="empty-state-subtext">${message}</div>
+      </div>
+    `;
+  },
+
+  formatThaiDate(dateStr) {
+    const date = new Date(dateStr);
+    return date.toLocaleDateString('th-TH', {
+      day: '2-digit',
+      month: '2-digit',
+      year: 'numeric'
+    });
+  },
+
+  async exportSalesData(format, startDate, endDate) {
+    const btn = document.getElementById(`export-${format}-btn`);
+    const originalText = btn.innerHTML;
+
+    try {
+      btn.disabled = true;
+      btn.innerHTML = `⏳ กำลังสร้างไฟล์...`;
+
+      // Get data for the date range
+      let summary;
+      if (startDate === endDate) {
+        const result = await salesService.getSalesHistory(startDate);
+        summary = result.success ? result.summary : null;
+      } else {
+        summary = await this.getSalesDataForRange(startDate, endDate);
+      }
+
+      if (!summary) {
+        alert('ไม่สามารถดึงข้อมูลได้');
+        return;
+      }
+
+      const dateRange = startDate === endDate 
+        ? this.formatThaiDate(startDate)
+        : `${this.formatThaiDate(startDate)} - ${this.formatThaiDate(endDate)}`;
+
+      if (format === 'csv') {
+        this.downloadCSV(summary, dateRange);
+      } else if (format === 'pdf') {
+        this.downloadPDF(summary, dateRange);
+      }
+
+      this.showSuccessMessage(`✅ ดาวน์โหลด ${format.toUpperCase()} สำเร็จ!`);
+
+    } catch (error) {
+      alert('เกิดข้อผิดพลาด: ' + error.message);
+    } finally {
+      btn.disabled = false;
+      btn.innerHTML = originalText;
+    }
+  },
+
+  downloadCSV(summary, dateRange) {
+    const csvContent = [
+      ['รายงานสรุปยอดขาย', dateRange],
+      [''],
+      ['รายการ', 'จำนวนเงิน (บาท)'],
+      ['ยอดขายรวม', summary.totalAmount.toFixed(2)],
+      ['เงินสด', summary.cashAmount.toFixed(2)],
+      ['โอนเงิน', summary.transferAmount.toFixed(2)],
+      ['จำนวนรายการ', summary.totalSales],
+      [''],
+      ['สร้างรายงานเมื่อ', new Date().toLocaleString('th-TH')]
+    ].map(row => row.join(',')).join('\n');
+
+    const blob = new Blob(['\ufeff' + csvContent], { type: 'text/csv;charset=utf-8;' });
+    const link = document.createElement('a');
+    link.href = URL.createObjectURL(blob);
+    link.download = `sales-report-${dateRange.replace(/\//g, '-')}.csv`;
+    link.click();
+  },
+
+  downloadPDF(summary, dateRange) {
+    // Simple PDF generation using HTML and print
+    const printWindow = window.open('', '_blank');
+    printWindow.document.write(`
+      <!DOCTYPE html>
+      <html>
+      <head>
+        <title>รายงานสรุปยอดขาย</title>
+        <meta charset="utf-8">
+        <style>
+          body { font-family: 'Sarabun', sans-serif; margin: 40px; }
+          .header { text-align: center; margin-bottom: 30px; }
+          .title { font-size: 24px; font-weight: bold; margin-bottom: 10px; }
+          .date-range { font-size: 16px; color: #666; }
+          .summary-table { width: 100%; border-collapse: collapse; margin: 20px 0; }
+          .summary-table th, .summary-table td { 
+            border: 1px solid #ddd; padding: 12px; text-align: left; 
+          }
+          .summary-table th { background-color: #f5f5f5; font-weight: bold; }
+          .total-row { background-color: #fff3cd; font-weight: bold; }
+          .footer { margin-top: 30px; font-size: 12px; color: #666; }
+        </style>
+      </head>
+      <body>
+        <div class="header">
+          <div class="title">รายงานสรุปยอดขาย</div>
+          <div class="date-range">${dateRange}</div>
+        </div>
+        
+        <table class="summary-table">
+          <thead>
+            <tr>
+              <th>รายการ</th>
+              <th>จำนวนเงิน (บาท)</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>เงินสด</td>
+              <td>${summary.cashAmount.toFixed(2)}</td>
+            </tr>
+            <tr>
+              <td>โอนเงิน</td>
+              <td>${summary.transferAmount.toFixed(2)}</td>
+            </tr>
+            <tr class="total-row">
+              <td>ยอดขายรวม</td>
+              <td>${summary.totalAmount.toFixed(2)}</td>
+            </tr>
+            <tr>
+              <td>จำนวนรายการ</td>
+              <td>${summary.totalSales} รายการ</td>
+            </tr>
+          </tbody>
+        </table>
+        
+        <div class="footer">
+          สร้างรายงานเมื่อ: ${new Date().toLocaleString('th-TH')}
+        </div>
+      </body>
+      </html>
+    `);
+    
+    printWindow.document.close();
+    printWindow.focus();
+    
+    setTimeout(() => {
+      printWindow.print();
+      printWindow.close();
+    }, 250);
   },
 
   showAddProductModal() {
@@ -256,6 +686,7 @@ const adminView = {
       const index = parseInt(optionEl.dataset.index);
 
       optionEl.querySelector('.price-label-input').addEventListener('change', (e) => {
+        
         this.updatePriceOption(index, 'label', e.target.value);
       });
 
