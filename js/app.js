@@ -56,6 +56,7 @@ const App = {
   setupNavigation() {
     const navItems = document.querySelectorAll('.nav-item[data-view]');
     const logoutBtn = document.getElementById('logout-btn');
+    const themeBtn = document.getElementById('theme-selector-btn');
 
     navItems.forEach(item => {
       item.addEventListener('click', (e) => {
@@ -69,6 +70,13 @@ const App = {
       logoutBtn.addEventListener('click', (e) => {
         e.preventDefault();
         this.logout();
+      });
+    }
+
+    if (themeBtn) {
+      themeBtn.addEventListener('click', (e) => {
+        e.preventDefault();
+        themeManager.showThemeSelector();
       });
     }
   },

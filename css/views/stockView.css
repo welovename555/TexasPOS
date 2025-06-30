@@ -13,7 +13,7 @@
 .stock-title {
   font-size: 1.8rem;
   font-weight: 800;
-  color: #FFFFFF;
+  color: var(--color-text-primary);
   margin: 0;
   text-align: center;
   background: -webkit-linear-gradient(45deg, #ff6b6b, #4ecdc4);
@@ -30,7 +30,7 @@
 .search-input {
   padding: 14px 16px;
   border-radius: 12px;
-  border: 1px solid rgba(255, 255, 255, 0.2);
+  border: 1px solid var(--color-border);
   background-color: var(--color-bg-content);
   color: var(--color-text-primary);
   font-size: 1rem;
@@ -55,7 +55,7 @@
   flex: 1;
   padding: 14px 16px;
   border-radius: 12px;
-  border: 1px solid rgba(255, 255, 255, 0.2);
+  border: 1px solid var(--color-border);
   background-color: var(--color-bg-content);
   color: var(--color-text-primary);
   font-size: 1rem;
@@ -107,7 +107,7 @@
 .category-filter-btn {
   padding: 10px 16px;
   border-radius: 20px;
-  border: 2px solid rgba(255, 255, 255, 0.1);
+  border: 2px solid var(--color-border);
   background-color: var(--color-bg-content);
   color: var(--color-text-secondary);
   font-size: 0.9rem;
@@ -161,21 +161,38 @@
 }
 
 .stock-card {
-  background: linear-gradient(135deg, var(--color-bg-content) 0%, rgba(26, 29, 31, 0.8) 100%);
+  /* Dynamic background based on theme */
+  background: var(--stock-card-bg, linear-gradient(135deg, var(--color-bg-content) 0%, rgba(26, 29, 31, 0.8) 100%));
   border-radius: 16px;
   padding: 16px;
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+  border: 1px solid var(--color-border);
+  box-shadow: var(--stock-card-shadow, 0 4px 20px rgba(0, 0, 0, 0.2));
   backdrop-filter: blur(10px);
   transition: all 0.3s ease;
   position: relative;
   overflow: hidden;
 }
 
+/* Light theme specific styles */
+:root {
+  --stock-card-bg: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
+  --stock-card-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+  --stock-card-hover-shadow: 0 8px 30px rgba(0, 0, 0, 0.12);
+  --stock-card-border-hover: rgba(59, 130, 246, 0.3);
+}
+
+/* Dark theme overrides */
+[data-theme="dark"] {
+  --stock-card-bg: linear-gradient(135deg, var(--color-bg-content) 0%, rgba(26, 29, 31, 0.8) 100%);
+  --stock-card-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+  --stock-card-hover-shadow: 0 8px 30px rgba(0, 0, 0, 0.3);
+  --stock-card-border-hover: var(--color-accent-primary);
+}
+
 .stock-card:hover {
   transform: translateY(-2px);
-  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.3);
-  border-color: var(--color-accent-primary);
+  box-shadow: var(--stock-card-hover-shadow);
+  border-color: var(--stock-card-border-hover);
 }
 
 .stock-card::before {
@@ -185,7 +202,7 @@
   left: -100%;
   width: 100%;
   height: 100%;
-  background: linear-gradient(90deg, transparent, rgba(10, 132, 255, 0.05), transparent);
+  background: linear-gradient(90deg, transparent, rgba(59, 130, 246, 0.05), transparent);
   transition: left 0.5s ease;
 }
 
@@ -206,16 +223,22 @@
   height: 60px;
   border-radius: 12px;
   overflow: hidden;
-  background: linear-gradient(135deg, #3a3a3c 0%, #2c2c2e 100%);
+  background: linear-gradient(135deg, #f1f5f9 0%, #e2e8f0 100%);
   position: relative;
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
   transition: all 0.3s ease;
   flex-shrink: 0;
 }
 
+/* Dark theme image container */
+[data-theme="dark"] .stock-card-image-container {
+  background: linear-gradient(135deg, #3a3a3c 0%, #2c2c2e 100%);
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+}
+
 .stock-card-image-container:hover {
   transform: scale(1.05);
-  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
 }
 
 .stock-card-image {
@@ -344,7 +367,7 @@
   padding: 8px 12px;
   border-radius: 10px;
   border: 2px solid var(--color-accent-primary);
-  background: linear-gradient(135deg, rgba(10, 132, 255, 0.1) 0%, rgba(10, 132, 255, 0.05) 100%);
+  background: linear-gradient(135deg, rgba(59, 130, 246, 0.1) 0%, rgba(59, 130, 246, 0.05) 100%);
   color: var(--color-accent-primary);
   font-size: 0.8rem;
   font-weight: 700;
@@ -362,6 +385,12 @@
   justify-content: center;
 }
 
+/* Light theme button adjustments */
+:root .btn-stock-action {
+  background: linear-gradient(135deg, rgba(59, 130, 246, 0.08) 0%, rgba(59, 130, 246, 0.03) 100%);
+  border-color: rgba(59, 130, 246, 0.4);
+}
+
 .btn-stock-action::before {
   content: '';
   position: absolute;
@@ -369,7 +398,7 @@
   left: -100%;
   width: 100%;
   height: 100%;
-  background: linear-gradient(90deg, transparent, rgba(10, 132, 255, 0.1), transparent);
+  background: linear-gradient(90deg, transparent, rgba(59, 130, 246, 0.1), transparent);
   transition: left 0.5s ease;
 }
 
@@ -381,7 +410,7 @@
   background: linear-gradient(135deg, var(--color-accent-primary) 0%, #3f9eff 100%);
   color: white;
   transform: translateY(-2px);
-  box-shadow: 0 6px 20px rgba(10, 132, 255, 0.3);
+  box-shadow: 0 6px 20px rgba(59, 130, 246, 0.3);
 }
 
 .btn-stock-action:active {
@@ -459,8 +488,8 @@
   width: 100%;
   padding: 14px 16px;
   border-radius: 12px;
-  border: 2px solid rgba(255, 255, 255, 0.2);
-  background-color: rgba(255, 255, 255, 0.05);
+  border: 2px solid var(--color-border);
+  background-color: var(--color-bg-content);
   color: var(--color-text-primary);
   font-size: 1.1rem;
   transition: all 0.3s ease;
@@ -471,7 +500,7 @@
   outline: none;
   border-color: var(--color-accent-primary);
   box-shadow: 0 0 0 3px rgba(10, 132, 255, 0.1);
-  background-color: rgba(255, 255, 255, 0.08);
+  background-color: var(--color-bg-content);
 }
 
 /* Responsive Design for larger screens */

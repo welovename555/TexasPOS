@@ -8,17 +8,17 @@ body {
 
 .pos-container {
   display: flex;
+  flex-direction: column; /* เปลี่ยนเป็น column สำหรับ bottom navigation */
   height: 100vh;
   width: 100vw;
 }
 
 .main-content {
   flex-grow: 1;
-  height: 100vh;
+  height: calc(100vh - 80px); /* ลบความสูงของ bottom nav */
   overflow-y: auto; /* ให้ scroll ได้เฉพาะส่วนเนื้อหา */
   padding: 24px;
   box-sizing: border-box;
-  margin-left: var(--sidebar-width); /* เพิ่ม: เว้นที่สำหรับ Sidebar */
 }
 
 /* ซ่อน Scrollbar แต่ยัง scroll ได้ */
@@ -33,4 +33,268 @@ body {
 
 .content-view.active {
   display: block;
+}
+
+/* Bottom Navigation Styles */
+.bottom-navigation {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 80px;
+  background: var(--nav-bg, linear-gradient(135deg, rgba(26, 29, 31, 0.95) 0%, rgba(17, 19, 21, 0.98) 100%));
+  backdrop-filter: blur(20px);
+  border-top: 1px solid var(--color-border);
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  padding: 0 20px;
+  z-index: 1000;
+  box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.1);
+}
+
+/* Light theme navigation */
+:root {
+  --nav-bg: linear-gradient(135deg, rgba(255, 255, 255, 0.95) 0%, rgba(248, 250, 252, 0.98) 100%);
+  --nav-shadow: 0 -4px 20px rgba(0, 0, 0, 0.05);
+}
+
+[data-theme="dark"] {
+  --nav-bg: linear-gradient(135deg, rgba(26, 29, 31, 0.95) 0%, rgba(17, 19, 21, 0.98) 100%);
+  --nav-shadow: 0 -4px 20px rgba(0, 0, 0, 0.1);
+}
+
+.bottom-navigation {
+  box-shadow: var(--nav-shadow);
+}
+
+/* Navigation Item */
+.nav-item {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 8px 12px;
+  border-radius: 16px;
+  text-decoration: none;
+  color: var(--color-text-secondary);
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  cursor: pointer;
+  min-width: 60px;
+  min-height: 60px;
+  overflow: hidden;
+}
+
+/* Magic Background Effect */
+.nav-item::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 0;
+  height: 0;
+  background: linear-gradient(135deg, var(--color-accent-primary), var(--color-accent-secondary));
+  border-radius: 50%;
+  transform: translate(-50%, -50%);
+  transition: all 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+  z-index: -1;
+  opacity: 0;
+}
+
+/* Icon Container */
+.nav-item svg {
+  width: 24px;
+  height: 24px;
+  margin-bottom: 4px;
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  z-index: 2;
+  position: relative;
+}
+
+/* Text Label */
+.nav-item span {
+  font-size: 0.7rem;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  z-index: 2;
+  position: relative;
+  text-align: center;
+}
+
+/* Hover Effects */
+.nav-item:hover {
+  color: var(--color-text-primary);
+  transform: translateY(-2px);
+}
+
+.nav-item:hover::before {
+  width: 50px;
+  height: 50px;
+  opacity: 0.1;
+}
+
+.nav-item:hover svg {
+  transform: scale(1.1) rotate(5deg);
+}
+
+.nav-item:hover span {
+  transform: scale(1.05);
+}
+
+/* Active State - Magic Effect */
+.nav-item.active {
+  color: #ffffff;
+  transform: translateY(-4px);
+}
+
+.nav-item.active::before {
+  width: 55px;
+  height: 55px;
+  opacity: 1;
+  box-shadow: 
+    0 8px 25px rgba(59, 130, 246, 0.4),
+    0 0 20px rgba(59, 130, 246, 0.3),
+    inset 0 1px 0 rgba(255, 255, 255, 0.2);
+}
+
+.nav-item.active svg {
+  transform: scale(1.2) rotate(0deg);
+  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.2));
+}
+
+.nav-item.active span {
+  transform: scale(1.1);
+  font-weight: 700;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+}
+
+/* Ripple Effect on Click */
+.nav-item::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 0;
+  height: 0;
+  background: rgba(255, 255, 255, 0.3);
+  border-radius: 50%;
+  transform: translate(-50%, -50%);
+  transition: all 0.6s ease;
+  pointer-events: none;
+}
+
+.nav-item:active::after {
+  width: 80px;
+  height: 80px;
+  opacity: 0;
+}
+
+/* Special Logout Button */
+.nav-item#logout-btn {
+  background: linear-gradient(135deg, rgba(239, 68, 68, 0.1) 0%, rgba(239, 68, 68, 0.05) 100%);
+  border: 1px solid rgba(239, 68, 68, 0.2);
+}
+
+.nav-item#logout-btn:hover {
+  background: linear-gradient(135deg, rgba(239, 68, 68, 0.2) 0%, rgba(239, 68, 68, 0.1) 100%);
+  border-color: rgba(239, 68, 68, 0.4);
+  color: var(--color-accent-danger);
+}
+
+.nav-item#logout-btn::before {
+  background: linear-gradient(135deg, var(--color-accent-danger), #ff6b5a);
+}
+
+/* Theme Selector Button */
+.nav-item#theme-selector-btn {
+  background: linear-gradient(135deg, rgba(139, 92, 246, 0.1) 0%, rgba(139, 92, 246, 0.05) 100%);
+  border: 1px solid rgba(139, 92, 246, 0.2);
+}
+
+.nav-item#theme-selector-btn:hover {
+  background: linear-gradient(135deg, rgba(139, 92, 246, 0.2) 0%, rgba(139, 92, 246, 0.1) 100%);
+  border-color: rgba(139, 92, 246, 0.4);
+  color: #8b5cf6;
+}
+
+.nav-item#theme-selector-btn::before {
+  background: linear-gradient(135deg, #8b5cf6, #a855f7);
+}
+
+/* Floating Animation for Active Item */
+@keyframes floatActive {
+  0%, 100% { transform: translateY(-4px); }
+  50% { transform: translateY(-6px); }
+}
+
+.nav-item.active {
+  animation: floatActive 3s ease-in-out infinite;
+}
+
+/* Responsive Design */
+@media (max-width: 480px) {
+  .bottom-navigation {
+    padding: 0 10px;
+    height: 75px;
+  }
+  
+  .main-content {
+    height: calc(100vh - 75px);
+    padding: 20px 16px;
+  }
+  
+  .nav-item {
+    min-width: 50px;
+    min-height: 55px;
+    padding: 6px 8px;
+  }
+  
+  .nav-item svg {
+    width: 20px;
+    height: 20px;
+  }
+  
+  .nav-item span {
+    font-size: 0.65rem;
+  }
+}
+
+@media (max-width: 360px) {
+  .nav-item span {
+    font-size: 0.6rem;
+  }
+  
+  .nav-item {
+    min-width: 45px;
+  }
+}
+
+/* Hide old sidebar */
+.sidebar {
+  display: none;
+}
+
+/* Smooth Transitions */
+* {
+  transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
+}
+
+/* Glow Effect for Active Navigation */
+.nav-item.active::before {
+  animation: activeGlow 2s ease-in-out infinite alternate;
+}
+
+@keyframes activeGlow {
+  0% { 
+    box-shadow: 
+      0 8px 25px rgba(59, 130, 246, 0.4),
+      0 0 20px rgba(59, 130, 246, 0.3);
+  }
+  100% { 
+    box-shadow: 
+      0 12px 35px rgba(59, 130, 246, 0.6),
+      0 0 30px rgba(59, 130, 246, 0.5);
+  }
 }

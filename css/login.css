@@ -1,4 +1,4 @@
-/* ===== Modern Login Design ===== */
+/* ===== Masculine Login Design ===== */
 .login-container {
   display: flex;
   flex-direction: column;
@@ -11,26 +11,28 @@
   position: relative;
   overflow: hidden;
   
-  /* Dynamic Gradient Background */
+  /* Masculine Dark Gradient Background */
   background: linear-gradient(135deg, 
-    #667eea 0%, 
-    #764ba2 25%, 
-    #f093fb 50%, 
-    #f5576c 75%, 
-    #4facfe 100%
+    #0f172a 0%,    /* Slate 900 - Deep Dark */
+    #1e293b 25%,   /* Slate 800 - Dark Blue */
+    #334155 50%,   /* Slate 700 - Steel Blue */
+    #475569 75%,   /* Slate 600 - Cool Gray */
+    #64748b 100%   /* Slate 500 - Light Steel */
   );
   background-size: 400% 400%;
-  animation: gradientShift 15s ease infinite;
+  animation: masculineGradientShift 20s ease infinite;
 }
 
-/* Animated Background */
-@keyframes gradientShift {
+/* Masculine Gradient Animation */
+@keyframes masculineGradientShift {
   0% { background-position: 0% 50%; }
-  50% { background-position: 100% 50%; }
+  25% { background-position: 100% 50%; }
+  50% { background-position: 100% 100%; }
+  75% { background-position: 0% 100%; }
   100% { background-position: 0% 50%; }
 }
 
-/* Floating Particles */
+/* Subtle Tech Particles */
 .login-container::before {
   content: '';
   position: absolute;
@@ -39,17 +41,17 @@
   width: 100%;
   height: 100%;
   background-image: 
-    radial-gradient(circle at 20% 80%, rgba(255, 255, 255, 0.1) 2px, transparent 2px),
-    radial-gradient(circle at 80% 20%, rgba(255, 255, 255, 0.15) 1px, transparent 1px),
-    radial-gradient(circle at 40% 40%, rgba(255, 255, 255, 0.1) 1.5px, transparent 1.5px);
-  background-size: 100px 100px, 150px 150px, 200px 200px;
-  animation: floatParticles 20s linear infinite;
+    radial-gradient(circle at 20% 80%, rgba(59, 130, 246, 0.1) 2px, transparent 2px),
+    radial-gradient(circle at 80% 20%, rgba(99, 102, 241, 0.15) 1px, transparent 1px),
+    radial-gradient(circle at 40% 40%, rgba(139, 92, 246, 0.1) 1.5px, transparent 1.5px);
+  background-size: 120px 120px, 180px 180px, 240px 240px;
+  animation: techParticles 25s linear infinite;
   pointer-events: none;
 }
 
-@keyframes floatParticles {
+@keyframes techParticles {
   0% { transform: translateY(0px) rotate(0deg); }
-  100% { transform: translateY(-100px) rotate(360deg); }
+  100% { transform: translateY(-120px) rotate(360deg); }
 }
 
 /* Main Content Container */
@@ -57,76 +59,95 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 24px;
+  gap: 28px;
   color: #fff;
   position: relative;
   z-index: 10;
   
-  /* Glass Effect */
-  background: rgba(255, 255, 255, 0.1);
-  backdrop-filter: blur(20px);
-  border-radius: 24px;
-  padding: 40px 30px;
-  border: 1px solid rgba(255, 255, 255, 0.2);
+  /* Dark Glass Effect */
+  background: rgba(15, 23, 42, 0.4);
+  backdrop-filter: blur(25px);
+  border-radius: 28px;
+  padding: 45px 35px;
+  border: 1px solid rgba(59, 130, 246, 0.2);
   box-shadow: 
-    0 25px 50px rgba(0, 0, 0, 0.2),
-    inset 0 1px 0 rgba(255, 255, 255, 0.3);
+    0 30px 60px rgba(0, 0, 0, 0.4),
+    inset 0 1px 0 rgba(59, 130, 246, 0.2),
+    0 0 0 1px rgba(15, 23, 42, 0.1);
   
-  /* Floating Animation */
-  animation: floatContainer 6s ease-in-out infinite;
+  /* Masculine Floating Animation */
+  animation: masculineFloat 8s ease-in-out infinite;
 }
 
-@keyframes floatContainer {
-  0%, 100% { transform: translateY(0px); }
-  50% { transform: translateY(-10px); }
+@keyframes masculineFloat {
+  0%, 100% { transform: translateY(0px) scale(1); }
+  50% { transform: translateY(-8px) scale(1.02); }
 }
 
-/* Logo Styling */
+/* Logo Styling - Masculine */
 .pin-display .logo {
-  font-size: 3rem;
+  font-size: 3.2rem;
   font-weight: 900;
-  background: linear-gradient(135deg, #fff 0%, #f0f9ff 50%, #dbeafe 100%);
+  background: linear-gradient(135deg, 
+    #3b82f6 0%,   /* Blue 500 */
+    #6366f1 25%,  /* Indigo 500 */
+    #8b5cf6 50%,  /* Violet 500 */
+    #06b6d4 75%,  /* Cyan 500 */
+    #10b981 100%  /* Emerald 500 */
+  );
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
-  text-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
-  letter-spacing: 2px;
-  animation: logoGlow 3s ease-in-out infinite alternate;
+  text-shadow: 0 6px 12px rgba(59, 130, 246, 0.3);
+  letter-spacing: 3px;
+  animation: masculineLogoGlow 4s ease-in-out infinite alternate;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  font-weight: 800;
 }
 
-@keyframes logoGlow {
-  0% { filter: drop-shadow(0 0 10px rgba(255, 255, 255, 0.3)); }
-  100% { filter: drop-shadow(0 0 20px rgba(255, 255, 255, 0.6)); }
+@keyframes masculineLogoGlow {
+  0% { 
+    filter: drop-shadow(0 0 15px rgba(59, 130, 246, 0.4));
+    transform: scale(1);
+  }
+  100% { 
+    filter: drop-shadow(0 0 25px rgba(99, 102, 241, 0.6));
+    transform: scale(1.05);
+  }
 }
 
 /* Subtitle */
 .pin-display p {
-  font-size: 1.1rem;
-  font-weight: 500;
-  color: rgba(255, 255, 255, 0.9);
+  font-size: 1.15rem;
+  font-weight: 600;
+  color: rgba(226, 232, 240, 0.9);
   margin: 0;
-  letter-spacing: 0.5px;
+  letter-spacing: 0.8px;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
 }
 
 /* PIN Dots Container */
 .pin-dots-container {
   display: flex;
-  gap: 16px;
-  height: 32px;
-  margin: 20px 0;
+  gap: 20px;
+  height: 36px;
+  margin: 24px 0;
   align-items: center;
 }
 
-/* Individual PIN Dots */
+/* Individual PIN Dots - Masculine Style */
 .pin-dot {
-  width: 20px;
-  height: 20px;
+  width: 24px;
+  height: 24px;
   border-radius: 50%;
-  background: rgba(255, 255, 255, 0.2);
-  border: 2px solid rgba(255, 255, 255, 0.4);
-  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  background: rgba(15, 23, 42, 0.3);
+  border: 2px solid rgba(59, 130, 246, 0.4);
+  transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
   position: relative;
   overflow: hidden;
+  box-shadow: 
+    0 4px 15px rgba(0, 0, 0, 0.2),
+    inset 0 2px 4px rgba(59, 130, 246, 0.1);
 }
 
 .pin-dot::before {
@@ -136,47 +157,49 @@
   left: 50%;
   width: 0;
   height: 0;
-  background: linear-gradient(135deg, #60a5fa, #3b82f6);
+  background: linear-gradient(135deg, #3b82f6, #6366f1);
   border-radius: 50%;
   transform: translate(-50%, -50%);
-  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .pin-dot.filled {
-  background: linear-gradient(135deg, #60a5fa, #3b82f6);
+  background: linear-gradient(135deg, #3b82f6, #6366f1);
   border-color: #3b82f6;
   box-shadow: 
-    0 0 20px rgba(59, 130, 246, 0.6),
+    0 0 25px rgba(59, 130, 246, 0.7),
+    0 4px 15px rgba(59, 130, 246, 0.4),
     inset 0 2px 4px rgba(255, 255, 255, 0.3);
-  transform: scale(1.1);
+  transform: scale(1.15);
 }
 
 .pin-dot.filled::before {
-  width: 8px;
-  height: 8px;
-  background: rgba(255, 255, 255, 0.8);
+  width: 10px;
+  height: 10px;
+  background: rgba(255, 255, 255, 0.9);
+  box-shadow: 0 0 8px rgba(255, 255, 255, 0.5);
 }
 
 /* PIN Pad Container */
 .pin-pad-container {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
-  gap: 16px;
+  gap: 18px;
   width: 100%;
-  max-width: 280px;
-  margin-top: 20px;
+  max-width: 300px;
+  margin-top: 24px;
 }
 
-/* PIN Buttons */
+/* PIN Buttons - Masculine Design */
 .pin-btn {
-  font-size: 1.8rem;
-  font-weight: 600;
-  background: rgba(255, 255, 255, 0.15);
-  color: #fff;
-  border: 1px solid rgba(255, 255, 255, 0.3);
-  border-radius: 20px;
-  width: 80px;
-  height: 80px;
+  font-size: 2rem;
+  font-weight: 700;
+  background: rgba(15, 23, 42, 0.2);
+  color: #e2e8f0;
+  border: 1px solid rgba(59, 130, 246, 0.3);
+  border-radius: 24px;
+  width: 85px;
+  height: 85px;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -184,15 +207,17 @@
   margin: 0 auto;
   position: relative;
   overflow: hidden;
-  backdrop-filter: blur(10px);
+  backdrop-filter: blur(15px);
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
   
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   box-shadow: 
-    0 8px 16px rgba(0, 0, 0, 0.1),
-    inset 0 1px 0 rgba(255, 255, 255, 0.2);
+    0 10px 20px rgba(0, 0, 0, 0.15),
+    inset 0 1px 0 rgba(59, 130, 246, 0.2),
+    0 1px 3px rgba(59, 130, 246, 0.1);
 }
 
-/* Ripple Effect */
+/* Masculine Ripple Effect */
 .pin-btn::before {
   content: '';
   position: absolute;
@@ -200,57 +225,64 @@
   left: 50%;
   width: 0;
   height: 0;
-  background: rgba(255, 255, 255, 0.3);
+  background: rgba(59, 130, 246, 0.4);
   border-radius: 50%;
   transform: translate(-50%, -50%);
-  transition: all 0.6s ease;
+  transition: all 0.8s ease;
 }
 
 .pin-btn:active::before {
-  width: 120px;
-  height: 120px;
+  width: 140px;
+  height: 140px;
 }
 
 /* Button Hover & Active States */
 .pin-btn:hover {
-  background: rgba(255, 255, 255, 0.25);
-  border-color: rgba(255, 255, 255, 0.5);
-  transform: translateY(-2px);
+  background: rgba(59, 130, 246, 0.15);
+  border-color: rgba(59, 130, 246, 0.6);
+  color: #ffffff;
+  transform: translateY(-3px) scale(1.05);
   box-shadow: 
-    0 12px 24px rgba(0, 0, 0, 0.15),
-    inset 0 1px 0 rgba(255, 255, 255, 0.3);
+    0 15px 30px rgba(0, 0, 0, 0.2),
+    0 0 20px rgba(59, 130, 246, 0.3),
+    inset 0 1px 0 rgba(59, 130, 246, 0.4);
 }
 
 .pin-btn:active {
-  transform: translateY(0px) scale(0.95);
-  background: rgba(255, 255, 255, 0.3);
+  transform: translateY(-1px) scale(0.98);
+  background: rgba(59, 130, 246, 0.25);
   box-shadow: 
-    0 4px 8px rgba(0, 0, 0, 0.2),
+    0 8px 15px rgba(0, 0, 0, 0.25),
+    0 0 15px rgba(59, 130, 246, 0.4),
     inset 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
 /* Special Buttons (Clear & Backspace) */
 .pin-btn[data-value="C"],
 .pin-btn[data-value="<"] {
-  background: rgba(239, 68, 68, 0.2);
+  background: rgba(239, 68, 68, 0.15);
   border-color: rgba(239, 68, 68, 0.4);
-  color: #fecaca;
+  color: #fca5a5;
 }
 
 .pin-btn[data-value="C"]:hover,
 .pin-btn[data-value="<"]:hover {
-  background: rgba(239, 68, 68, 0.3);
-  border-color: rgba(239, 68, 68, 0.6);
+  background: rgba(239, 68, 68, 0.25);
+  border-color: rgba(239, 68, 68, 0.7);
+  color: #ffffff;
+  box-shadow: 
+    0 15px 30px rgba(0, 0, 0, 0.2),
+    0 0 20px rgba(239, 68, 68, 0.3);
 }
 
 /* Error Message */
 .error-message {
-  color: #fecaca;
-  height: 24px;
-  font-weight: 600;
-  font-size: 1rem;
-  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
-  letter-spacing: 0.5px;
+  color: #fca5a5;
+  height: 28px;
+  font-weight: 700;
+  font-size: 1.1rem;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.4);
+  letter-spacing: 0.8px;
 }
 
 /* Loading Overlay */
@@ -260,8 +292,8 @@
   left: 0;
   width: 100%;
   height: 100%;
-  background: rgba(0, 0, 0, 0.8);
-  backdrop-filter: blur(5px);
+  background: rgba(15, 23, 42, 0.85);
+  backdrop-filter: blur(8px);
   display: none;
   justify-content: center;
   align-items: center;
@@ -269,78 +301,101 @@
 }
 
 .loading-overlay .spinner {
-  width: 60px;
-  height: 60px;
-  border: 4px solid rgba(255, 255, 255, 0.2);
-  border-top-color: #60a5fa;
+  width: 70px;
+  height: 70px;
+  border: 5px solid rgba(59, 130, 246, 0.2);
+  border-top-color: #3b82f6;
   border-radius: 50%;
   animation: spin 1s linear infinite;
-  filter: drop-shadow(0 0 10px rgba(96, 165, 250, 0.5));
+  filter: drop-shadow(0 0 15px rgba(59, 130, 246, 0.6));
 }
 
 /* Shake Animation for Errors */
 .pin-display.shake {
-  animation: shakeError 0.6s ease-in-out;
+  animation: masculineShakeError 0.8s ease-in-out;
 }
 
-@keyframes shakeError {
-  0%, 100% { transform: translateX(0) translateY(-10px); }
-  10%, 30%, 50%, 70%, 90% { transform: translateX(-8px) translateY(-10px); }
-  20%, 40%, 60%, 80% { transform: translateX(8px) translateY(-10px); }
+@keyframes masculineShakeError {
+  0%, 100% { transform: translateX(0) translateY(-8px) scale(1.02); }
+  10%, 30%, 50%, 70%, 90% { transform: translateX(-12px) translateY(-8px) scale(1.02); }
+  20%, 40%, 60%, 80% { transform: translateX(12px) translateY(-8px) scale(1.02); }
 }
 
 @keyframes spin {
   to { transform: rotate(360deg); }
 }
 
-/* Responsive Design */
-@media (max-width: 480px) {
-  .pin-display {
-    padding: 30px 20px;
-    margin: 0 10px;
-  }
-  
-  .pin-display .logo {
-    font-size: 2.5rem;
-  }
-  
-  .pin-btn {
-    width: 70px;
-    height: 70px;
-    font-size: 1.6rem;
-  }
-  
-  .pin-pad-container {
-    gap: 12px;
-    max-width: 240px;
-  }
-}
-
-@media (max-width: 360px) {
-  .pin-btn {
-    width: 60px;
-    height: 60px;
-    font-size: 1.4rem;
-  }
-  
-  .pin-pad-container {
-    max-width: 200px;
-  }
-}
-
 /* Success Animation */
-@keyframes successPulse {
-  0% { transform: scale(1); }
-  50% { transform: scale(1.05); }
-  100% { transform: scale(1); }
+@keyframes masculineSuccessPulse {
+  0% { transform: scale(1.02); }
+  50% { transform: scale(1.08); }
+  100% { transform: scale(1.02); }
 }
 
 .pin-display.success {
-  animation: successPulse 0.6s ease-in-out;
+  animation: masculineSuccessPulse 0.8s ease-in-out;
 }
 
 .pin-display.success .pin-dot.filled {
   background: linear-gradient(135deg, #10b981, #059669);
   border-color: #10b981;
-  box-shadow: 0 0 20px rgba(16, 185, 129, 0.6);
+  box-shadow: 0 0 25px rgba(16, 185, 129, 0.7);
+}
+
+/* Responsive Design */
+@media (max-width: 480px) {
+  .pin-display {
+    padding: 35px 25px;
+    margin: 0 15px;
+  }
+  
+  .pin-display .logo {
+    font-size: 2.8rem;
+  }
+  
+  .pin-btn {
+    width: 75px;
+    height: 75px;
+    font-size: 1.8rem;
+  }
+  
+  .pin-pad-container {
+    gap: 15px;
+    max-width: 260px;
+  }
+}
+
+@media (max-width: 360px) {
+  .pin-btn {
+    width: 65px;
+    height: 65px;
+    font-size: 1.6rem;
+  }
+  
+  .pin-pad-container {
+    max-width: 220px;
+  }
+}
+
+/* Additional Masculine Touches */
+.pin-display::after {
+  content: '';
+  position: absolute;
+  top: -2px;
+  left: -2px;
+  right: -2px;
+  bottom: -2px;
+  background: linear-gradient(45deg, 
+    rgba(59, 130, 246, 0.1), 
+    rgba(99, 102, 241, 0.1), 
+    rgba(139, 92, 246, 0.1)
+  );
+  border-radius: 30px;
+  z-index: -1;
+  animation: borderGlow 3s ease-in-out infinite alternate;
+}
+
+@keyframes borderGlow {
+  0% { opacity: 0.3; }
+  100% { opacity: 0.7; }
 }

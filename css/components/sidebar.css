@@ -1,83 +1,13 @@
+/* Sidebar is now hidden - using bottom navigation instead */
 .sidebar {
-  width: var(--sidebar-width);
-  background-color: var(--color-bg-content);
-  flex-shrink: 0;
-  height: 100vh;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  padding: 24px 0;
-  box-sizing: border-box;
-  border-right: 1px solid var(--color-border);
-  position: fixed;
-  left: 0;
-  top: 0;
-  z-index: 100;
+  display: none;
 }
 
-.sidebar-brand {
-  height: 60px;
-  margin-bottom: 30px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex-shrink: 0;
-}
-
+/* Legacy styles kept for compatibility but not used */
+.sidebar-brand,
+.sidebar-nav,
+.sidebar-footer,
+.nav-item,
 .brand-title {
-  font-size: 1.1rem;
-  font-weight: 800;
-  margin: 0;
-  background: -webkit-linear-gradient(45deg, var(--color-accent-secondary), var(--color-accent-primary));
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  writing-mode: vertical-rl;
-  text-orientation: mixed;
-  transform: rotate(180deg);
-}
-
-.sidebar-nav {
-  display: flex;
-  flex-direction: column;
-  gap: 15px;
-  width: 100%;
-  align-items: center;
-}
-
-.nav-item {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  width: 60px;
-  height: 60px;
-  border-radius: 12px;
-  text-decoration: none;
-  color: var(--color-text-secondary);
-  transition: background-color 0.2s ease, color 0.2s ease;
-  flex-shrink: 0;
-}
-
-.nav-item span {
-  font-size: 0.75rem;
-  margin-top: 4px;
-}
-
-.nav-item:hover {
-  background-color: rgba(255, 255, 255, 0.08);
-  color: var(--color-text-primary);
-}
-
-.nav-item.active {
-  background-color: var(--color-accent-primary);
-  color: var(--color-text-primary);
-}
-
-.sidebar-footer {
-  margin-top: auto; /* ทำให้ footer อยู่ล่างสุดเสมอ */
-  flex-shrink: 0;
-  display: flex;
-  flex-direction: column;
-  gap: 15px; /* ระยะห่างระหว่างปุ่ม */
-  padding-bottom: 48px; /* เพิ่มระยะห่างจากขอบล่าง */
+  display: none;
 }
