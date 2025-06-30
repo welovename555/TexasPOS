@@ -7,132 +7,114 @@
   font-weight: 800;
   color: #FFFFFF;
   margin: 0;
-  background: -webkit-linear-gradient(45deg, var(--color-accent-secondary), var(--color-accent-primary)); /* แก้ไข */
+  background: -webkit-linear-gradient(45deg, var(--color-accent-secondary), var(--color-accent-primary));
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
 }
 
 .product-grid {
   display: grid;
-  /* ปรับแก้บรรทัดนี้: กำหนดขนาดขั้นต่ำให้เล็กลงเพื่อให้ 3 รายการต่อแถวได้ */
-  grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); /* ปรับขนาดขั้นต่ำให้กว้างขึ้นเล็กน้อย */
   gap: 16px;
-  /* เพิ่ม padding ด้านล่างเพื่อให้ไม่ทับกับปุ่มชำระเงิน และรองรับ Safe Area */
   padding-bottom: calc(120px + env(safe-area-inset-bottom));
 }
 
+/* --- [เริ่ม] สไตล์การ์ดสินค้า (ยกเครื่องใหม่) --- */
 .product-item {
-  background-color: var(--color-bg-content); /* แก้ไข */
+  background-color: #1A1D1F; /* พื้นหลังสีเทาเข้ม */
   border-radius: 12px;
-  text-align: left;
   cursor: pointer;
   transition: transform 0.2s ease, box-shadow 0.2s ease;
-  border: 1px solid var(--color-border); /* แก้ไข */
-  display: flex;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  display: flex; /* ใช้ flexbox ในการจัด layout */
   flex-direction: column;
-  overflow: hidden;
+  justify-content: center; /* จัดให้อยู่กึ่งกลางแนวตั้ง */
+  padding: 20px 16px; /* เพิ่ม padding ให้โปร่งขึ้น */
+  min-height: 120px; /* กำหนดความสูงขั้นต่ำให้การ์ดเท่ากัน */
 }
 
 .product-item:hover {
   transform: translateY(-5px);
   box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+  border-color: rgba(52, 199, 89, 0.4); /* เปลี่ยนสีขอบเมื่อ hover */
 }
 
 .product-item.out-of-stock {
   cursor: not-allowed;
   opacity: 0.5;
+  background-color: #2a2d2f;
 }
 
-.product-item-image-container {
-  width: 100%;
-  padding-top: 100%;
-  position: relative;
-  background-color: #3a3a3c;
+.product-item.out-of-stock:hover {
+    transform: none;
+    box-shadow: none;
+    border-color: rgba(255, 255, 255, 0.1);
 }
 
-.product-item-image {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-}
-
-.product-item-name {
-  font-size: 0.9rem; /* ปรับขนาดฟอนต์ให้เล็กลงเล็กน้อย */
-  font-weight: 600;
-  color: var(--color-text-primary); /* แก้ไข */
-  line-height: 1.3;
-  padding: 10px; /* ลด padding เล็กน้อย */
-  flex-grow: 1;
-}
-
-.product-item-footer {
+.product-item-details {
   display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 0 10px 10px 10px; /* ลด padding เล็กน้อย */
+  flex-direction: column;
+  gap: 8px; /* ระยะห่างระหว่าง ชื่อ, ราคา, สต็อก */
+  text-align: left; /* จัดชิดซ้าย */
 }
 
+/* ชื่อสินค้า (สีขาว, ใหญ่) */
+.product-item-name {
+  color: var(--color-text-primary);
+  font-size: 1.1rem; /* ขนาดใหญ่ */
+  font-weight: 600;
+  line-height: 1.4; /* เว้นบรรทัด */
+}
+
+/* ราคา (สีเขียว, กลาง) */
 .product-item-price {
-  font-size: 1rem; /* ปรับขนาดฟอนต์ให้เล็กลงเล็กน้อย */
+  color: var(--color-accent-secondary);
+  font-size: 1rem; /* ขนาดกลาง */
   font-weight: 700;
-  color: var(--color-accent-secondary); /* แก้ไข */
 }
 
+/* สต็อก (สีเทาอ่อน, เล็ก) */
 .product-item-stock {
-  font-size: 0.75rem; /* ปรับขนาดฟอนต์ให้เล็กลงเล็กน้อย */
-  color: var(--color-text-secondary); /* แก้ไข */
+  color: var(--color-text-secondary);
+  font-size: 0.85rem; /* ขนาดเล็ก */
   font-weight: 500;
 }
 
+/* สไตล์สำหรับ "หลายราคา" */
+.multi-price-text {
+  color: #ff9500; /* สีเหลืองอำพัน */
+  font-weight: 600;
+}
+/* --- [จบ] สไตล์การ์ดสินค้า --- */
+
+
 .empty-message {
-    color: var(--color-text-secondary); /* แก้ไข */
+    color: var(--color-text-secondary);
     text-align: center;
     width: 100%;
     padding: 50px 0;
 }
 
-/* ลบ old checkout button styles */
-.checkout-btn-old {
-  position: fixed;
-  bottom: 20px;
-  right: 20px;
-  z-index: 999;
-  background-color: var(--color-accent-secondary); /* แก้ไข */
-  color: white;
-  padding: 14px 22px;
-  font-size: 16px;
-  font-weight: bold;
-  border: none;
-  border-radius: 8px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
-  cursor: pointer;
-  transition: background 0.3s ease;
-}
-
-.checkout-btn-old:hover {
-  background-color: #27ae60;
-}
-
+/* Responsive ปรับ padding สำหรับมือถือ */
 @media (max-width: 480px) {
-  .checkout-btn-old {
-    width: calc(100% - 40px);
-    left: 20px;
-    right: 20px;
-    border-radius: 12px;
-  }
-  
   .product-grid {
-    padding-bottom: 140px; /* เพิ่ม padding สำหรับมือถือ */
+    padding-bottom: 140px; 
+    grid-template-columns: repeat(auto-fill, minmax(120px, 1fr)); /* ลดขนาดการ์ดในมือถือ */
+  }
+
+  .product-item {
+    padding: 16px;
+  }
+
+  .product-item-name {
+    font-size: 1rem;
+  }
+    
+  .product-item-price {
+    font-size: 0.9rem;
+  }
+
+  .product-item-stock {
+    font-size: 0.8rem;
   }
 }
-
-/* --- [เริ่ม] สไตล์สำหรับข้อความ "หลายราคา" --- */
-.multi-price-text {
-  color: #ff9500; /* สีเหลืองอำพัน */
-  font-weight: 600; /* ปรับความหนาตัวอักษร */
-  font-size: 0.9rem; /* ปรับขนาดฟอนต์ให้เหมาะสม */
-}
-/* --- [จบ] สไตล์สำหรับข้อความ "หลายราคา" --- */
