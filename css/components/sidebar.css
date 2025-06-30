@@ -1,4 +1,5 @@
-/* Sidebar is now hidden - using bottom navigation instead */
+/* Bottom Navigation is now in layout.css */
+/* This file is kept for compatibility but sidebar is hidden */
 .sidebar {
   display: none;
 }
@@ -9,5 +10,5 @@
 .sidebar-footer,
 .nav-item,
 .brand-title {
-  display: none;
+  /* These are now handled by bottom navigation in layout.css */
 }
