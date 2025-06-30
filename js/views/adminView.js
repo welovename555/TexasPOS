@@ -3,6 +3,7 @@ import { Modal } from '../components/modal.js';
 import { productService } from '../services/productService.js';
 import { salesService } from '../services/salesService.js';
 import { authStore } from '../stores/authStore.js';
+import { NotificationSystem } from '../components/notification.js';
 
 const adminView = {
   container: null,
@@ -92,6 +93,10 @@ const adminView = {
 
     } catch (error) {
       console.error('Error loading initial data:', error);
+      NotificationSystem.error(
+        'เกิดข้อผิดพลาด',
+        'ไม่สามารถโหลดข้อมูลเริ่มต้นได้'
+      );
     }
   },
 
@@ -400,7 +405,10 @@ const adminView = {
       }
 
       if (!summary) {
-        alert('ไม่สามารถดึงข้อมูลได้');
+        NotificationSystem.error(
+          'ไม่สามารถดึงข้อมูลได้',
+          'กรุณาลองใหม่อีกครั้ง'
+        );
         return;
       }
 
@@ -414,10 +422,16 @@ const adminView = {
         this.downloadPDF(summary, dateRange);
       }
 
-      this.showSuccessMessage(`✅ ดาวน์โหลด ${format.toUpperCase()} สำเร็จ!`);
+      NotificationSystem.success(
+        `📄 ดาวน์โหลด ${format.toUpperCase()} สำเร็จ!`,
+        'ไฟล์ถูกบันทึกลงในเครื่องของคุณแล้ว'
+      );
 
     } catch (error) {
-      alert('เกิดข้อผิดพลาด: ' + error.message);
+      NotificationSystem.error(
+        'เกิดข้อผิดพลาด',
+        'ไม่สามารถสร้างไฟล์ได้: ' + error.message
+      );
     } finally {
       btn.disabled = false;
       btn.innerHTML = originalText;
@@ -635,12 +649,18 @@ const adminView = {
     if (!file) return;
 
     if (!file.type.startsWith('image/')) {
-      alert('กรุณาเลือกไฟล์รูปภาพเท่านั้น');
+      NotificationSystem.warning(
+        'ไฟล์ไม่ถูกต้อง',
+        'กรุณาเลือกไฟล์รูปภาพเท่านั้น'
+      );
       return;
     }
 
     if (file.size > 5 * 1024 * 1024) {
-      alert('ขนาดไฟล์ต้องไม่เกิน 5MB');
+      NotificationSystem.warning(
+        'ไฟล์ใหญ่เกินไป',
+        'ขนาดไฟล์ต้องไม่เกิน 5MB'
+      );
       return;
     }
 
@@ -734,7 +754,10 @@ const adminView = {
       };
 
       if (!formData.name || !formData.category_id || isNaN(formData.base_price)) {
-        alert('กรุณากรอกข้อมูลที่จำเป็นให้ครบถ้วนและถูกต้อง');
+        NotificationSystem.warning(
+          'ข้อมูลไม่ครบถ้วน',
+          'กรุณากรอกข้อมูลที่จำเป็นให้ครบถ้วนและถูกต้อง'
+        );
         return;
       }
 
@@ -744,7 +767,10 @@ const adminView = {
         if (uploadResult.success) {
           formData.image_url = uploadResult.url;
         } else {
-          alert('ไม่สามารถอัปโหลดรูปภาพได้: ' + uploadResult.error.message);
+          NotificationSystem.error(
+            'อัปโหลดรูปภาพไม่สำเร็จ',
+            uploadResult.error.message
+          );
           return;
         }
       }
@@ -762,15 +788,24 @@ const adminView = {
       
       if (result.success) {
         modal.close();
-        this.showSuccessMessage('✅ เพิ่มสินค้าสำเร็จ!');
+        NotificationSystem.success(
+          '✅ เพิ่มสินค้าสำเร็จ!',
+          `เพิ่ม "${formData.name}" เข้าสู่ระบบแล้ว`
+        );
         this.loadInitialData();
         document.dispatchEvent(new CustomEvent('productsUpdated'));
       } else {
-        alert('ไม่สามารถเพิ่มสินค้าได้: ' + result.error.message);
+        NotificationSystem.error(
+          'ไม่สามารถเพิ่มสินค้าได้',
+          result.error.message
+        );
       }
 
     } catch (error) {
-      alert('เกิดข้อผิดพลาด: ' + error.message);
+      NotificationSystem.error(
+        'เกิดข้อผิดพลาด',
+        error.message
+      );
     } finally {
       submitBtn.disabled = false;
       submitBtn.innerHTML = originalText;
@@ -1020,12 +1055,18 @@ const adminView = {
     if (!file) return;
 
     if (!file.type.startsWith('image/')) {
-      alert('กรุณาเลือกไฟล์รูปภาพเท่านั้น');
+      NotificationSystem.warning(
+        'ไฟล์ไม่ถูกต้อง',
+        'กรุณาเลือกไฟล์รูปภาพเท่านั้น'
+      );
       return;
     }
 
     if (file.size > 5 * 1024 * 1024) {
-      alert('ขนาดไฟล์ต้องไม่เกิน 5MB');
+      NotificationSystem.warning(
+        'ไฟล์ใหญ่เกินไป',
+        'ขนาดไฟล์ต้องไม่เกิน 5MB'
+      );
       return;
     }
 
@@ -1038,7 +1079,10 @@ const adminView = {
 
       const uploadResult = await productService.uploadProductImage(file);
       if (!uploadResult.success) {
-        alert('ไม่สามารถอัปโหลดรูปภาพได้: ' + uploadResult.error.message);
+        NotificationSystem.error(
+          'อัปโหลดรูปภาพไม่สำเร็จ',
+          uploadResult.error.message
+        );
         return;
       }
 
@@ -1048,15 +1092,24 @@ const adminView = {
         const imagePreview = modal.modalElement.querySelector('.image-preview');
         imagePreview.innerHTML = `<img src="${uploadResult.url}" alt="${product.name}">`;
         
-        this.showSuccessMessage('✅ อัปเดตรูปภาพสำเร็จ!');
+        NotificationSystem.success(
+          '✅ อัปเดตรูปภาพสำเร็จ!',
+          'รูปภาพสินค้าถูกเปลี่ยนแล้ว'
+        );
         this.loadInitialData();
         document.dispatchEvent(new CustomEvent('productsUpdated'));
       } else {
-        alert('ไม่สามารถอัปเดตรูปภาพได้: ' + updateResult.error.message);
+        NotificationSystem.error(
+          'อัปเดตรูปภาพไม่สำเร็จ',
+          updateResult.error.message
+        );
       }
 
     } catch (error) {
-      alert('เกิดข้อผิดพลาด: ' + error.message);
+      NotificationSystem.error(
+        'เกิดข้อผิดพลาด',
+        error.message
+      );
     } finally {
       updateImageBtn.disabled = false;
       updateImageBtn.innerHTML = originalText;
@@ -1066,77 +1119,51 @@ const adminView = {
   async saveProductChanges(product, modal) {
     // This would require implementing an update product service
     // For now, just show a message
-    alert('ฟีเจอร์แก้ไขข้อมูลสินค้าจะเพิ่มในอนาคต\nปัจจุบันสามารถเปลี่ยนรูปภาพและลบสินค้าได้เท่านั้น');
+    NotificationSystem.info(
+      'ฟีเจอร์ยังไม่พร้อม',
+      'ฟีเจอร์แก้ไขข้อมูลสินค้าจะเพิ่มในอนาคต\nปัจจุบันสามารถเปลี่ยนรูปภาพและลบสินค้าได้เท่านั้น'
+    );
   },
 
-  confirmDeleteProduct(product, modal) {
-    const confirmModal = Modal.create({
+  async confirmDeleteProduct(product, modal) {
+    const confirmed = await NotificationSystem.confirm({
       title: '⚠️ ยืนยันการลบสินค้า',
-      body: `
-        <div style="text-align: center; padding: 20px 0;">
-          <div style="font-size: 3rem; margin-bottom: 16px;">🗑️</div>
-          <h3 style="color: var(--color-accent-danger); margin-bottom: 12px;">คุณแน่ใจหรือไม่?</h3>
-          <p style="margin-bottom: 16px;">คุณกำลังจะลบสินค้า:</p>
-          <div style="background: rgba(255,69,58,0.1); padding: 12px; border-radius: 8px; border: 1px solid rgba(255,69,58,0.3);">
-            <strong style="color: var(--color-text-primary);">${product.name}</strong>
-          </div>
-          <p style="margin-top: 16px; color: var(--color-text-secondary); font-size: 0.9rem;">
-            การลบจะไม่สามารถกู้คืนได้
-          </p>
-        </div>
-      `,
-      footer: `
-        <button class="btn btn-secondary">❌ ยกเลิก</button>
-        <button class="btn btn-danger" id="confirm-delete-btn">🗑️ ลบสินค้า</button>
-      `
+      message: `คุณกำลังจะลบสินค้า "${product.name}" การลบจะไม่สามารถกู้คืนได้`,
+      confirmText: 'ลบสินค้า',
+      cancelText: 'ยกเลิก',
+      type: 'error'
     });
 
-    setTimeout(() => {
-      const confirmDeleteBtn = document.getElementById('confirm-delete-btn');
-      confirmDeleteBtn.addEventListener('click', async () => {
-        await this.deleteProduct(product, confirmModal, modal);
-      });
-    }, 100);
-  },
-
-  async deleteProduct(product, confirmModal, editModal) {
-    const confirmDeleteBtn = document.getElementById('confirm-delete-btn');
-    const originalText = confirmDeleteBtn.innerHTML;
-
-    try {
-      confirmDeleteBtn.disabled = true;
-      confirmDeleteBtn.innerHTML = '⏳ กำลังลบ...';
-
-      const result = await productService.deleteProduct(product.id);
-      
-      if (result.success) {
-        confirmModal.close();
-        editModal.close();
-        this.showSuccessMessage('✅ ลบสินค้าสำเร็จ!');
-        this.loadInitialData();
-        document.dispatchEvent(new CustomEvent('productsUpdated'));
-      } else {
-        alert('ไม่สามารถลบสินค้าได้: ' + result.error.message);
-      }
-
-    } catch (error) {
-      alert('เกิดข้อผิดพลาด: ' + error.message);
-    } finally {
-      confirmDeleteBtn.disabled = false;
-      confirmDeleteBtn.innerHTML = originalText;
+    if (confirmed) {
+      await this.deleteProduct(product, modal);
     }
   },
 
-  showSuccessMessage(message) {
-    const successMsg = document.createElement('div');
-    successMsg.className = 'success-message';
-    successMsg.innerHTML = message;
-    document.body.appendChild(successMsg);
-    
-    setTimeout(() => {
-      successMsg.style.animation = 'slideOut 0.3s ease';
-      setTimeout(() => successMsg.remove(), 300);
-    }, 3000);
+  async deleteProduct(product, editModal) {
+    try {
+      const result = await productService.deleteProduct(product.id);
+      
+      if (result.success) {
+        editModal.close();
+        NotificationSystem.success(
+          '✅ ลบสินค้าสำเร็จ!',
+          `ลบ "${product.name}" ออกจากระบบแล้ว`
+        );
+        this.loadInitialData();
+        document.dispatchEvent(new CustomEvent('productsUpdated'));
+      } else {
+        NotificationSystem.error(
+          'ไม่สามารถลบสินค้าได้',
+          result.error.message
+        );
+      }
+
+    } catch (error) {
+      NotificationSystem.error(
+        'เกิดข้อผิดพลาด',
+        error.message
+      );
+    }
   }
 };
 

@@ -6,6 +6,7 @@ import { stockView } from './views/stockView.js';
 import { priceSelectorModal } from './components/priceSelectorModal.js';
 import { checkoutModal } from './components/checkoutModal.js';
 import { themeManager } from './components/themeManager.js';
+import { NotificationSystem } from './components/notification.js';
 
 const App = {
   currentView: 'sell-view',
@@ -18,6 +19,9 @@ const App = {
       
       // Initialize theme manager
       themeManager.init();
+      
+      // Initialize notification system
+      NotificationSystem.init();
     });
   },
 
@@ -67,9 +71,9 @@ const App = {
     });
 
     if (logoutBtn) {
-      logoutBtn.addEventListener('click', (e) => {
+      logoutBtn.addEventListener('click', async (e) => {
         e.preventDefault();
-        this.logout();
+        await this.logout();
       });
     }
 
@@ -117,10 +121,27 @@ const App = {
     }
   },
 
-  logout() {
-    if (confirm('คุณต้องการออกจากระบบหรือไม่?')) {
-      authStore.logout();
-      window.location.href = 'index.html';
+  async logout() {
+    const confirmed = await NotificationSystem.confirm({
+      title: '🚪 ออกจากระบบ',
+      message: 'คุณต้องการออกจากระบบหรือไม่?',
+      confirmText: 'ออกจากระบบ',
+      cancelText: 'ยกเลิก',
+      type: 'warning'
+    });
+
+    if (confirmed) {
+      // Show logout notification
+      NotificationSystem.info(
+        '👋 กำลังออกจากระบบ',
+        'ขอบคุณที่ใช้งาน TEXAS POS'
+      );
+      
+      // Delay for notification to show
+      setTimeout(() => {
+        authStore.logout();
+        window.location.href = 'index.html';
+      }, 1000);
     }
   }
 };

@@ -1,6 +1,7 @@
 import { productService } from '../services/productService.js';
 import { stockService } from '../services/stockService.js';
 import { Modal } from '../components/modal.js';
+import { NotificationSystem } from '../components/notification.js';
 
 const stockView = {
     container: null,
@@ -389,7 +390,10 @@ const stockView = {
             const quantity = parseInt(quantityInput.value);
             
             if (!quantity || quantity < 1) {
-                alert('❌ กรุณาใส่จำนวนที่ถูกต้อง (ต้องมากกว่า 0)');
+                NotificationSystem.warning(
+                    'จำนวนไม่ถูกต้อง',
+                    'กรุณาใส่จำนวนที่ถูกต้อง (ต้องมากกว่า 0)'
+                );
                 quantityInput.focus();
                 return;
             }
@@ -403,57 +407,30 @@ const stockView = {
                 if (result.success) {
                     modal.close();
                     
-                    // Show success message
-                    this.showSuccessMessage(`✅ เพิ่มสต็อก ${quantity} ชิ้น สำเร็จ!`);
+                    // Show success notification
+                    NotificationSystem.success(
+                        '✅ เพิ่มสต็อกสำเร็จ!',
+                        `เพิ่มสต็อก ${quantity} ชิ้น สำหรับ "${productName}" แล้ว`
+                    );
                     
                     this.loadData();
                 } else {
-                    alert('❌ ไม่สามารถเพิ่มสต็อกได้: ' + result.error.message);
+                    NotificationSystem.error(
+                        'ไม่สามารถเพิ่มสต็อกได้',
+                        result.error.message
+                    );
                     confirmBtn.disabled = false;
                     confirmBtn.innerHTML = '✅ เพิ่มสต็อก';
                 }
             } catch (error) {
-                alert('💥 เกิดข้อผิดพลาด: ' + error.message);
+                NotificationSystem.error(
+                    'เกิดข้อผิดพลาด',
+                    error.message
+                );
                 confirmBtn.disabled = false;
                 confirmBtn.innerHTML = '✅ เพิ่มสต็อก';
             }
         });
-    },
-
-    showSuccessMessage(message) {
-        const successMsg = document.createElement('div');
-        successMsg.style.cssText = `
-            position: fixed; top: 20px; right: 20px; z-index: 9999;
-            background: linear-gradient(135deg, #22c55e, #16a34a);
-            color: white; padding: 16px 24px; border-radius: 12px;
-            box-shadow: 0 8px 25px rgba(34, 197, 94, 0.3);
-            font-weight: 600; animation: slideIn 0.3s ease;
-            max-width: 300px; text-align: center;
-        `;
-        successMsg.innerHTML = message;
-        document.body.appendChild(successMsg);
-        
-        setTimeout(() => {
-            successMsg.style.animation = 'slideOut 0.3s ease';
-            setTimeout(() => successMsg.remove(), 300);
-        }, 3000);
-
-        // Add CSS for animations if not exists
-        if (!document.getElementById('stock-animations')) {
-            const style = document.createElement('style');
-            style.id = 'stock-animations';
-            style.textContent = `
-                @keyframes slideIn {
-                    from { transform: translateX(100%); opacity: 0; }
-                    to { transform: translateX(0); opacity: 1; }
-                }
-                @keyframes slideOut {
-                    from { transform: translateX(0); opacity: 1; }
-                    to { transform: translateX(100%); opacity: 0; }
-                }
-            `;
-            document.head.appendChild(style);
-        }
     },
 
     showError(message) {

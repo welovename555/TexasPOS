@@ -1,5 +1,6 @@
 import { Modal } from './modal.js';
 import { cartStore } from '../stores/cartStore.js';
+import { NotificationSystem } from './notification.js';
 
 const priceSelectorModal = {
   open(product) {
@@ -73,6 +74,12 @@ const priceSelectorModal = {
           console.log('💰 Selected price:', selectedPrice, 'for product:', product.name);
           
           cartStore.addItem(product, selectedPrice);
+          
+          // Show success notification
+          NotificationSystem.success(
+            '🛒 เพิ่มสินค้าแล้ว!',
+            `เพิ่ม "${product.name}" ราคา ${selectedPrice} บาท เข้าตะกร้าแล้ว`
+          );
           
           modal.close();
         });

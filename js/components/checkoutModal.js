@@ -2,6 +2,7 @@ import { Modal } from './modal.js';
 import { cartStore } from '../stores/cartStore.js';
 import { salesService } from '../services/salesService.js';
 import { ProgressBar } from './progressBar.js';
+import { NotificationSystem } from './notification.js';
 
 const checkoutModal = (() => {
   let modalInstance = null;
@@ -76,12 +77,30 @@ const checkoutModal = (() => {
         
         const selectedMethodEl = document.querySelector('.btn-toggle.active');
         if (!selectedMethodEl) {
-          alert('กรุณาเลือกวิธีการชำระเงิน');
+          NotificationSystem.warning(
+            'กรุณาเลือกวิธีการชำระเงิน',
+            'เลือกเงินสดหรือโอนเงินก่อนดำเนินการต่อ'
+          );
           return;
         }
         
         const paymentMethod = selectedMethodEl.dataset.method;
         console.log('💰 Processing payment with method:', paymentMethod);
+        
+        // Validate cash payment
+        if (paymentMethod === 'cash') {
+          const cashValue = parseFloat(cashInput?.value || 0);
+          const total = cartStore.getTotal();
+          
+          if (!cashValue || cashValue < total) {
+            NotificationSystem.warning(
+              'จำนวนเงินไม่เพียงพอ',
+              `กรุณาใส่จำนวนเงินที่มากกว่าหรือเท่ากับ ${total.toFixed(2)} บาท`
+            );
+            cashInput?.focus();
+            return;
+          }
+        }
         
         confirmBtn.disabled = true;
         confirmBtn.textContent = 'กำลังประมวลผล...';
@@ -98,16 +117,27 @@ const checkoutModal = (() => {
             console.log('✅ Sale successful, clearing cart');
             cartStore.clearCart();
             modalInstance?.close();
-            alert('บันทึกการขายสำเร็จ!');
+            
+            // Show beautiful success notification
+            NotificationSystem.success(
+              '🎉 บันทึกการขายสำเร็จ!',
+              `ขายสินค้า ${result.data.length} รายการ เรียบร้อยแล้ว`
+            );
           } else {
             console.error('❌ Sale failed:', result.error);
-            alert('เกิดข้อผิดพลาด: ' + result.error.message);
+            NotificationSystem.error(
+              'เกิดข้อผิดพลาด',
+              result.error.message || 'ไม่สามารถบันทึกการขายได้'
+            );
             confirmBtn.disabled = false;
             confirmBtn.textContent = 'ยืนยันการชำระเงิน';
           }
         } catch (error) {
           console.error('💥 Sale error:', error);
-          alert('เกิดข้อผิดพลาด: ' + error.message);
+          NotificationSystem.error(
+            'เกิดข้อผิดพลาด',
+            error.message || 'ระบบขัดข้อง กรุณาลองใหม่อีกครั้ง'
+          );
           confirmBtn.disabled = false;
           confirmBtn.textContent = 'ยืนยันการชำระเงิน';
         }
@@ -116,11 +146,24 @@ const checkoutModal = (() => {
 
     const clearCartBtn = document.getElementById('clear-cart-btn');
     if (clearCartBtn) {
-      clearCartBtn.addEventListener('click', () => {
+      clearCartBtn.addEventListener('click', async () => {
         console.log('🗑️ Clear cart clicked');
-        if (confirm('คุณต้องการล้างตะกร้าสินค้าหรือไม่?')) {
+        
+        const confirmed = await NotificationSystem.confirm({
+          title: '🗑️ ล้างตะกร้าสินค้า',
+          message: 'คุณต้องการลบสินค้าทั้งหมดในตะกร้าหรือไม่?',
+          confirmText: 'ล้างตะกร้า',
+          cancelText: 'ยกเลิก',
+          type: 'warning'
+        });
+        
+        if (confirmed) {
           cartStore.clearCart();
           modalInstance?.close();
+          NotificationSystem.info(
+            '🧹 ล้างตะกร้าแล้ว',
+            'สินค้าทั้งหมดถูกลบออกจากตะกร้าเรียบร้อย'
+          );
         }
       });
     }
@@ -139,7 +182,10 @@ const checkoutModal = (() => {
     
     const items = cartStore.getItems();
     if (items.length === 0) {
-      alert('ไม่มีสินค้าในตะกร้า');
+      NotificationSystem.warning(
+        'ตะกร้าสินค้าว่าง',
+        'กรุณาเลือกสินค้าก่อนทำการชำระเงิน'
+      );
       return;
     }
 
