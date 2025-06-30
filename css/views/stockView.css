@@ -217,7 +217,7 @@
   align-items: center;
 }
 
-/* Product Image - ขนาดเท่าหน้าขาย */
+/* --- [เริ่ม] ส่วนที่แก้ไข --- */
 .stock-card-image-container {
   width: 60px;
   height: 60px;
@@ -230,9 +230,9 @@
   flex-shrink: 0;
 }
 
-/* Dark theme image container */
+/* Dark theme image container - ปรับพื้นหลังให้เหมือนหน้าขาย */
 [data-theme="dark"] .stock-card-image-container {
-  background: linear-gradient(135deg, #3a3a3c 0%, #2c2c2e 100%);
+  background: rgba(255, 255, 255, 0.04); /* เปลี่ยนเป็นสีโปร่งแสง */
   box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
 }
 
@@ -244,13 +244,16 @@
 .stock-card-image {
   width: 100%;
   height: 100%;
-  object-fit: cover;
+  object-fit: contain; /* เปลี่ยนจาก cover เป็น contain */
+  padding: 4px; /* เพิ่ม padding เล็กน้อย */
+  box-sizing: border-box; /* ป้องกันขนาดเพี้ยน */
   transition: all 0.3s ease;
 }
 
 .stock-card-image-container:hover .stock-card-image {
   transform: scale(1.1);
 }
+/* --- [จบ] ส่วนที่แก้ไข --- */
 
 /* Product Info */
 .stock-card-info {
