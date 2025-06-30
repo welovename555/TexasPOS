@@ -1,9 +1,7 @@
 /* css/views/historyView.css */
 
 .history-view {
-  padding: 0;
-  /* [FIX] Increased padding to the bottom to avoid being obscured by the bottom navigation */
-  padding-bottom: 120px;
+  padding-bottom: calc(120px + env(safe-area-inset-bottom, 0px));
 }
 
 .history-header {
