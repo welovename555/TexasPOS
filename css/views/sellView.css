@@ -17,8 +17,8 @@
   /* ปรับแก้บรรทัดนี้: กำหนดขนาดขั้นต่ำให้เล็กลงเพื่อให้ 3 รายการต่อแถวได้ */
   grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
   gap: 16px;
-  /* เพิ่ม padding ด้านล่างเพื่อให้ไม่ทับกับปุ่มชำระเงิน */
-  padding-bottom: 120px;
+  /* เพิ่ม padding ด้านล่างเพื่อให้ไม่ทับกับปุ่มชำระเงิน และรองรับ Safe Area */
+  padding-bottom: calc(120px + env(safe-area-inset-bottom));
 }
 
 .product-item {
