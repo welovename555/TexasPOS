@@ -18,7 +18,8 @@ const checkoutModal = (() => {
         ${items.map(item => `
           <div class="cart-item-row">
             <span>${item.product.name} (x${item.quantity})</span>
-            <span>${(item.selectedPrice * item.quantity).toFixed(2)} ฿</span>
+   
+           <span>${(item.selectedPrice * item.quantity).toFixed(2)} ฿</span>
           </div>
         `).join('')}
       </div>
@@ -29,6 +30,7 @@ const checkoutModal = (() => {
       <div class="payment-method-toggle">
         <button class="btn-toggle" data-method="cash">เงินสด</button>
         <button class="btn-toggle" data-method="transfer">โอนเงิน</button>
+      
       </div>
       <div class="cash-input hidden">
         <label>ลูกค้าจ่ายมา</label>
@@ -54,6 +56,7 @@ const checkoutModal = (() => {
         if (cashInput) {
           cashInput.classList.toggle('hidden', method !== 'cash');
         }
+ 
       });
     });
 
@@ -67,7 +70,8 @@ const checkoutModal = (() => {
         if (changeOutput) {
           changeOutput.textContent = `เงินทอน: ${change.toFixed(2)} ฿`;
         }
-      });
+   
+       });
     }
 
     const confirmBtn = document.getElementById('confirm-checkout');
@@ -81,26 +85,16 @@ const checkoutModal = (() => {
             'กรุณาเลือกวิธีการชำระเงิน',
             'เลือกเงินสดหรือโอนเงินก่อนดำเนินการต่อ'
           );
+    
           return;
         }
         
         const paymentMethod = selectedMethodEl.dataset.method;
         console.log('💰 Processing payment with method:', paymentMethod);
         
-        // Validate cash payment
-        if (paymentMethod === 'cash') {
-          const cashValue = parseFloat(cashInput?.value || 0);
-          const total = cartStore.getTotal();
-          
-          if (!cashValue || cashValue < total) {
-            NotificationSystem.warning(
-              'จำนวนเงินไม่เพียงพอ',
-              `กรุณาใส่จำนวนเงินที่มากกว่าหรือเท่ากับ ${total.toFixed(2)} บาท`
-            );
-            cashInput?.focus();
-            return;
-          }
-        }
+        // ===============================================
+        //  ✅  ส่วนของการตรวจสอบจำนวนเงินถูกลบออกไปแล้ว  ✅ 
+        // ===============================================
         
         confirmBtn.disabled = true;
         confirmBtn.textContent = 'กำลังประมวลผล...';
@@ -110,7 +104,6 @@ const checkoutModal = (() => {
             ProgressBar.show('กำลังบันทึกการขาย...'),
             salesService.createSale(cartStore.getItems(), paymentMethod)
           ]);
-          
           console.log('📊 Sale result:', result);
           
           if (result.success) {
@@ -154,6 +147,7 @@ const checkoutModal = (() => {
           message: 'คุณต้องการลบสินค้าทั้งหมดในตะกร้าหรือไม่?',
           confirmText: 'ล้างตะกร้า',
           cancelText: 'ยกเลิก',
+    
           type: 'warning'
         });
         
@@ -164,6 +158,7 @@ const checkoutModal = (() => {
             '🧹 ล้างตะกร้าแล้ว',
             'สินค้าทั้งหมดถูกลบออกจากตะกร้าเรียบร้อย'
           );
+  
         }
       });
     }
@@ -198,12 +193,10 @@ const checkoutModal = (() => {
         <button class="btn btn-cancel" id="cancel-checkout">ยกเลิก</button>
       `
     });
-
     // รอให้ modal แสดงผลก่อนแล้วค่อยเพิ่ม event listeners
     setTimeout(() => attachEvents(), 100);
   };
 
   return { open };
 })();
-
 export { checkoutModal };
