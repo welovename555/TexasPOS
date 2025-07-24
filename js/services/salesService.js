@@ -40,20 +40,19 @@ const salesService = {
     
     try {
       const transaction_id = crypto.randomUUID();
-const employee_id = authStore.state.user?.id;
-// const shift_id = shiftStore.state.currentShift?.id; // ลบการอ้างอิง shiftStore
-console.log('🔍 Sale details:', { transaction_id, employee_id });
+      const employee_id = authStore.state.user?.id;
+      // const shift_id = shiftStore.state.currentShift?.id; // ลบการอ้างอิง shiftStore
+      console.log('🔍 Sale details:', { transaction_id, employee_id });
 
-if (!employee_id) { // เอา shift_id ออกจากเงื่อนไข
-  throw new Error('ไม่พบข้อมูลพนักงานปัจจุบัน');
-}
-
+      if (!employee_id) { // เอา shift_id ออกจากเงื่อนไข
+        throw new Error('ไม่พบข้อมูลพนักงานปัจจุบัน');
+      }
 
       const salesRecords = cartItems.map(item => ({
-  transaction_id,
-  employee_id,
-  shift_id: null, // กำหนดให้ shift_id เป็น null เสมอ
-  product_id: item.product.id,
+        transaction_id,
+        employee_id,
+        shift_id: null, // กำหนดให้ shift_id เป็น null เสมอ
+        product_id: item.product.id,
         quantity: item.quantity,
         price_per_unit: item.selectedPrice, // ใช้ราคาที่เลือก
         total_item_price: item.selectedPrice * item.quantity,
@@ -99,8 +98,15 @@ if (!employee_id) { // เอา shift_id ออกจากเงื่อน�
     console.log('📊 Fetching sales history for date:', date);
     
     try {
-      const startDate = `${date}T00:00:00.000Z`;
-      const endDate = `${date}T23:59:59.999Z`;
+      // สร้างเวลาเริ่มต้น 05:00 ของวันนั้น (เวลาไทย UTC+7)
+      const start = new Date(`${date}T05:00:00+07:00`);
+      
+      // คำนวณเวลาสิ้นสุดคือ 24 ชั่วโมงถัดไป ลบออก 1 มิลลิวินาที
+      const end = new Date(start.getTime() + (24 * 60 * 60 * 1000) - 1);
+
+      // แปลงเป็นรูปแบบ ISO String (UTC) สำหรับ Supabase
+      const startDate = start.toISOString();
+      const endDate = end.toISOString();
 
       const { data: salesData, error } = await supabaseClient
         .from('sales')
