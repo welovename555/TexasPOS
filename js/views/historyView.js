@@ -5,11 +5,20 @@ const historyView = {
   container: null,
   currentDate: null,
 
+  // 📌 ฟังก์ชันคำนวณวันโดยอิงเวลา 02:00
+  getShiftedDate() {
+    const now = new Date();
+    if (now.getHours() < 2) {
+      now.setDate(now.getDate() - 1);
+    }
+    return now.toISOString().split('T')[0];
+  },
+
   init() {
     this.container = document.querySelector('#history-view');
     if (!this.container) return;
 
-    this.currentDate = new Date().toISOString().split('T')[0]; // Today's date
+    this.currentDate = this.getShiftedDate(); // ✅ ใช้เวลาตามที่ร้านปิด (หลังตี 2 เปลี่ยนวัน)
     this.render();
     this.loadSalesHistory();
   },
@@ -31,9 +40,7 @@ const historyView = {
         </div>
       </div>
 
-      <div class="sales-summary" id="sales-summary">
-        <!-- Summary cards will be inserted here -->
-      </div>
+      <div class="sales-summary" id="sales-summary"></div>
 
       <div class="history-table-container">
         <table class="history-table">
@@ -47,9 +54,7 @@ const historyView = {
               <th>พนักงานขาย</th>
             </tr>
           </thead>
-          <tbody id="history-table-body">
-            <!-- Sales data will be inserted here -->
-          </tbody>
+          <tbody id="history-table-body"></tbody>
         </table>
       </div>
     `;
@@ -80,7 +85,6 @@ const historyView = {
     const tableBody = document.getElementById('history-table-body');
     const summaryContainer = document.getElementById('sales-summary');
 
-    // Show loading state
     if (refreshBtn) {
       refreshBtn.disabled = true;
       refreshBtn.innerHTML = `
@@ -104,7 +108,6 @@ const historyView = {
     } catch (error) {
       this.showError('เกิดข้อผิดพลาด: ' + error.message);
     } finally {
-      // Reset refresh button
       if (refreshBtn) {
         refreshBtn.disabled = false;
         refreshBtn.innerHTML = `
