@@ -41,27 +41,26 @@ const salesService = {
     try {
       const transaction_id = crypto.randomUUID();
       const employee_id = authStore.state.user?.id;
-      // const shift_id = shiftStore.state.currentShift?.id; // ลบการอ้างอิง shiftStore
+
       console.log('🔍 Sale details:', { transaction_id, employee_id });
 
-      if (!employee_id) { // เอา shift_id ออกจากเงื่อนไข
+      if (!employee_id) {
         throw new Error('ไม่พบข้อมูลพนักงานปัจจุบัน');
       }
 
       const salesRecords = cartItems.map(item => ({
         transaction_id,
         employee_id,
-        shift_id: null, // กำหนดให้ shift_id เป็น null เสมอ
+        shift_id: null,
         product_id: item.product.id,
         quantity: item.quantity,
-        price_per_unit: item.selectedPrice, // ใช้ราคาที่เลือก
+        price_per_unit: item.selectedPrice,
         total_item_price: item.selectedPrice * item.quantity,
         payment_method: paymentMethod
       }));
 
       console.log('📊 Sales records to insert:', salesRecords);
 
-      // Step 1: Insert all sale records into the 'sales' table.
       const { data, error: salesError } = await supabaseClient
         .from('sales')
         .insert(salesRecords)
@@ -74,10 +73,7 @@ const salesService = {
 
       console.log('✅ Sales records inserted:', data);
 
-      // Step 2: Update stock quantities for all sold products.
       await this._updateStock(cartItems);
-
-      // Step 3: Notify the app that stock has changed.
       document.dispatchEvent(new CustomEvent('stockUpdated', { bubbles: true }));
 
       console.log('🎉 Sale completed successfully');
@@ -96,15 +92,14 @@ const salesService = {
    */
   async getSalesHistory(date) {
     console.log('📊 Fetching sales history for date:', date);
-    
+
     try {
-      // สร้างเวลาเริ่มต้น 05:00 ของวันนั้น (เวลาไทย UTC+7)
-      const start = new Date(`${date}T05:00:00+07:00`);
-      
-      // คำนวณเวลาสิ้นสุดคือ 24 ชั่วโมงถัดไป ลบออก 1 มิลลิวินาที
+      // ✅ ปรับช่วงเวลาให้เริ่มที่ 02:00 ของวันนั้น (UTC+7)
+      const start = new Date(`${date}T02:00:00+07:00`);
+
+      // ✅ จบที่ 01:59:59 ของวันถัดไป
       const end = new Date(start.getTime() + (24 * 60 * 60 * 1000) - 1);
 
-      // แปลงเป็นรูปแบบ ISO String (UTC) สำหรับ Supabase
       const startDate = start.toISOString();
       const endDate = end.toISOString();
 
@@ -121,7 +116,6 @@ const salesService = {
 
       if (error) throw error;
 
-      // Calculate summary
       const summary = {
         totalSales: salesData.length,
         totalAmount: salesData.reduce((sum, sale) => sum + sale.total_item_price, 0),
@@ -134,11 +128,11 @@ const salesService = {
       };
 
       console.log('📈 Sales history fetched:', { salesData: salesData.length, summary });
-      
-      return { 
-        success: true, 
+
+      return {
+        success: true,
         data: salesData,
-        summary 
+        summary
       };
 
     } catch (error) {
