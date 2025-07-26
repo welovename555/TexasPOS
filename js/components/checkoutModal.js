@@ -29,7 +29,7 @@ const checkoutModal = (() => {
       </div>
       <div class="payment-method-toggle">
         <button class="btn-toggle" data-method="cash">เงินสด</button>
-        <button class="btn-toggle" data-method="transfer">โอนเงิน</button>
+        <button class="btn-toggle" data-method="transfer">เงินโอน</button>
       
       </div>
       <div class="cash-input hidden">
